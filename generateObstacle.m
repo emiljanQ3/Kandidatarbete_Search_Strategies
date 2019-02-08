@@ -9,13 +9,13 @@
 
 function obstacle = generateObstacle(string, R, r )
 
-    if string = "c" %Cross
+    if string == "c" %Cross
         obstacle(:,:,1) = [-R/2, 0: R/2, 0];
         obstacle(:,:,2) = [0, -R/2: 0, R/2];
        return 
     end
     
-    if string = "hc" %Hooked cross
+    if string == "hc" %Hooked cross
         %Cross
         obstacle(:,:,1) = [-R/2, 0: R/2, 0];
         obstacle(:,:,2) = [0, -R/2: 0, R/2];
@@ -28,7 +28,7 @@ function obstacle = generateObstacle(string, R, r )
         return
     end
     
-    if string = "hm" %Homogenous cell
+    if string == "hm" %Homogenous cell
         obstacle = null;
         return
     end
