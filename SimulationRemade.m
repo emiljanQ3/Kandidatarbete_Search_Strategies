@@ -36,7 +36,7 @@ for w_i = w %Loop over different kiralities
             rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn, 2  * pi); %Update agent rotation for all agents
             
             for agent = 1:numAgents
-                pos_a(:,agent,T_i) = moveAgent(pos_a(:,agent,T_i-1), rot_a(agent), v, obstacle, L);    %Move agent
+                pos_a(:,agent,T_i) = moveAgent(pos_a(:,agent,T_i-1), rot_a(agent), v*dT, obstacle, L);    %Move agent
             end
             
         end
