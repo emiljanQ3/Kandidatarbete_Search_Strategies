@@ -2,11 +2,11 @@
 
 %CONFIG-------------------------------------------------------------------------------------------------------
 L                       = 1;      %Cell side length
-obstacle                = generateObstacle();   %Periodic obstacle contained in one cell
+obstacle                = generateObstacle("hej", R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 300;
 numSimulations          = 1;
-dT                      = 0.1;   % in seconds
+dT                      = 0.1;   % Delta time in seconds
 w                       = 0*pi/10;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 2 * Delta_time * speed; % Side length of cells in grid used to determine covered area
@@ -16,6 +16,7 @@ D_r                     = 0.01; %Diffusion constant for rotation
 %Friction
 %Agent shape
 %D_t   %Diffusion constant for movement
+%Boundry of environment
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
