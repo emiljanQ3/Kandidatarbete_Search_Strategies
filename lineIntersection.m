@@ -2,6 +2,9 @@ function P = lineIntersection(line1, line2)
 % line1 is the path of agent
 % line2 is a wall
 
+G = [5 6];
+
+
 A = [line1(2,1)-line1(1,1) line2(1,1)-line2(2,1);
     line1(2,2)-line1(1,2) line2(1,2)-line2(2,2)];
 
@@ -9,6 +12,7 @@ B = [line2(1,1)-line1(1,1);
     line2(1,2)-line1(1,2)];
 
 X = A\B;
+
 
 % Find
 
@@ -41,7 +45,7 @@ if (X(1) > 1 || X(1) < 0 || X(2) > 1 || X(2) < 0)
     
 else
     x = line1(1,1)+ X(1)*(line1(2,1)-line1(1,1));
-    y = line1(1,2) + X(2)*(line1(2,2)-line1(1,2));
+    y = line1(1,2) + X(1)*(line1(2,2)-line1(1,2));
     
     P = [x,y];
 end
