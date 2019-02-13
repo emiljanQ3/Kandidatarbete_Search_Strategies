@@ -2,9 +2,6 @@ function P = lineIntersection(line1, line2)
 % line1 is the path of agent
 % line2 is a wall
 
-G = [5 6];
-
-
 A = [line1(2,1)-line1(1,1) line2(1,1)-line2(2,1);
     line1(2,2)-line1(1,2) line2(1,2)-line2(2,2)];
 
