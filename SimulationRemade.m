@@ -1,4 +1,5 @@
 %Iteration 2 of simulation
+clc;
 close all
 hold on
 %CONFIG-------------------------------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ D_r                     = 0.01; %Diffusion constant for rotation
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
 pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
-areaCovered = zeros(numSimulations);        %INITIALIZATION: List of the amount of area elements found each simulation.
+areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
 meanAreaCovered = zeros(length(w));         %INITIALIZATION: List of mean area covered for each kirality.
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ for w_i = w %Loop over different kiralities
 %         for i = 1:size(indexedPos_a,3)                %HELP lyckas inte med vektorer som index 
 %                 areaGrid(indexedPos_a(agent,1,i),indexedPos_a(agent,2,i)) = 1;
 %         end   
- %        areaGrid
+%        areaGrid
         areaGrid(indexedPos_a(agent, 1, :),indexedPos_a(agent, 2, :)) = 1;     %Not sure about the dimensions here, will check back later.         
        areaCovered(N_i) = sum(sum(areaGrid));
        
