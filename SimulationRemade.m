@@ -8,7 +8,7 @@ r                       = 0.05;
 obstacle                = generateObstacle("c", R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 300;
-numSimulations          = 1000;
+numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
 w                       = 1*pi/20;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
@@ -28,6 +28,7 @@ areaCovered = zeros(numSimulations);        %INITIALIZATION: List of the amount 
 meanAreaCovered = zeros(length(w));         %INITIALIZATION: List of mean area covered for each kirality.
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
+w_j = 1;
 for w_i = w %Loop over different kiralities
     
     for N_i = 1:numSimulations %Loop over separate simulations
@@ -44,33 +45,36 @@ for w_i = w %Loop over different kiralities
             end
             
         end 
+        
         %Simulation is done. Time to calculate area discovered.
-         maxPos = [max(max(pos_a(agent,1,:))) max(max(pos_a(agent,2,:)))];
-         minPos = [min(min(pos_a(agent,1,:))) min(min(pos_a(agent,2,:)))];
-         area = ceil((maxPos - minPos) / l);          %Number of area-cells of length l
-         areaGrid = zeros(area(1), area(2));       %Giovanni told us to use sparse grid but I'm not sure how it increases efficency. 
-                                                                         %Maybe we dont need it bc we restrict ourselves to the area of the trajectory by Max&Min?
+        maxPos = max(max(pos_a,[],1),[],3);
+        minPos = min(min(pos_a,[],1),[],3);
+        gridSize = ceil((maxPos - minPos) / l);
+        areaGrid = zeros(gridSize);
          
-         indexedPos_a = ceil((pos_a - minPos)/l)+1; %so as to start at index 1
-        %Reorder dimentions
-%         for i = 1:size(indexedPos_a,3)                %HELP lyckas inte med vektorer som index 
-%                 areaGrid(indexedPos_a(agent,1,i),indexedPos_a(agent,2,i)) = 1;
-%         end   
- %        areaGrid
-        areaGrid(indexedPos_a(agent, 1, :),indexedPos_a(agent, 2, :)) = 1;     %Not sure about the dimensions here, will check back later.         
-       areaCovered(N_i) = sum(sum(areaGrid));
+        indexedPos_a = floor((pos_a - minPos)/l) + 1;
+        
+        xIndices = indexedPos_a(:,1,:);
+        yIndices = indexedPos_a(:,2,:);
+        for i = 1:numel(xIndices)             
+            areaGrid(xIndices(i),yIndices(i)) = 1;
+        end   
+              
+        areaCovered(N_i) = sum(areaGrid,'all');
        
 
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
-    %meanAreaCovered(w_i) = mMean(areaCovered);
+    meanAreaCovered(w_j) = mean(areaCovered);
+    w_j = w_j + 1;
     
 end
 
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
 result(:,1) = w;
 result(:,2) = meanAreaCovered;
+result
 %Plot-----------------------------------------------------------------------------------------------------------------
 hold on
 plotSize = 5;
