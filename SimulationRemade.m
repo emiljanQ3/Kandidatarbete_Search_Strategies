@@ -1,17 +1,19 @@
-%Iteration 2 of simulation
-clc;
+%%Iteration 2 of simulation
+clf
 close all
 hold on
+warning('off','all')
 %CONFIG-------------------------------------------------------------------------------------------------------
+obstacleType            = "c";
 L                       = 1;      %Cell side length
 R                       = 0.5;
 r                       = 0.05;
-obstacle                = generateObstacle("c", R,r);   %Periodic obstacle contained in one cell
+obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 300;
-numSimulations          = 1;
+numSimulations          = 10;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 1*pi/20;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -26,12 +28,12 @@ D_r                     = 0.01; %Diffusion constant for rotation
 
 pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
 areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
-meanAreaCovered = zeros(length(w));         %INITIALIZATION: List of mean area covered for each kirality.
+meanAreaCovered = zeros(length(w),1);         %INITIALIZATION: List of mean area covered for each kirality.
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_j = 1;
 for w_i = w %Loop over different kiralities
-    
+    w_j
     for N_i = 1:numSimulations %Loop over separate simulations
         
         rot_a = 2*pi*rand(numAgents); %Starting rotations
@@ -42,7 +44,7 @@ for w_i = w %Loop over different kiralities
             
             for agent = 1:numAgents
                 targetPos = pos_a(agent, :, T_i-1) + [cos(rot_a(agent)), sin(rot_a(agent))] * dT * v; %Calculate where a unhindered move would go.
-                pos_a(agent, :, T_i) = OldmoveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/100);    %Move agent and take obstacles into consideration.
+                pos_a(agent, :, T_i) = moveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/10);    %Move agent and take obstacles into consideration.
             end
             
         end 
@@ -72,16 +74,15 @@ for w_i = w %Loop over different kiralities
 end
 
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
-result(:,1) = w;
-result(:,2) = meanAreaCovered;
-result;
+semilogx(w,meanAreaCovered)
 %Plot-----------------------------------------------------------------------------------------------------------------
+figure(101)
 hold on
-plotSize = 5;
+plotSize = 3;
 for i = -plotSize:plotSize
     for j = -plotSize:plotSize
         for k = 1:size(obstacle, 3)
-            plot(obstacle(:,1,k)+j*L,obstacle(:,2,k)+i*L, 'k')
+            plot(obstacle(:,1,k)+j*L,obstacle(:,2,k)+i*L, 'k', 'LineWidth', 1)
             
         end
     end
@@ -95,5 +96,13 @@ for agent = 1:numAgents
     Y = Y(:,:)';
     plot(X,Y);
 end
-scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b')
+%scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
 toc
+
+%% KÖr detta script för att spara ditt workspace
+dateTime = clock;
+R_s = num2str(R);
+r_s = num2str(r);
+filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', obstacleType, R_s([1,3:end]), r_s([1,3:end]), '_', num2str(numAgents))
+path = strcat(pwd, '\results\', filename)
+save(path)
