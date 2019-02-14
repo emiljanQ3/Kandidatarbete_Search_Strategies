@@ -42,7 +42,7 @@ for w_i = w %Loop over different kiralities
             
             for agent = 1:numAgents
                 targetPos = pos_a(agent, :, T_i-1) + [cos(rot_a(agent)), sin(rot_a(agent))] * dT * v; %Calculate where a unhindered move would go.
-                pos_a(agent, :, T_i) = moveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/100);    %Move agent and take obstacles into consideration.
+                pos_a(agent, :, T_i) = OldmoveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/100);    %Move agent and take obstacles into consideration.
             end
             
         end 
@@ -74,7 +74,7 @@ end
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
 result(:,1) = w;
 result(:,2) = meanAreaCovered;
-result
+result;
 %Plot-----------------------------------------------------------------------------------------------------------------
 hold on
 plotSize = 5;
