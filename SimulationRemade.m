@@ -1,6 +1,7 @@
 %Iteration 2 of simulation
 close all
 hold on
+warning('off','all')
 %CONFIG-------------------------------------------------------------------------------------------------------
 L                       = 1;      %Cell side length
 R                       = 0.5;
@@ -10,7 +11,7 @@ numAgents               = 1;
 numTimeSteps            = 300;
 numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 1*pi/20;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 2*pi/10;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -41,7 +42,7 @@ for w_i = w %Loop over different kiralities
             
             for agent = 1:numAgents
                 targetPos = pos_a(agent, :, T_i-1) + [cos(rot_a(agent)), sin(rot_a(agent))] * dT * v; %Calculate where a unhindered move would go.
-                pos_a(agent, :, T_i) = moveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/100);    %Move agent and take obstacles into consideration.
+                pos_a(agent, :, T_i) = moveAgent(pos_a(agent, :, T_i-1), targetPos, obstacle, L, v*dT/10);    %Move agent and take obstacles into consideration.
             end
             
         end 
@@ -77,7 +78,7 @@ result(:,2) = meanAreaCovered;
 result
 %Plot-----------------------------------------------------------------------------------------------------------------
 hold on
-plotSize = 5;
+plotSize = 3;
 for i = -plotSize:plotSize
     for j = -plotSize:plotSize
         for k = 1:size(obstacle, 3)
@@ -95,5 +96,5 @@ for agent = 1:numAgents
     Y = Y(:,:)';
     plot(X,Y);
 end
-scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b')
+scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
 toc
