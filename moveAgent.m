@@ -37,6 +37,6 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
     %Calculate new target pos based on tangental movement along the wall.
     newTarget = targetPos - 1.001*normal*dot((targetPos-impactPoint), normal);
     newStartPos = impactPoint - 0.001*normal*dot((targetPos-impactPoint), normal);
-    scatter(impactPoint(1),impactPoint(2), 'r')
+    
     resultPos = moveAgent(newStartPos, newTarget, obstacle, L, threshold);
 end
