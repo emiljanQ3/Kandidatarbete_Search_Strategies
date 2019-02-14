@@ -9,7 +9,7 @@ r                       = 0.05;
 obstacle                = generateObstacle("c", R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 300;
-numSimulations          = 1;
+numSimulations          = 1000;
 dT                      = 0.1;   % Delta time in seconds
 w                       = 2*pi/10;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
@@ -25,8 +25,8 @@ D_r                     = 0.01; %Diffusion constant for rotation
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
 pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
-areaCovered = zeros(numSimulations);        %INITIALIZATION: List of the amount of area elements found each simulation.
-meanAreaCovered = zeros(length(w));         %INITIALIZATION: List of mean area covered for each kirality.
+areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
+meanAreaCovered = zeros(length(w),1);         %INITIALIZATION: List of mean area covered for each kirality.
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_j = 1;
