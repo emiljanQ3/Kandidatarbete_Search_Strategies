@@ -77,8 +77,7 @@ for w_i = w %Loop over different kiralities
             areaGrid(xIndices(i),yIndices(i)) = 1;
         end   
               
-        areaCovered(N_i) = sum(areaGrid,'all');
-       
+        areaCovered(N_i) = sum(areaGrid,'all');       
 
     end
     
