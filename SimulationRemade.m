@@ -13,8 +13,7 @@ numAgents               = 1;
 numTimeSteps            = 1000;
 numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 10.^linspace(-2,0,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
-w                       = 1;
+w                       = 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -65,8 +64,7 @@ for w_i = w %Loop over different kiralities
         end   
               
         areaCovered(N_i) = sum(sum(areaGrid));
-       
-
+  
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
@@ -113,7 +111,7 @@ filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5
 path = strcat(pwd, '\results\', filename)
 save(path)
 
-%% Animation
+%% Animation of the last done kirality
 
 p = animation(pos_a,obstacle,dT);
 
