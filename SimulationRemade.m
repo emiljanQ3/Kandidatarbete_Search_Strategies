@@ -10,10 +10,11 @@ R                       = 0.5;
 r                       = 0.05;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
-numTimeSteps            = 300;
-numSimulations          = 10;
+numTimeSteps            = 1000;
+numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 10.^linspace(-2,0,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 1;
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -63,7 +64,7 @@ for w_i = w %Loop over different kiralities
             areaGrid(xIndices(i),yIndices(i)) = 1;
         end   
               
-        areaCovered(N_i) = sum(areaGrid,'all');
+        areaCovered(N_i) = sum(sum(areaGrid));
        
 
     end
@@ -79,9 +80,13 @@ semilogx(w,meanAreaCovered)
 %Plot-----------------------------------------------------------------------------------------------------------------
 figure(101)
 hold on
-plotSize = 3;
-for i = -plotSize:plotSize
-    for j = -plotSize:plotSize
+
+maxPos = max(max(pos_a,[],1),[],3);
+minPos = min(min(pos_a,[],1),[],3);
+maxmax = max(abs([maxPos minPos]))
+plotSize = ceil((maxmax) / L);
+for i = -plotSize():plotSize-1
+    for j = -plotSize:plotSize-1
         for k = 1:size(obstacle, 3)
             plot(obstacle(:,1,k)+j*L,obstacle(:,2,k)+i*L, 'k', 'LineWidth', 1)
             
@@ -100,10 +105,16 @@ end
 %scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
 toc
 
-%% KÖr detta script för att spara ditt workspace
+%% Kï¿½r detta script fï¿½r att spara ditt workspace
 dateTime = clock;
 R_s = num2str(R);
 r_s = num2str(r);
 filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', obstacleType, R_s([1,3:end]), r_s([1,3:end]), '_', num2str(numAgents))
 path = strcat(pwd, '\results\', filename)
 save(path)
+
+%% Animation
+
+p = animation(pos_a,obstacle,dT);
+
+
