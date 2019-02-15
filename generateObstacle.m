@@ -33,7 +33,6 @@ function obstacle = generateObstacle(string, R, r )
     if string == "hm" %Homogenous cell
         obstacle = null;
         return
-    end
-    
+    end 
     
 end
