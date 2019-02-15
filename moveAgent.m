@@ -8,11 +8,11 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
         intersectPoint = lineIntersection([pos; targetPos] - floor(pos/L)*L, obstacle(:,:,i)*L); %Get intersection between wall segment and movement, in cell 1.
         if ~isnan(intersectPoint) %If intersection found
             intersectPoint = floor(pos/L)*L + intersectPoint; %Move impact point to correct cell.
-            %--DEBUG----------
-            scatter(intersectPoint(1), intersectPoint(2), 'r')
-            scatter(pos(1),pos(2), 'y')
-            resultPos = pos;
-            return
+%             %--DEBUG----------
+              scatter(intersectPoint(1), intersectPoint(2), 'r')
+              scatter(pos(1),pos(2), 'y')
+             resultPos = pos;
+             return
             %--END DEBUG-----------
             intersectDist = norm(pos-intersectPoint); 
             if intersectDist < impactDist %If intersection is closer than closest discovered impact

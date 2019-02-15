@@ -8,7 +8,7 @@ r                       = 0.05;
 obstacle                = generateObstacle("c", R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 300;
-numSimulations          = 1000;
+numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
 w                       = 1*pi/20;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
@@ -24,7 +24,7 @@ D_r                     = 0.01; %Diffusion constant for rotation
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
 pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
-areaCovered = zeros(numSimulations);        %INITIALIZATION: List of the amount of area elements found each simulation.
+areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
 meanAreaCovered = zeros(length(w));         %INITIALIZATION: List of mean area covered for each kirality.
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
@@ -53,18 +53,18 @@ for w_i = w %Loop over different kiralities
          
          indexedPos_a = ceil((pos_a - minPos)/l)+1; %so as to start at index 1
         %Reorder dimentions
-%         for i = 1:size(indexedPos_a,3)                %HELP lyckas inte med vektorer som index 
-%                 areaGrid(indexedPos_a(agent,1,i),indexedPos_a(agent,2,i)) = 1;
-%         end   
+         for i = 1:size(indexedPos_a,3)                %HELP lyckas inte med vektorer som index 
+             areaGrid(indexedPos_a(agent,1,i),indexedPos_a(agent,2,i)) = 1;
+        end   
  %        areaGrid
-        areaGrid(indexedPos_a(agent, 1, :),indexedPos_a(agent, 2, :)) = 1;     %Not sure about the dimensions here, will check back later.         
+       % areaGrid(indexedPos_a(agent, 1, :),indexedPos_a(agent, 2, :)) = 1;     %Not sure about the dimensions here, will check back later.         
        areaCovered(N_i) = sum(sum(areaGrid));
        
 
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
-    %meanAreaCovered(w_i) = mMean(areaCovered);
+    meanAreaCovered(1) = mean(areaCovered);
     
 end
 
