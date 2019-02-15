@@ -1,4 +1,10 @@
 function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
+
+    %If movement is small enough, return current position.
+    if(norm(pos-targetPos) < threshold)
+        resultPos = pos;
+        return
+    end
     
     impactDist = inf;       %Distance to closest wall collision.
     impactPoint = NaN;      %Point of collision
@@ -8,12 +14,6 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
         intersectPoint = lineIntersection([pos; targetPos] - floor(pos/L)*L, obstacle(:,:,i)*L); %Get intersection between wall segment and movement, in cell 1.
         if ~isnan(intersectPoint) %If intersection found
             intersectPoint = floor(pos/L)*L + intersectPoint; %Move impact point to correct cell.
-%             %--DEBUG----------
-              scatter(intersectPoint(1), intersectPoint(2), 'r')
-              scatter(pos(1),pos(2), 'y')
-             resultPos = pos;
-             return
-            %--END DEBUG-----------
             intersectDist = norm(pos-intersectPoint); 
             if intersectDist < impactDist %If intersection is closer than closest discovered impact
                 %Set intersection as new impact point
@@ -33,14 +33,10 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
     tangent = tangent/norm(tangent);
     normal = tangent*[0,-1;1,0];
 
+    
     %Calculate new target pos based on tangental movement along the wall.
-    targetPos = impactPoint + tangent*dot((pos-impactPoint), tangent) - 0.00001*normal*dot((pos-impactPoint), normal);
-
-    %If movement is small enough, return current position.
-    if(norm(impactPoint-targetPos) < threshold)
-        resultPos = pos;
-        return
-    end
-
-    resultPos = moveAgent(impactPoint, targetPos, obstacle, L, threshold);
+    newTarget = targetPos - 1.001*normal*dot((targetPos-impactPoint), normal);
+    newStartPos = impactPoint - 0.001*normal*dot((targetPos-impactPoint), normal);
+    
+    resultPos = moveAgent(newStartPos, newTarget, obstacle, L, threshold);
 end
