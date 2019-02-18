@@ -31,9 +31,19 @@ function obstacle = generateObstacle(string, R, r )
     end
     
     if string == "hm" %Homogenous cell
-        obstacle = null;
+        obstacle = [0, 0; 0, 0];
         return
     end
     
+        % R is the double wall in one cell length in proportion to the cell
+    % length
+    % R = 1 creates closed squares
+    if string == "nc" %
+        obstacle(:,:,1) = [-0.5 0; -0.5+R/2 0] + center;
+        obstacle(:,:,2) = [0.5-R/2 0; 0.5 0] + center;
+        obstacle(:,:,3) = [0 -0.5; 0 -0.5+R/2] + center;
+        obstacle(:,:,4) = [0 0.5-R/2; 0 0.5] + center;
+        return
+    end
     
 end
