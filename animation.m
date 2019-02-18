@@ -20,9 +20,12 @@ function p = animation(pos_a,obstacle,dT)
 
     for time = 2:length(pos_a(1,1,:))
         pause(dT)
-        time
-        pos_a(1,1,time)
-        plot([pos_a(1,1,time),pos_a(1,1,time-1)],[pos_a(1,2,time),pos_a(1,2,time-1)],'b')
+        for agent = 1:length(pos_a(:,1,1))
+           %pos_a(agent,1,time);
+           % plot([pos_a(agent,1,time),pos_a(agent,1,time-1)],[pos_a(agent,2,time),pos_a(agent,2,time-1)],'b')
+           h =  plot([pos_a(:,1,time),pos_a(:,1,time-1)]',[pos_a(:,2,time),pos_a(:,2,time-1)]','b');
+           set(h, {'color'}, num2cell(jet(length(pos_a(:,1,1))),2));
+        end
     end
     
     p = 5;
