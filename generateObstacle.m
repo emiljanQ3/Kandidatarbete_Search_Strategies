@@ -30,8 +30,8 @@ function obstacle = generateObstacle(string, R, r )
         return
     end
     
-    if string == "hm" %Homogenous cell
-        obstacle = [0, 0; 0, 0];
+    if string == "hm" %Homogenous cell	
+        obstacle = [0, 0; 0, 0]; %works for now better that null
         return
     end
     
