@@ -45,5 +45,6 @@ function obstacle = generateObstacle(string, R, r )
         obstacle(:,:,4) = [0 0.5-R/2; 0 0.5] + center;
         return
     end
+
     
 end
