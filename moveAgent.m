@@ -1,8 +1,9 @@
-function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
+function [resultPos, resultRotation] = moveAgent(pos,targetPos, rotation, obstacle,L, threshold)
 
     %If movement is small enough, return current position.
     if(norm(pos-targetPos) < threshold)
         resultPos = pos;
+        resultRotation = rotation;
         return
     end
     
@@ -25,7 +26,8 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
     end
 
     if(isnan(impactPoint)) %If no wall impact, move unhindered.
-        resultPos = targetPos; 
+        resultPos = targetPos;
+        resultRotation = rotation;
         return 
     end
 
@@ -41,5 +43,5 @@ function resultPos = moveAgent(pos,targetPos,obstacle,L, threshold)
     newStartPos = impactPoint - 0.001*normal*dotProdukt;
     
     % 
-    resultPos = moveAgent(newStartPos, newTarget, obstacle, L, threshold);
+    [resultPos, resultRotation] = moveAgent(newStartPos, newTarget, rotation, obstacle, L, threshold);
 end
