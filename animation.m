@@ -1,4 +1,4 @@
-function p = animation(pos_a,obstacle,dT)
+function p = animation(pos_a,obstacle,dT,colision)
 
     figure(2002)
     hold on
@@ -19,6 +19,9 @@ function p = animation(pos_a,obstacle,dT)
     end
 
     for time = 2:length(pos_a(1,1,:))
+        if(colision(3,time) == 1)
+            scatter(colision(1,time),colision(2,time),'r')
+        end
         pause(dT)
         h =  plot([pos_a(:,1,time),pos_a(:,1,time-1)]',[pos_a(:,2,time),pos_a(:,2,time-1)]','b');
         set(h, {'color'}, num2cell(jet(length(pos_a(:,1,1))),2));
