@@ -16,7 +16,8 @@ dT                      = 0.1;   % Delta time in seconds
 w                       = 0.7% 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
-D_r                     = 0.01;%Diffusion constant for rotation
+D_r                     = 0.01; %Diffusion constant for rotation
+D_p                     = 0.01; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
@@ -43,7 +44,7 @@ for w_i = w %Loop over different kiralities
         
         for T_i = 2:numTimeSteps
             rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn, 2  * pi); %Update agent rotation for all agents
-            targetPos = pos_a(:, :, T_i-1) + [cos(rot_a), sin(rot_a)] * dT * v; %Calculate where a unhindered move would go.
+            targetPos = pos_a(:, :, T_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
             [pos_a(:, :, T_i) rot_a col]= moveAllAgents(pos_a(:, :, T_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c);    %Move agent and take obstacles into consideration.        
             colision(:,T_i) = col;
         end 
