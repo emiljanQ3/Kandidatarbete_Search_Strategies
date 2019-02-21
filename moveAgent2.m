@@ -40,7 +40,24 @@ function [resultPos, resultRotation] = moveAgent2(pos,targetPos, rotation, obsta
     
     dotProdukt = (targetPos(1)-impactPoint(1))*normal(1) + (targetPos(2)-impactPoint(2))*normal(2);
     
-    randomDirection = 2*pi*rand;
+    %==== USE ONE OF THE WAYS TO CALCULATE randomDirection ===
+    
+    %randomDirection = 2*pi*rand;
+    %---------------------------
+    %randomDirection = rotation + randn * 0.2;
+    %---------------------------
+    %randomDirection = rotation + abs(randn) * 0.2 * sign(dot(tangent, ))
+    %---------------------------
+    v = (impactPoint - pos);
+    u = v - dot(v, normal)*2*normal;
+    dir = (u/norm(u) + tangent/norm(tangent) * sign(dot(u,tangent)))/2;
+    newRot = atan(dir(2)/dir(1));
+    if(dir(1) < 0)
+        newRot = newRot + pi;
+    end
+    randomDirection = newRot + randn * 0.2;
+    %==========================================================
+    
     lengthLeft = norm(pos-targetPos) - norm(impactPoint-targetPos);
     
     newTarget = impactPoint + [cos(randomDirection), sin(randomDirection)] * lengthLeft;
