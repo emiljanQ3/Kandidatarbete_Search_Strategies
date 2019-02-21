@@ -46,16 +46,18 @@ function [resultPos, resultRotation] = moveAgent2(pos,targetPos, rotation, obsta
     %---------------------------
     %randomDirection = rotation + randn * 0.2;
     %---------------------------
-    %randomDirection = rotation + abs(randn) * 0.2 * sign(dot(tangent, ))
+    projectedPoint = pos + dot((impactPoint-pos), normal)*normal;
+    rotSign = -sign((projectedPoint(2) - pos(2))*(impactPoint(1) - projectedPoint(1)) - (impactPoint(2) - projectedPoint(2))*(projectedPoint(1) - pos(1)));
+    randomDirection = rotation + abs(randn) * 0.2 * rotSign;
     %---------------------------
-    v = (impactPoint - pos);
-    u = v - dot(v, normal)*2*normal;
-    dir = (u/norm(u) + tangent/norm(tangent) * sign(dot(u,tangent)))/2;
-    newRot = atan(dir(2)/dir(1));
-    if(dir(1) < 0)
-        newRot = newRot + pi;
-    end
-    randomDirection = newRot + randn * 0.2;
+%     v = (impactPoint - pos);
+%     u = v - dot(v, normal)*2*normal;
+%     dir = (u/norm(u) + tangent/norm(tangent) * sign(dot(u,tangent)))/2;
+%     newRot = atan(dir(2)/dir(1));
+%     if(dir(1) < 0)
+%         newRot = newRot + pi;
+%     end
+%     randomDirection = newRot + randn * 0.2;
     %==========================================================
     
     lengthLeft = norm(pos-targetPos) - norm(impactPoint-targetPos);
@@ -63,5 +65,5 @@ function [resultPos, resultRotation] = moveAgent2(pos,targetPos, rotation, obsta
     newTarget = impactPoint + [cos(randomDirection), sin(randomDirection)] * lengthLeft;
     newStartPos = impactPoint - 0.001*normal*dotProdukt;
     
-    [resultPos, resultRotation] = moveAgent2(newStartPos, newTarget, randomDirection, obstacle, L, threshold);
+    [resultPos, resultRotation] = moveAgent(newStartPos, newTarget, randomDirection, obstacle, L, threshold);
 end
