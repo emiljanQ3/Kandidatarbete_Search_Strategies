@@ -1,12 +1,34 @@
 
-function [pos rot_a col] = moveAllAgents(pos,targetPos, rot_a ,obstacle, L, threshold, r_c)
+function [pos, rot_a, col] = moveAllAgents(pos,targetPos, rot_a ,obstacle, L, threshold, r_c, mapSize)
 
     col = zeros(3,1);
     numAgents = size(pos,1);
     targets = zeros(numAgents,2);
     
+    if ~isnan(mapSize)
+        minPos = -floor(mapSize/2);
+        cellIndex = floor((pos - minPos)/L) + 1;
+    end
+    
     for i = 1:numAgents
-       [targets(i,:), rot_a(i)] = moveAgent(pos(i,:),targetPos(i,:), rot_a(i), obstacle, L, threshold);
+        %If in edge cell add walls to obstacle
+       if ~isnan(mapSize)
+           tempObstacle = obstacle;
+           if cellIndex(i,1) == 0 %vänster
+               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;0,1];
+           end
+           if cellIndex(i,1) == mapSize(1) %höger
+               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [1,0;1,1];
+           end
+           if cellIndex(i,2) == 0 %ner
+               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;1,0];
+           end
+           if cellIndex(i,2) == mapSize(2) %upp
+               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,1;1,1];
+           end
+       end
+       %Move agent
+       [targets(i,:), rot_a(i)] = moveAgent2(pos(i,:),targetPos(i,:), rot_a(i), tempObstacle, L, threshold);
     end
     
     % Detekterar just nu kolisioner genom hinder 
@@ -17,8 +39,6 @@ function [pos rot_a col] = moveAllAgents(pos,targetPos, rot_a ,obstacle, L, thre
                 col(3) = 1;
                 rot_a(j) = 2*pi*rand;
                 rot_a(i) = 2*pi*rand;
-                %targets(j,:) = pos(j,:);   % vart vill vi sÃ¤tte positionen
-                %targets(i,:) = pos(i,:);
             end
         end
     end

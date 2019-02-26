@@ -24,6 +24,8 @@ function [resultPos, resultRotation] = moveAgent2(pos,targetPos, rotation, obsta
             end
         end
     end
+    
+    
 
     if(isnan(impactPoint)) %If no wall impact, move unhindered.
         resultPos = targetPos;
