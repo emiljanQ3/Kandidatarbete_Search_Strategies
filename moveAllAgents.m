@@ -4,7 +4,7 @@ function [pos, rot_a, col] = moveAllAgents(pos,targetPos, rot_a ,obstacle, L, th
     col = zeros(3,1);
     numAgents = size(pos,1);
     targets = zeros(numAgents,2);
-    
+    tempObstacle = obstacle;
     if ~isnan(mapSize)
         minPos = -floor(mapSize/2);
         cellIndex = floor((pos - minPos)/L) + 1;
