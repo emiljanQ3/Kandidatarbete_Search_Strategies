@@ -4,16 +4,16 @@ close all
 hold on
 warning('off','all')
 %CONFIG-------------------------------------------------------------------------------------------------------
-obstacleType     = "hm";
+obstacleType     = "c";
 L                       = 1;      %Cell side length
-R                       = 0.5;
-r                       = 0.5;
+R                       = 0.2;
+r                       = 0.05;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
-numTimeSteps            = 5000;
-numSimulations          = 1;
+numTimeSteps            = 50;
+numSimulations          = 500;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 0.3 %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01;%Diffusion constant for rotation
@@ -25,7 +25,6 @@ D_r                     = 0.01;%Diffusion constant for rotation
 %Boundry of environment
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
-
 pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
 areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
 meanAreaCovered = zeros(length(w),1);         %INITIALIZATION: List of mean area covered for each kirality.
@@ -72,9 +71,15 @@ for w_i = w %Loop over different kiralities
     w_j = w_j + 1;
     
 end
+maxAreaCovered=v*dT*numTimeSteps/l;
+
+% 10 000 simulations of zero chirality gives 1.0594 'normalized' mean area covered
+% (500 steps) 10 000 simulations of 0.01 chirality gives 1.0597 'normalized' mean area covered
+% (500 steps) 10 000 ------------------  0.01 ------------------  1.0596 --------
+% 
 
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
-semilogx(w,meanAreaCovered)
+%semilogx(w,meanAreaCovered)
 %%
 %Plot-----------------------------------------------------------------------------------------------------------------
 clf
@@ -100,16 +105,18 @@ for agent = 1:numAgents
     %Reorder dimentions
     X = X(:,:)';
     Y = Y(:,:)';
-    plot(X,Y);
+    plot(X,Y,'o');
 end
 %scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
-toc
+%toc
 %%
+
 figure(111)
 semilogx(w,meanAreaCovered/(v*dT*numTimeSteps/l),'o')
 axis([0.01, 10, 0, 1.2])
 name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
 title(name)
+
 %% K�r detta script f�r att spara ditt workspace
 dateTime = clock;
 R_s = num2str(R);
