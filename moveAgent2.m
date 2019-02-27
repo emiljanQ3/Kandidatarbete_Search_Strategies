@@ -1,4 +1,4 @@
-function [resultPos, resultRotation] = moveAgent(pos,targetPos, rotation, obstacle,L, threshold)
+function [resultPos, resultRotation] = moveAgent2(pos,targetPos, rotation, obstacle,L, threshold)
 
     %If movement is small enough, return current position.
     if(norm(pos-targetPos) < threshold)
@@ -24,6 +24,8 @@ function [resultPos, resultRotation] = moveAgent(pos,targetPos, rotation, obstac
             end
         end
     end
+    
+    
 
     if(isnan(impactPoint)) %If no wall impact, move unhindered.
         resultPos = targetPos;
@@ -36,12 +38,34 @@ function [resultPos, resultRotation] = moveAgent(pos,targetPos, rotation, obstac
     normal = tangent*[0,-1;1,0];
 
     
-    %Calculate new target pos based on tangental movement along the wall.
+    %Calculate new target pos based on random collision direction.
     
     dotProdukt = (targetPos(1)-impactPoint(1))*normal(1) + (targetPos(2)-impactPoint(2))*normal(2);
-    newTarget = targetPos - 1.001*normal*dotProdukt;
+    
+    %==== USE ONE OF THE WAYS TO CALCULATE randomDirection ===
+    
+    %randomDirection = 2*pi*rand;
+    %---------------------------
+    %randomDirection = rotation + randn * 0.2;
+    %---------------------------
+    projectedPoint = pos + dot((impactPoint-pos), normal)*normal;
+    rotSign = -sign((projectedPoint(2) - pos(2))*(impactPoint(1) - projectedPoint(1)) - (impactPoint(2) - projectedPoint(2))*(projectedPoint(1) - pos(1)));
+    randomDirection = rotation + abs(randn) * 0.2 * rotSign;
+    %---------------------------
+%     v = (impactPoint - pos);
+%     u = v - dot(v, normal)*2*normal;
+%     dir = (u/norm(u) + tangent/norm(tangent) * sign(dot(u,tangent)))/2;
+%     newRot = atan(dir(2)/dir(1));
+%     if(dir(1) < 0)
+%         newRot = newRot + pi;
+%     end
+%     randomDirection = newRot + randn * 0.2;
+    %==========================================================
+    
+    lengthLeft = norm(pos-targetPos) - norm(impactPoint-targetPos);
+    
+    newTarget = impactPoint + [cos(randomDirection), sin(randomDirection)] * lengthLeft;
     newStartPos = impactPoint - 0.001*normal*dotProdukt;
     
-    % 
-    [resultPos, resultRotation] = moveAgent(newStartPos, newTarget, rotation, obstacle, L, threshold);
+    [resultPos, resultRotation] = moveAgent(newStartPos, newTarget, randomDirection, obstacle, L, threshold);
 end
