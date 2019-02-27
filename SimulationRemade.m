@@ -1,31 +1,29 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
-obstacleType     = "c";
+obstacleType            = "c";
 L                       = 1;      %Cell side length
-mapSize                 = [1,1]; %Number of cells before a boundry is reached
+mapSize                 = [3,3]; %Number of cells before a boundry is reached
 R                       = 0.5;
 r                       = 0.5;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 500;
-numSimulations          = 50;
+numSimulations          = 100;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 0.7; % 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 0; % 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
-l                       = 1.5 * dT * v; % Side length of cells in grid used to determine covered area
-D_r                     = 0.01; %Diffusion constant for rotation
-D_p                     = 0.001; %Diffusion constant for position
+l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
+D_r                     = 0; %Diffusion constant for rotation
+D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
 %Friction
 %Agent shape
-%D_t   %Diffusion constant for movement
-%Boundry of environment
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
-pos_a = zeros(numAgents, 2, numTimeSteps);  %INITIALIZATION: Agent positions in each timestep
+pos_a = zeros(numAgents, 2, numTimeSteps);    %INITIALIZATION: Agent positions in each timestep
 areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
 meanAreaCovered = zeros(length(w),1);         %INITIALIZATION: List of mean area covered for each kirality.
 colision = zeros(3,numTimeSteps);
@@ -69,7 +67,7 @@ for w_i = w %Loop over different kiralities
     w_j = w_j + 1;
     
 end
-
+toc
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
 %semilogx(w,meanAreaCovered)
 %%
@@ -98,7 +96,7 @@ for agent = 1:numAgents
     plot(X,Y);
 end
 %scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
-toc
+
 %%
 figure(111)
 semilogx(w,meanAreaCovered/(numAgents*v*dT*numTimeSteps/l),'o')
