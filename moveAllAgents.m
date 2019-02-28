@@ -13,18 +13,22 @@ function [pos, rot_a, col] = moveAllAgents(pos,targetPos, rot_a ,obstacle, L, th
     for i = 1:numAgents
         %If in edge cell add walls to obstacle
        if ~isnan(mapSize)
+           j = 1;
            tempObstacle = obstacle;
            if cellIndex(i,1) == 1 %vänster
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;0,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,0;0,1];
+               j = j+1;
            end
            if cellIndex(i,1) == mapSize(1) %höger
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [1,0;1,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [1,0;1,1];
+               j = j+1;
            end
            if cellIndex(i,2) == 1 %ner
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;1,0];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,0;1,0];
+               j = j+1;
            end
            if cellIndex(i,2) == mapSize(2) %upp
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,1;1,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,1;1,1];
            end
        end
        %Move agent
