@@ -4,18 +4,18 @@
 obstacleType            = "c";
 L                       = 1;      %Cell side length
 mapSize                 = [3,3]; %Number of cells before a boundry is reached
-R                       = 0.5;
+R                       = 0.8;
 r                       = 0.5;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
-numTimeSteps            = 5000;
-numSimulations          = 1;
+numTimeSteps            = 500;
+numSimulations          = 200;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 0.3; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
-D_r                     = 0; %Diffusion constant for rotation
-D_p                     = 0; %Diffusion constant for position
+D_r                     = 0.01; %Diffusion constant for rotation
+D_p                     = 0.001; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
@@ -100,7 +100,7 @@ end
 %scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
 
 %%
-figure(111)
+figure(112)
 semilogx(w,meanAreaCovered/(numAgents*v*dT*numTimeSteps/l),'o')
 axis([0.01, 10, 0, 1.2])
 name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
