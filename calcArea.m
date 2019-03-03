@@ -42,23 +42,19 @@ for a = 1:size(indexedPos_a,1)
                line = line(:,:);
               if (~isnan(lineIntersection(lineMovement,line)))
                   if (j == 1) 
-                      j
                       xInd = ind(1)-1;
                       yInd = ind(2);
                   elseif j == 2
-                      j
                       xInd = ind(1);
                       yInd = ind(2)+1;   
                   elseif j == 3
-                      j
                       xInd = ind(1)+1;
                       yInd = ind(2);
                   elseif j == 4
-                      j
                       xInd = ind(1)-1;
                       yInd = ind(2);
                   end
-                  
+               
                   extraX(fill) = xInd;
                   extraY(fill) = yInd;
                   fill = fill + 1;
@@ -81,7 +77,6 @@ for i = 1:size(xIndices)
     yIndices(i);
     areaGrid(xIndices(i),yIndices(i)) = 1;
     if (extraX(i) ~= 0 || extraY(i) ~= 0)
-        5
         areaGrid(extraX(i),extraY(i)) = 1;
     end
 end
