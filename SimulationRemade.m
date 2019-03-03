@@ -4,18 +4,20 @@
 obstacleType            = "c";
 L                       = 1;      %Cell side length
 mapSize                 = [3,3]; %Number of cells before a boundry is reached
-R                       = 0.5;
+R                       = 0.8;
 r                       = 0.5;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
-numTimeSteps            = 5000;
-numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 0.3; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
+simulationTime          = 50;
+numTimeSteps            = floor(simulationTime/dT);
+numSimulations          = 1;
+w                       = 1;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
-D_r                     = 0; %Diffusion constant for rotation
-D_p                     = 0; %Diffusion constant for position
+D_r                     = 0.01; %Diffusion constant for rotation
+D_p                     = 0.001; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
@@ -38,6 +40,17 @@ for w_i = w %Loop over different kiralities
         rot_a = 2*pi*rand(numAgents,1); %Starting rotations
         pos_a(:,:,1) = zeros(numAgents,2); %randn(numAgents,2);          %Starting positions
         
+        %Pre measurement start
+        for t_i = floor(-preTime/dT):1
+            rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
+            targetPos = pos_a(:, :, 1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
+            [pos_a(:, :, 1), rot_a, col]= moveAllAgents(pos_a(:, :, 1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
+        end
+        
+        %Set position to cell [1,1]
+        pos_a = pos_a - floor(pos_a/L)*L;
+        
+        %Simulations for measured values
         for T_i = 2:numTimeSteps
             rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
             targetPos = pos_a(:, :, T_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
@@ -100,7 +113,7 @@ end
 %scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
 
 %%
-figure(111)
+figure(112)
 semilogx(w,meanAreaCovered/(numAgents*v*dT*numTimeSteps/l),'o')
 axis([0.01, 10, 0, 1.2])
 name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
