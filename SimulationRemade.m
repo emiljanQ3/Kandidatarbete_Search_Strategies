@@ -27,6 +27,7 @@ r_c                     = l/2;
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
 pos_a = zeros(numAgents, 2, numTimeSteps);    %INITIALIZATION: Agent positions in each timestep
+pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 areaCovered = zeros(numSimulations,1);        %INITIALIZATION: List of the amount of area elements found each simulation.
 meanAreaCovered = zeros(length(w),1);         %INITIALIZATION: List of mean area covered for each kirality.
 colision = zeros(3,numTimeSteps);
@@ -38,17 +39,17 @@ for w_i = w %Loop over different kiralities
     for N_i = 1:numSimulations %Loop over separate simulations
         
         rot_a = 2*pi*rand(numAgents,1); %Starting rotations
-        pos_a(:,:,1) = zeros(numAgents,2); %randn(numAgents,2);          %Starting positions
+        pos_pre(:,:,1) = zeros(numAgents,2); %randn(numAgents,2);          %Starting positions
         
         %Pre measurement start
-        for t_i = floor(-preTime/dT):1
+        for t_i = 2:floor(preTime/dT)
             rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
-            targetPos = pos_a(:, :, 1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
-            [pos_a(:, :, 1), rot_a, col]= moveAllAgents(pos_a(:, :, 1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
+            targetPos = pos_pre(:, :, t_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
+            [pos_pre(:, :, t_i), rot_a, col]= moveAllAgents(pos_pre(:, :, t_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
         end
         
         %Set position to cell [1,1]
-        pos_a = pos_a - floor(pos_a/L)*L;
+        pos_a(:,:,1) = pos_pre(:,:,end) - floor(pos_pre(:,:,end)/L)*L;
         
         %Simulations for measured values
         for T_i = 2:numTimeSteps
