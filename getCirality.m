@@ -30,7 +30,10 @@ function [w_average, v] = getCirality(pos_a,dT, stepSizeThreshold)
         end
         
     end
-        
+    
+    T = T(1:t);
+    orientation = orientation(1:t);
+    
     dw = zeros(1,length(orientation)-1); %INIT 
     for i = 1:length(orientation)-1
         dw(i) = (orientation(i+1)-orientation(i))/(T(i+1)-T(i));     
