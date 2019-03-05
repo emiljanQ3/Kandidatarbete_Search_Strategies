@@ -14,17 +14,21 @@ function [pos, rot_a, col] = moveAllAgents2(pos,targetPos, rot_a ,obstacle, L, t
         %If in edge cell add walls to obstacle
        if ~isnan(mapSize)
            tempObstacle = obstacle;
+           j = 1;
            if cellIndex(i,1) == 1 %v�nster
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;0,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,0;0,1];
+               j = j+1;
            end
            if cellIndex(i,1) == mapSize(1) %h�ger
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [1,0;1,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [1,0;1,1];
+               j = j+1;
            end
            if cellIndex(i,2) == 1 %ner
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,0;1,0];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,0;1,0];
+               j = j+1;
            end
            if cellIndex(i,2) == mapSize(2) %upp
-               tempObstacle(:,:,size(tempObstacle, 3) + 1) = [0,1;1,1];
+               tempObstacle(:,:,size(tempObstacle, 3) + j) = [0,1;1,1];
            end
        end
        %Move agent
@@ -32,17 +36,7 @@ function [pos, rot_a, col] = moveAllAgents2(pos,targetPos, rot_a ,obstacle, L, t
     end
     
     % Detekterar just nu kolisioner genom hinder 
-    for i = 1:numAgents-1
-        for j = i+1:numAgents
-            if norm(targets(i,:) - targets(j,:)) < r_c    
-                col(1:2) = (targets(i,:)+targets(j,:))/2;
-                col(3) = 1;
-                rot_a(j) = 2*pi*rand;
-                rot_a(i) = 2*pi*rand;
-            end
-        end
-    end
-
+    [rot_a, col] = collision(targets,rot_a,numAgents,r_c);
 
     pos = targets;
 end
