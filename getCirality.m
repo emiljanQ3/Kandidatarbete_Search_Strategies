@@ -1,4 +1,4 @@
-function [w_average, v] = getCirality(pos_a,dT)
+function [w_average, v] = getCirality(pos_a,dT, stepSizeThreshold)
   
     n = 0;
     t = 1;
@@ -16,7 +16,7 @@ function [w_average, v] = getCirality(pos_a,dT)
         u = pos_a(1,:,i+1) - pos_a(1,:,i);
         v(i) = norm(u)/dT;
         
-        if (norm(u)>1)
+        if (norm(u) > stepSizeThreshold)
             t = t+1;
             T(t) = dT*(i-1);
             angle =  atan2(u(2),u(1));
