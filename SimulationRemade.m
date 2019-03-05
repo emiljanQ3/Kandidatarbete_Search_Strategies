@@ -8,16 +8,16 @@ R                       = 0.8;
 r                       = 0.5;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
-dT                      = 0.1;   % Delta time in seconds
+dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-simulationTime          = 50;
-numTimeSteps            = floor(simulationTime/dT);
+measurmetnTime          = 50;
+numTimeSteps            = floor(measurmentTime/dT);
 numSimulations          = 1;
-w                       = 1;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 0.3;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
-D_p                     = 0.001; %Diffusion constant for position
+D_p                     = 0*0.001; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
@@ -35,46 +35,23 @@ tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_j = 1;
 for w_i = w %Loop over different kiralities
-      w_j
+    w_j
+      
     for N_i = 1:numSimulations %Loop over separate simulations
+        rot_a = 2*pi*rand(numAgents,1);          %Starting rotations
+        pos_pre(:,:,1) = zeros(numAgents,2);     %Starting positions
         
-        rot_a = 2*pi*rand(numAgents,1); %Starting rotations
-        pos_pre(:,:,1) = zeros(numAgents,2); %randn(numAgents,2);          %Starting positions
-        
-        %Pre measurement start
-        for t_i = 2:floor(preTime/dT)
-            rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
-            targetPos = pos_pre(:, :, t_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
-            [pos_pre(:, :, t_i), rot_a, col]= moveAllAgents(pos_pre(:, :, t_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
-        end
-        
+        % Do the simulation for pre time
+        [pos_pre, rot_a, colision] = simulate( preTime ,dT,D_r,D_p,v,w_i,numAgents,pos_pre, rot_a,colision, obstacle, L, r_c,mapSize);
+
         %Set position to cell [1,1]
         pos_a(:,:,1) = pos_pre(:,:,end) - floor(pos_pre(:,:,end)/L)*L;
         
-        %Simulations for measured values
-        for T_i = 2:numTimeSteps
-            rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
-            targetPos = pos_a(:, :, T_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
-            [pos_a(:, :, T_i), rot_a, col]= moveAllAgents(pos_a(:, :, T_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
-            colision(:,T_i) = col;
-        end 
-        
+        % Do simulation for measurmenttime after pretime is done
+        [pos_a, rot_a, colision] = simulate( measurmentTime ,dT,D_r,D_p,v,w_i,numAgents,pos_a, rot_a,colision, obstacle, L, r_c,mapSize);
+          
         %Simulation is done. Time to calculate area discovered.
-        maxPos = max(max(pos_a,[],1),[],3);
-        minPos = min(min(pos_a,[],1),[],3);
-        gridSize = ceil((maxPos - minPos) / l);
-        areaGrid = zeros(gridSize);
-         
-        indexedPos_a = floor((pos_a - minPos)/l) + 1;
-        
-        xIndices = indexedPos_a(:,1,:);
-        yIndices = indexedPos_a(:,2,:);
-        for i = 1:numel(xIndices)             
-            areaGrid(xIndices(i),yIndices(i)) = 1;
-        end   
-              
-        areaCovered(N_i) = sum(sum(areaGrid));
-  
+        [areaCovered(N_i),~] = calcArea(pos_a,v,dT,l);
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
