@@ -11,7 +11,7 @@ numAgents               = 1;
 numTimeSteps            = 500;
 numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = 1; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 0.7; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -36,7 +36,7 @@ w_k = 1;
 %==== FOR FINDING STARTING VALUES TO LAB ====
 w_j = 1;
 for w_i = w %Loop over different kiralities
-      w_j
+    
     for N_i = 1:numSimulations %Loop over separate simulations
         
         rot_a = 2*pi*rand(numAgents,1); %Starting rotations
@@ -48,20 +48,6 @@ for w_i = w %Loop over different kiralities
             [pos_a(:, :, T_i), rot_a, col]= moveAllAgents(pos_a(:, :, T_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
             colision(:,T_i) = col;
         end 
-        
-        %Simulation is done. Time to calculate area discovered.
-        maxPos = max(max(pos_a,[],1),[],3);
-        minPos = min(min(pos_a,[],1),[],3);
-        gridSize = ceil((maxPos - minPos) / l);
-        areaGrid = zeros(gridSize);
-         
-        indexedPos_a = floor((pos_a - minPos)/l) + 1;
-        
-        xIndices = indexedPos_a(:,1,:);
-        yIndices = indexedPos_a(:,2,:);
-        for i = 1:numel(xIndices)             
-            areaGrid(xIndices(i),yIndices(i)) = 1;
-        end   
               
         areaCovered(N_i) = sum(sum(areaGrid));
         %==== FOR FINDING STARTING VALUES TO LAB ====
@@ -71,15 +57,9 @@ for w_i = w %Loop over different kiralities
         %==== FOR FINDING STARTING VALUES TO LAB ====
     end
     
-    %All N simulations have been compleated. The mean result is saved for this kirality.
-    meanAreaCovered(w_j) = mean(areaCovered);
-    w_j = w_j + 1;
-    
 end
 toc
-plotStartingPoint(endPosition(1,:),obstacle)
-%Result is stored as data points, pairing each kirality with a meanAreaCovered value.
-%semilogx(w,meanAreaCovered)
+plotStartingPoint(endPosition(1,:),obstacle, v)
 
 %%
 %Plot-----------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-function [] = plotStartingPoint(startInfo, obstacle)
+function [] = plotStartingPoint(startInfo, obstacle, v)
 
     hold on
     %PlotObstacle
@@ -11,10 +11,11 @@ function [] = plotStartingPoint(startInfo, obstacle)
     rot = startInfo(2);
     x = startInfo(3);
     y = startInfo(4);
+    d = v/w/pi;
     scatter(x+0.05*cos(rot),y+0.05*sin(rot), 'r.')
     scatter(x,y, 'bo')
     
-    title(join(["Kirality: ", string(w), "   Rotation: ", string(rot), "   X: ", string(x),  "  Y: ", string(y)]));
+    title(join(["w: ", string(w), "   d: ", string(d), "   rot: ", string(rot), "   X: ", string(x),  "  Y: ", string(y)]));
     xlim([0,1]);
     ylim([0,1]);
 end
