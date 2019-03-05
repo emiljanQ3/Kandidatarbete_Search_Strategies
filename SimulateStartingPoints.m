@@ -9,9 +9,9 @@ r                       = 0.05;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 numTimeSteps            = 500;
-numSimulations          = 50;
+numSimulations          = 1;
 dT                      = 0.1;   % Delta time in seconds
-w                       = [0.01, 0.03, 0.1, 0.3, 0.6, 1, 1.8, 3, 10]; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+w                       = 1; %10.^linspace(-2,1,100);  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
@@ -77,6 +77,7 @@ for w_i = w %Loop over different kiralities
     
 end
 toc
+plotStartingPoint(endPosition(1,:),obstacle)
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.
 %semilogx(w,meanAreaCovered)
 
