@@ -1,5 +1,5 @@
 function [cir, v] = getCirality(pos_a,dT)
-
+  
     n = 0;
     t = 1;
     
@@ -7,6 +7,7 @@ function [cir, v] = getCirality(pos_a,dT)
     v(1) = norm(u)/dT;
     orientation(1) = atan2(u(2),u(1));
     T(1) = 0;
+    
     for i = 2:length(pos_a)-1
         
         u = pos_a(1,:,i+1) - pos_a(1,:,i);
