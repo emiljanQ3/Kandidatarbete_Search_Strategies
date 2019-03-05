@@ -1,7 +1,7 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-obstacleType            = "c";
+obstacleType            = "hm";
 L                       = 1;      %Cell side length
 mapSize                 = [3,3]; %Number of cells before a boundry is reached
 R                       = 0.8;
@@ -10,7 +10,7 @@ obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obsta
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-measurmetnTime          = 50;
+measurmentTime          = 50;
 numTimeSteps            = floor(measurmentTime/dT);
 numSimulations          = 1;
 w                       = 0.3;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
