@@ -3,6 +3,9 @@ function [w_average, v] = getCirality(pos_a,dT)
     n = 0;
     t = 1;
     
+    v = zeros(1,ength(pos_a)-1);            %INIT
+    T = zeros(1,ength(pos_a)-1);            %INIT
+    orientation = zeros(1,ength(pos_a)-1);  %INIT
     u = pos_a(1,:,2) - pos_a(1,:,1);
     v(1) = norm(u)/dT;
     orientation(1) = atan2(u(2),u(1));
@@ -28,7 +31,7 @@ function [w_average, v] = getCirality(pos_a,dT)
         
     end
         
-        
+    dw = zeros(1,length(orientation)-1); %INIT 
     for i = 1:length(orientation)-1
         dw(i) = (orientation(i+1)-orientation(i))/(T(i+1)-T(i));     
     end
