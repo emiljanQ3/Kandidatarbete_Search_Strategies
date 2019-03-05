@@ -1,14 +1,13 @@
-function [numSquares,A] = calcArea(M,vdT,l)
+function [numSquares,A] = calcArea(M,v,dT,l)
 
 % Calculates the area covered by an agent, returns the number of squares
-% the agent moves through (numSquares) and the normalized area (A) 
+% the agent moves through (numSquares) and the normalized area (A)
+% Also consideres squares that are missed out when moving diagonally.
 % The input Matrix should not contain any NaN, should be complete
 % trajectories.
 
-%l = 5 * vdT;
-
 %l = 30; % corresponds to ish 5*dT*v
-dT_times_v = vdT;
+dT_times_v = v*dT;
 
 maxPos = max(max(M,[],1),[],3);
 minPos = min(min(M,[],1),[],3);
@@ -86,5 +85,5 @@ numSquares = sum(sum(areaGrid));
 numTimeSteps = size(M,3);
 numOfAgents = size(M,1);
 % v*dT = 6 pixlar
-A = numSquares/((4*vdT/(pi*l)-1)); 
+A = numSquares/((4*v*dT/(pi*l)-1)); 
 end
