@@ -36,17 +36,7 @@ function [pos, rot_a, col] = moveAllAgents2(pos,targetPos, rot_a ,obstacle, L, t
     end
     
     % Detekterar just nu kolisioner genom hinder 
-    for i = 1:numAgents-1
-        for j = i+1:numAgents
-            if norm(targets(i,:) - targets(j,:)) < r_c    
-                col(1:2) = (targets(i,:)+targets(j,:))/2;
-                col(3) = 1;
-                rot_a(j) = 2*pi*rand;
-                rot_a(i) = 2*pi*rand;
-            end
-        end
-    end
-
+    [rot_a, col] = collision(targets,rot_a,numAgents,r_c);
 
     pos = targets;
 end

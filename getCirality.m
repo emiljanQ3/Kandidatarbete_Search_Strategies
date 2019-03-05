@@ -1,8 +1,11 @@
-function [cir, v] = getCirality(pos_a,dT)
+function [w_average, v] = getCirality(pos_a,dT, stepSizeThreshold)
   
     n = 0;
     t = 1;
     
+    v = zeros(1,ength(pos_a)-1);            %INIT
+    T = zeros(1,ength(pos_a)-1);            %INIT
+    orientation = zeros(1,ength(pos_a)-1);  %INIT
     u = pos_a(1,:,2) - pos_a(1,:,1);
     v(1) = norm(u)/dT;
     orientation(1) = atan2(u(2),u(1));
@@ -13,25 +16,29 @@ function [cir, v] = getCirality(pos_a,dT)
         u = pos_a(1,:,i+1) - pos_a(1,:,i);
         v(i) = norm(u)/dT;
         
-        if (norm(u)>1)
+        if (norm(u) > stepSizeThreshold)
             t = t+1;
             T(t) = dT*(i-1);
-            angel =  atan2(u(2),u(1));
-            if((orientation(t-1)-(angel+2*pi*n)) > 5)
+            angle =  atan2(u(2),u(1));
+            if((orientation(t-1)-(angle+2*pi*n)) > 5)
                 n = n+1;
             
-            elseif((orientation(t-1) - (angel+2*pi*n)) < -5)
+            elseif((orientation(t-1) - (angle+2*pi*n)) < -5)
                 n = n-1;
             end
-            orientation(t) = angel + 2*n*pi;
+            orientation(t) = angle + 2*n*pi;
         end
         
     end
-
+    
+    T = T(1:t);
+    orientation = orientation(1:t);
+    
+    dw = zeros(1,length(orientation)-1); %INIT 
     for i = 1:length(orientation)-1
-        cir2(i) = (orientation(i+1)-orientation(i))/(T(i+1)-T(i));     
+        dw(i) = (orientation(i+1)-orientation(i))/(T(i+1)-T(i));     
     end
 
-    cir = mean(cir2)
+    w_average = mean(dw);
     v = mean(v);
 end
