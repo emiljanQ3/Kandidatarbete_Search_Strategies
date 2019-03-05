@@ -1,4 +1,4 @@
-function [numSquares,A] = calcArea(M,vdT)
+function [numSquares,A] = calcArea(M,vdT,l)
 
 % Calculates the area covered by an agent, returns the number of squares
 % the agent moves through (numSquares) and the normalized area (A) 
@@ -7,7 +7,7 @@ function [numSquares,A] = calcArea(M,vdT)
 
 %l = 5 * vdT;
 
-l = 30; % corresponds to ish 5*dT*v
+%l = 30; % corresponds to ish 5*dT*v
 dT_times_v = vdT;
 
 maxPos = max(max(M,[],1),[],3);
@@ -22,12 +22,9 @@ indexedPos_a = floor((M - minPos)/l) + 1;
 extraX = zeros(size(indexedPos_a,3),1);
 extraY = zeros(size(indexedPos_a,3),1);
 fill = 1;
-
 for a = 1:size(indexedPos_a,1)
     for i = 1:size(indexedPos_a,3)-1
        if (norm(indexedPos_a(a,1,i)-indexedPos_a(a,1,i+1))>0 && norm(indexedPos_a(a,2,i)-indexedPos_a(a,2,i+1))>0)
-           %lostSquares = lostSquares + 1;
-           % blabla hittar rätt ruta
            lineMovement = [M(a,1,i) M(a,2,i); M(a,1,i+1) M(a,2,i+1)];
            ind = indexedPos_a(a,:,i);
            lines = zeros(2,2,1);
@@ -51,8 +48,8 @@ for a = 1:size(indexedPos_a,1)
                       xInd = ind(1)+1;
                       yInd = ind(2);
                   elseif j == 4
-                      xInd = ind(1)-1;
-                      yInd = ind(2);
+                      xInd = ind(1);
+                      yInd = ind(2)-1;
                   end
                
                   extraX(fill) = xInd;
@@ -64,19 +61,22 @@ for a = 1:size(indexedPos_a,1)
        end
     end
 end
-lines(:,:,1);
+%lines(:,:,1);
 xIndices = indexedPos_a(:,1,:);
 yIndices = indexedPos_a(:,2,:);
 xIndices = xIndices(:,:)';
 yIndices = yIndices(:,:)';
 
-extraX ;
-extraY ;
-for i = 1:size(xIndices)
+for i = 1:size(xIndices,1)
     xIndices(i);
     yIndices(i);
     areaGrid(xIndices(i),yIndices(i)) = 1;
+    i;
     if (extraX(i) ~= 0 || extraY(i) ~= 0)
+        
+        extraX(i);
+        extraY(i);
+        indexedPos_a(1,:,i:i+1);
         areaGrid(extraX(i),extraY(i)) = 1;
     end
 end
@@ -86,5 +86,5 @@ numSquares = sum(sum(areaGrid));
 numTimeSteps = size(M,3);
 numOfAgents = size(M,1);
 % v*dT = 6 pixlar
-A = numSquares/(numOfAgents*dT_times_v*numTimeSteps/l);
+A = numSquares/((4*vdT/(pi*l)-1)); 
 end
