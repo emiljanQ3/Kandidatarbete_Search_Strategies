@@ -35,7 +35,8 @@ tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_j = 1;
 for w_i = w %Loop over different kiralities
-      w_j
+    w_j
+      
     for N_i = 1:numSimulations %Loop over separate simulations
         
         rot_a = 2*pi*rand(numAgents,1); %Starting rotations
@@ -55,26 +56,12 @@ for w_i = w %Loop over different kiralities
         for T_i = 2:numTimeSteps
             rot_a = mod(rot_a + dT * w_i + sqrt(2 * D_r * dT) * randn(size(rot_a)), 2  * pi); %Update agent rotation for all agents
             targetPos = pos_a(:, :, T_i-1) + [cos(rot_a), sin(rot_a)] * dT * v + randn(numAgents, 2) * sqrt(2 * D_p * dT); %Calculate where a unhindered move would go.
-            [pos_a(:, :, T_i), rot_a, col]= moveAllAgents(pos_a(:, :, T_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
-            colision(:,T_i) = col;
+            [pos_a(:, :, T_i), rot_a, colision(:,T_i)]= moveAllAgents(pos_a(:, :, T_i-1), targetPos,rot_a, obstacle, L, v*dT/10, r_c, mapSize);    %Move agent and take obstacles into consideration.        
         end 
         
         %Simulation is done. Time to calculate area discovered.
-        maxPos = max(max(pos_a,[],1),[],3);
-        minPos = min(min(pos_a,[],1),[],3);
-        gridSize = ceil((maxPos - minPos) / l);
-        areaGrid = zeros(gridSize);
-         
-        indexedPos_a = floor((pos_a - minPos)/l) + 1;
+        [areaCovered(N_i),~] = calcArea(pos_a,v,dT,l);
         
-        xIndices = indexedPos_a(:,1,:);
-        yIndices = indexedPos_a(:,2,:);
-        for i = 1:numel(xIndices)             
-            areaGrid(xIndices(i),yIndices(i)) = 1;
-        end   
-              
-        areaCovered(N_i) = sum(sum(areaGrid));
-  
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
