@@ -1,7 +1,7 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-obstacleType            = "c";
+obstacleType            = "hc";
 L                       = 1;      %Cell side length
 mapSize                 = [3,3];  %Number of cells before a boundry is reached
 edge                    = true(1,1);  % true med kant fals utan
@@ -13,7 +13,7 @@ dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 measurmentTime          = 30;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 10;
+numSimulations          = 50;
 w                       = 10.^(linspace(-2,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 5 * dT * v; % Side length of cells in grid used to determine covered area
@@ -124,5 +124,20 @@ save(path)
 %% Animation of the last done kirality
 
 p = animation(pos_a,obstacle,dT,colision);
+
+%%
+
+M = agentTracking('OG.xml')
+
+r = splitPositionData(M)
+
+%%
+[cir,v] = getKomplexCirality(r,1/25)
+
+[cir2,v2] = getComplexCirality(r,1/25,1)
+
+[cir3,v3] = getCirality(M,1/25,1)
+
+
 
 
