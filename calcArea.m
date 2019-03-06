@@ -97,10 +97,10 @@ for i = 1:size(xIndices,1)
     end
 end
 
-numSquares = sum(sum(areaGrid))
-T = size(M,3);
+numSquares = sum(sum(areaGrid));
+T = size(M,3)*dT;
 % Normalized area
-A = numSquares/((4*v*T/(pi*l)-1))  
+A = numSquares/((4*v*T/(pi*l)-1));  
 fill;
 
 end
