@@ -13,7 +13,7 @@ dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 measurmentTime          = 30;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 50;
+numSimulations          = 5;
 w                       = 10.^(linspace(-2,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 5 * dT * v; % Side length of cells in grid used to determine covered area
@@ -30,6 +30,7 @@ r_c                     = l/2;
 pos_a = zeros(numAgents, 2, numTimeSteps);      %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,1);           %INITIALIZATION: List of the amount of area elements found each simulation.
+totalTime = zeros(numSimulations,1); 
 meanAreaCovered = zeros(length(w),1);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),1);               %INITIALIZATION: List of mean area covered per total time for each kirality.
 colision = zeros(3,numTimeSteps);
@@ -50,15 +51,18 @@ for w_i = w %Loop over different kiralities
         pos_a(:,:,1) = pos_pre(:,:,end) - floor(pos_pre(:,:,end)/L)*L;
         
         % Do simulation for measurmenttime after pretime is done
-        [pos_a, rot_a, colision,totalTime] = simulate( measurmentTime ,dT,D_r,D_p,v,w_i,numAgents,pos_a, rot_a,colision, obstacle, L, r_c,mapSize,edge);
+        [pos_a, rot_a, colision,totalTime(N_i)] = simulate( measurmentTime ,dT,D_r,D_p,v,w_i,numAgents,pos_a, rot_a,colision, obstacle, L, r_c,mapSize,edge);
           
         %Simulation is done. Time to calculate area discovered.
         [numSquares(N_i),~] = calcArea(pos_a,v,dT,l);
+        
+  
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
     meanAreaCovered(w_j) = mean(numSquares)*l^2;
-    areaPerTime(w_j) = mean(numSquares)*l^2/totalTime;
+    varians(w_j)        = std(numSquares)*l^2;
+    areaPerTime(w_j) = mean(numSquares./totalTime)*l^2;
     w_j = w_j + 1;
     
 end
@@ -91,18 +95,16 @@ for agent = 1:numAgents
     Y = Y(:,:)';
     plot(X,Y);
 end
-%scatter(pos_a(agent, 1, :),pos_a(agent, 2, :), 'b.')
+
 
 %%
-
 if(edge) 
     figure(112)
-    areaPerTime_max = numAgents*(4*v*totalTime*l/pi-l^2)/totalTime;
+    areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
     semilogx(w,areaPerTime/(areaPerTime_max),'o')
-    axis([0.01, 10, 0, 1.2])
+    axis([0.01, 10, 0, 5])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
-    
+    title(name)    
 else
     figure(112)
     meanArea_max = numAgents*(4*v*measurmentTime*l/pi-l^2);
@@ -124,19 +126,6 @@ save(path)
 %% Animation of the last done kirality
 
 p = animation(pos_a,obstacle,dT,colision);
-
-%%
-
-M = agentTracking('OG.xml')
-
-r = splitPositionData(M)
-
-%%
-[cir,v] = getKomplexCirality(r,1/25)
-
-[cir2,v2] = getComplexCirality(r,1/25,1)
-
-[cir3,v3] = getCirality(M,1/25,1)
 
 
 
