@@ -2,7 +2,6 @@ function p = animation(pos_a,obstacle,dT,colision)
 
     figure(2002)
     hold on
-    
     L = 1;
     maxPos = max(max(pos_a,[],1),[],3);
     minPos = min(min(pos_a,[],1),[],3);
