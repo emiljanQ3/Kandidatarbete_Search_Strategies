@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'Filtered videos\2_Tracks.xml'; %Name of file
+file = 'XMLfiles/Homogen_1agent/051_Tracks.xml'; %Name of file
 agent = 1; % which agent/s we look at
 l = 30; % Corresponds to ~5*v*dT for agents in experiments
 
