@@ -1,8 +1,8 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Homogen_1agent/051_Tracks.xml'; %Name of file
+file = 'XMLfiles/Homogen_1agent/103_Tracks.xml'; %Name of file
 agent = 1; % which agent/s we look at
-l = 30; % Corresponds to ~5*v*dT for agents in experiments
+l = 15; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
@@ -14,20 +14,22 @@ dT = 1/25; % Time step
 
 result = [kir, normA]
 
+v
+
 %% Run to save results to file
 clc;
 % Sparar:
     % Filnamn/path (i en egen fil)
     % Kiralitet
-    % NormArea
+    % NormArea/tid
     % Total tid
     % hastighet
     % l (size of area elements)
 
 expName = 'hm1agent'; %Change name for each new set of data
 
-file1 = ['results\Lab\' expName '.txt']; % Name of dataFile
-file2 = ['results\Lab\' expName 'SourceFiles.txt']; % Name of file containing names of XML files
+file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
+file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
     
 data = [result size(pos_a,3)*dT v l];
 dlmwrite(file1,data,'-append');
@@ -42,8 +44,8 @@ x = pos_a(1,1,:);
 y = pos_a(1,2,:);
 x = x(:,:)';
 y = y(:,:)';
-plot(x,y)
-
+plot(x,y,'.')
+axis equal
 %% Run animation
 
 % Generate an obstacle from the lab
@@ -55,16 +57,28 @@ p = animateExperiment(pos_a,obstacle,dT);
 %% Plot graph for all chiralities
 
 experiment = 'hm1agent';
-dataFile = ['results\Lab\' experiment '.txt'];
-sourceFile = ['results\Lab\' experiment 'SourceFiles.txt'];
+dataFile = ['results/Lab/' experiment '.txt'];
+sourceFile = ['results/Lab/' experiment 'SourceFiles.txt'];
 allData = dlmread(dataFile);
 
-w = norm(allData(:,1));
+w = abs(allData(:,1));
 normArea = allData(:,2); 
+v = allData(:,4);
 
-figure(112)
+
+
+figure(113)
 semilogx(w,normArea,'o')
+figure(114)
+semilogx(w./v,normArea,'o')
+
 %axis([0.01, 10, 0, 1.2])
 %name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
 name = 'Experimental results';
 title(name)
+
+
+
+
+
+
