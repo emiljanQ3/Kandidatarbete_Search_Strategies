@@ -2,14 +2,15 @@
 
 file = 'Filtered videos\2_Tracks.xml'; %Name of file
 agent = 1; % which agent/s we look at
+l = 30; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
-[M,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-[kir,v] = getCirality(M,dT,1);
+[pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-l = 30; % Corresponds to ~5*v*dT for agents in experiments
-[squares,normA] = calcArea(M,v,dT,l);
+[kir,v] = getCirality(pos_a,dT,1);
+
+[squares,normA] = calcArea(pos_a,v,dT,l);
 
 result = [kir, normA]
 
@@ -28,17 +29,17 @@ expName = 'hm1agent'; %Change name for each new set of data
 file1 = ['results\Lab\' expName '.txt']; % Name of dataFile
 file2 = ['results\Lab\' expName 'SourceFiles.txt']; % Name of file containing names of XML files
     
-data = [result size(M,3)*dT v l];
+data = [result size(pos_a,3)*dT v l];
 dlmwrite(file1,data,'-append');
 
 fileID = fopen(file2,'a');
 fprintf(fileID,'%-40s\n',file);
 fclose(fileID);
 
-%% Plot M, movement of agent
+%% Plot M, trajectory of agent
 
-x = M(1,1,:);
-y = M(1,2,:);
+x = pos_a(1,1,:);
+y = pos_a(1,2,:);
 x = x(:,:)';
 y = y(:,:)';
 plot(x,y)
@@ -48,7 +49,7 @@ plot(x,y)
 % Generate an obstacle from the lab
 obstacle = [0 0; 0 0];
 
-p = animateExperiment(M,obstacle,dT);
+p = animateExperiment(pos_a,obstacle,dT);
 
 
 %% Plot graph for all chiralities
