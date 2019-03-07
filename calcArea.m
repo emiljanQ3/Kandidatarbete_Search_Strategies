@@ -61,7 +61,14 @@ for a = 1:size(indexedPos_a,1)
                   elseif j == 2 % Crosses horizontal lines
                       xInd = ind(1);
                       yInd = ind(2)-yMove;   
+                  elseif j == 3
+                      xInd = ind(1)+1;
+                      yInd = ind(2);
+                  elseif j == 4
+                      xInd = ind(1);
+                      yInd = ind(2)-1;
                   end
+               
                   extraX(fill) = xInd;
                   extraY(fill) = yInd;
                   fill = fill + 1;
@@ -79,8 +86,13 @@ xIndices = xIndices(:,:)';
 yIndices = yIndices(:,:)';
 
 for i = 1:size(xIndices,1)
+    xIndices(i);
+    yIndices(i);
     areaGrid(xIndices(i),yIndices(i)) = 1;
+
     if (extraX(i) ~= 0 || extraY(i) ~= 0)
+        extraX(i);
+        extraY(i);
         areaGrid(extraX(i),extraY(i)) = 1;
     end
 end
@@ -88,7 +100,7 @@ end
 numSquares = sum(sum(areaGrid));
 T = size(M,3)*dT;
 % Normalized area
-A = numSquares/((4*v*T/(pi*l)-1));
-
+A = numSquares/((4*v*T/(pi*l)-1));  
+fill;
 
 end
