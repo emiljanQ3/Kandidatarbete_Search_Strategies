@@ -11,12 +11,12 @@ function [w_average, v] = getComplexCirality(pos_a, dT, stepSizeThreshold)
         index = strfind(str', [1 0]);
         temp_pos = pos_a(agent,:,1:index);
         
-        [w_a(agent), v_a(agent),t(agent)] = getCirality(temp_pos, dT, stepSizeThreshold);
+        [w_a(agent), v_a(agent),wigth(agent)] = getCirality(temp_pos, dT, stepSizeThreshold);
         n_a(agent) = length(temp_pos(1,1,:)); 
 
     end
 
-    w_average = sum(w_a.*n_a)/sum(n_a);
+    w_average = sum(w_a.*wigth)/sum(wigth);
     v = mean(v_a);
 end
 

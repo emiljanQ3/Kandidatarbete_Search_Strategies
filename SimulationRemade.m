@@ -13,7 +13,7 @@ dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 measurmentTime          = 30;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 5;
+numSimulations          = 1000;
 w                       = 10.^(linspace(-2,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
 l                       = 5 * dT * v; % Side length of cells in grid used to determine covered area
@@ -102,7 +102,7 @@ if(edge)
     figure(112)
     areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
     semilogx(w,areaPerTime/(areaPerTime_max),'o')
-    axis([0.01, 10, 0, 5])
+    axis([0.01, 10, 0, 1])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)    
 else
@@ -126,6 +126,21 @@ save(path)
 %% Animation of the last done kirality
 
 p = animation(pos_a,obstacle,dT,colision);
+
+%%
+
+M = agentTracking('OG.xml')
+
+r = splitPositionData(M)
+
+%%
+
+[cir, v] = getCirality(M,1/25,1)
+
+[cir2, v2] = getKomplexCirality(r,1/25)
+
+[cir3, v3] = getComplexCirality(r,1/25,1)
+
 
 
 
