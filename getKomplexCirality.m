@@ -9,7 +9,7 @@ function [cir, v] = getKomplexCirality(pos_a,dT)
         n = 0;
         t = 1;
 
-        u = temp_pos(1,:,2) - temp_pos(1,:,1); 
+        u = temp_pos(1,:,2) - temp_pos(1,:,1);
         
         v(1) = norm(u)/dT;
         orientation(1,agent) = atan2(u(2),u(1));
@@ -39,6 +39,7 @@ function [cir, v] = getKomplexCirality(pos_a,dT)
         end
     % Orientation is calculated now to get the cirality        
         w = 0;
+        cir2 = 0;
         for j = 1:length(orientation(:,agent))-1
             if(orientation(j+1,agent)~= 0 && orientation(j,agent)~= 0)
                 w = w +1;
@@ -48,7 +49,7 @@ function [cir, v] = getKomplexCirality(pos_a,dT)
 
         cir(1,agent) = mean(cir2);
         cir(2,agent) = w; 
-
+        P = length(cir2);
     end
 
     cir = sum(cir(1,:).*cir(2,:))/sum(cir(2,:));
