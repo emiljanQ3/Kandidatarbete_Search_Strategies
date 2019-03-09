@@ -12,7 +12,7 @@ function [] = plotStartingPoint(startInfo, obstacle, v)
     x = startInfo(3);
     y = startInfo(4);
     d = v/w/pi;
-    scatter(x+0.05*cos(rot),y+0.05*sin(rot), 'r.')
+    scatter(x+0.02*cos(rot),y+0.02*sin(rot), 'r.')
     scatter(x,y, 'bo')
     
     title(join(["w: ", string(w), "   d: ", string(d), "   rot: ", string(rot), "   X: ", string(x),  "  Y: ", string(y)]));
