@@ -49,7 +49,6 @@ for w_i = w %Loop over different kiralities
             colision(:,T_i) = col;
         end 
               
-        areaCovered(N_i) = sum(sum(areaGrid));
         %==== FOR FINDING STARTING VALUES TO LAB ====
         cellPos = pos_a(1,:,numTimeSteps) - floor(pos_a(1,:,numTimeSteps)/L)*L;
         endPosition(w_k, :) = [w(w_j), rot_a(1), cellPos(1), cellPos(2)];
