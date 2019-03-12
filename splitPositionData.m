@@ -18,7 +18,7 @@ function pos_res = splitPositionData(pos_a)
         [x,y,button] = ginput;
         
         scatter(x,y,'b.')
-        
+        button
         if(button == 3)
             break
         end

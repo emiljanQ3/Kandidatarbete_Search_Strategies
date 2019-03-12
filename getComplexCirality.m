@@ -1,6 +1,6 @@
 function [w_average, v] = getComplexCirality(pos_a, dT, stepSizeThreshold)
-
-    
+   
+   
     w_a = zeros(1,length(pos_a(:,1,1)));
     v_a = zeros(1,length(pos_a(:,1,1)));
     n_a = zeros(1,length(pos_a(:,1,1)));
