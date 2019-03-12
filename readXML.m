@@ -1,16 +1,16 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-%file = 'XMLfiles/Kors_1agent/011_Tracks.xml'; %Name of file
+file = 'XMLfiles/Kors_1agent/011_Tracks.xml'; %Name of file
+
 agent = 1; % which agent/s we look at
+
 l = 15; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
-file = 'XMLfiles/Kors_1agent/013_Tracks.xml';
-
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-r = splitPositionData(pos_a)
+r = splitPositionData(pos_a);
 
 [kir,v] = getComplexCirality(r,dT,1);
 
@@ -18,7 +18,6 @@ r = splitPositionData(pos_a)
 
 result = [kir, normA]
 
-v
 
 %% Run to save results to file
 clc;
@@ -57,7 +56,6 @@ obstacle = [0 0; 0 0];
 
 p = animateExperiment(pos_a,obstacle,dT);
 
-
 %% Plot graph for all chiralities
 
 experiment = 'hm1agent';
@@ -69,7 +67,8 @@ w = abs(allData(:,1));
 normArea = allData(:,2); 
 v = allData(:,4);
 
-
+figure(2)
+plot(v,'o')
 
 figure(113)
 semilogx(w,normArea,'o')
@@ -80,9 +79,3 @@ semilogx(w./v,normArea,'o')
 %name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
 name = 'Experimental results';
 title(name)
-
-
-
-
-
-
