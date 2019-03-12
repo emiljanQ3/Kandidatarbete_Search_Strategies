@@ -2,13 +2,12 @@ function [w_average, v,k] = getCirality(pos_a,dT, stepSizeThreshold)
   
     n = 0;
     t = 1;
-    
     v = zeros(1,length(pos_a)-1);            %INIT
     T = zeros(1,length(pos_a)-1);            %INIT
     orientation = zeros(1,length(pos_a)-1);  %INIT
     
     
-    u = pos_a(1,:,2) - pos_a(1,:,1);
+    u = pos_a(1,:,2) - pos_a(1,:,1)
     v(1) = norm(u)/dT;
     orientation(1) = atan2(u(2),u(1));
     T(1) = 0;
