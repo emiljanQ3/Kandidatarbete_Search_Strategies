@@ -3,11 +3,15 @@ function pos_res = splitPositionData(pos_a)
     
     X = pos_a(1, 1, :);
     Y = pos_a(1, 2, :);
+    start = [pos_a(1,1,1), pos_a(1,2,1)];
+    slut = [pos_a(1,1,size(pos_a,3)), pos_a(1,2,size(pos_a,3))];
 
     X = X(:,:)';
     Y = Y(:,:)';
     plot(X,Y);
     hold on
+    plot(start(1),start(2), 'o', 'MarkerEdgeColor','r')
+    plot(slut(1), slut(2),'o', 'MarkerEdgeColor','g')
     
     button = 0;
     agent = 0;
@@ -26,9 +30,18 @@ function pos_res = splitPositionData(pos_a)
         dist = [sqrt((squeeze(pos_a(1,1,:)) - x(1)).^2 + squeeze((pos_a(1,2,:)) - y(1)).^2), sqrt((squeeze(pos_a(1,1,:)) - x(2)).^2 + squeeze((pos_a(1,2,:)) - y(2)).^2)];
 
         [~,I] = min(dist);
+        
+        
 
         
         scatter(pos_a(1, 1, I),pos_a(1, 2, I), 'r.')
+        
+        X = pos_a(1, 1, I(1): I(2)) ;
+        Y = pos_a(1, 2, I(1):I(2));
+      
+        X = X(:,:)';
+        Y = Y(:,:)';
+        plot(X,Y, 'r');
         
         if I(2)>I(1)
             pos_res(agent,:,1:(I(2)-I(1)+1)) = pos_a(1,:,I(1):I(2));
