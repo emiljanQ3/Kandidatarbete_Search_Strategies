@@ -6,15 +6,11 @@ l = 15; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
-file = 'XMLfiles/Kors_1agent/013_Tracks.xml';
-
-[pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
-
-r = splitPositionData(pos_a)
+[r,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
 [kir,v] = getComplexCirality(r,dT,1);
 
-[squares,normA] = calcArea(pos_a,v,dT,l);
+[squares,normA] = calcArea(r,v,dT,l);
 
 result = [kir, normA]
 
@@ -30,7 +26,7 @@ clc;
     % hastighet
     % l (size of area elements)
 
-expName = 'c1agent'; %Change name for each new set of data
+expName = 'hm1agent'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
