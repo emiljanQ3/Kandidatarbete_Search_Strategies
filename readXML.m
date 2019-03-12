@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
-
-file = 'XMLfiles/Homogen_1agent/103_Tracks.xml'; %Name of file
+clc; clear;
+file = 'XMLfiles/Kors_1Agent/105_Tracks.xml'; %Name of file
 agent = 1; % which agent/s we look at
 l = 15; % Corresponds to ~5*v*dT for agents in experiments
 
@@ -8,13 +8,13 @@ dT = 1/25; % Time step
 
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-[kir,v] = getCirality(pos_a,dT,1);
+r = splitPositionData(pos_a);
+[kir,v] = getComplexCirality(r,dT,1);
 
 [squares,normA] = calcArea(pos_a,v,dT,l);
 
 result = [kir, normA]
 
-v
 
 %% Run to save results to file
 clc;
@@ -26,7 +26,7 @@ clc;
     % hastighet
     % l (size of area elements)
 
-expName = 'hm1agent'; %Change name for each new set of data
+expName = 'kors1agent'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
@@ -65,7 +65,8 @@ w = abs(allData(:,1));
 normArea = allData(:,2); 
 v = allData(:,4);
 
-
+figure(2)
+plot(v,'o')
 
 figure(113)
 semilogx(w,normArea,'o')
