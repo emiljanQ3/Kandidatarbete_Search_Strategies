@@ -13,15 +13,15 @@ for i = 1:12
        end
        file =  join(['XMLfiles/Homogen_1agent/', str, '_Tracks.xml'])
        [pos_a,~,times] = cut(file,1);
-       [kir(k),v(k)] = getCirality2(pos_a,dT);
+       [kir(k),v(k)] = getCirality(pos_a,dT,1);
+       spirKir(k) = getChiralitySpiral(pos_a,dT,1,20);
        [squares,normA(k)] = calcArea(pos_a,v(k),dT,l);
 
     end
 end
-figure(117)
-semilogx((abs(kir)./v),normA,'o')
 
 figure(118)
 semilogx((abs(kir)),normA,'o')
 
-
+figure(119)
+semilogx((abs(spirKir)),normA,'o')
