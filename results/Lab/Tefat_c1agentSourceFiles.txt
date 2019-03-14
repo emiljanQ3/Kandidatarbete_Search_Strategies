@@ -28,3 +28,15 @@ XMLfiles/KorsTefat_1agent/202_Tracks.xml
 XMLfiles/KorsTefat_1agent/201_Tracks.xml
 XMLfiles/KorsTefat_1agent/055_Tracks.xml
 XMLfiles/KorsTefat_1agent/054_Tracks.xml
+XMLfiles/KorsTefat_1agent/022_Tracks.xml
+XMLfiles/KorsTefat_1agent/023_Tracks.xml
+XMLfiles/KorsTefat_1agent/024_Tracks.xml
+XMLfiles/KorsTefat_1agent/025_Tracks.xml
+XMLfiles/KorsTefat_1agent/026_Tracks.xml
+XMLfiles/KorsTefat_1agent/027_Tracks.xml
+XMLfiles/KorsTefat_1agent/028_Tracks.xml
+XMLfiles/KorsTefat_1agent/031_Tracks.xml
+XMLfiles/KorsTefat_1agent/032_Tracks.xml
+XMLfiles/KorsTefat_1agent/033_Tracks.xml
+XMLfiles/KorsTefat_1agent/034_Tracks.xml
+XMLfiles/KorsTefat_1agent/035_Tracks.xml
