@@ -2,7 +2,7 @@
 
 l = 15; % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
-n=56;
+n=56; %number of XML files
 %complex = false(1,1); % we could merge homogenous and complex
 
 expName = 'hmleft_1agent'; %Change name for each new set of data
@@ -47,20 +47,55 @@ for i = 1:n
         fclose(fileID);
        
 end
-%% COMPLEX
+%% COMPLEX 1 - collect indices 
+ expName = 'c1agent';
+ file =  'XMLfiles/HomogenLeft_1agent/1_Tracks.xml']);
+ [pos_a,~,times] = cut(file,1);
+       
+ [~, indice] = splitPositionData(pos_a);
+ 
+  % complex environment, saves indices where pos_a should be cut for each XML,
+  % each XML separated by NaN in splitPositionData
+  file3 = ['results/Lab/' expName 'indices.txt']
+  dlmwrite(file3, indice, '-append')
+
+%% COMLEX 2 - with indices 
+
+% not done!!
+
+indice = load('results/Lab/c1agentindices.txt')
+
+film=0; 
+j=0;
+
+for i=1:size(indice,1)
+    if isnan(indice(i))
+        film=film+1;
+        cuts(film)=j; %cuts(i) should be number of cuts in XML file number i
+        j=0;
+    else j=j+1;
+    end 
+end 
+
+%if all works n=film
+
 % loop through n XML files
 for i = 1:n
     
        str = num2str(i) %if XMLfiles are named properly
-       file =  join(['XMLfiles/HomogenLeft_1agent/', str, '_Tracks.xml'])
+       file =  join(['XMLfiles/c1agent/', str, '_Tracks.xml'])
        [pos_a,~,times] = cut(file,1);
        
-       [r, indice] = splitPositionData(pos_a);
-       [kir, v] = getComplexCirality(r,dT,1);
-       %spirKir = getChiralitySpiral(pos_a,dT,1,20);
-       [squares,normA] = calcArea(pos_a,v,dT,l);
+       for j=1:cuts(n)
+           
+              r(j,:,1:(indice(j,2)-indice(j,1)+1)) = pos_a(agent,:,I(1):I(2)); %picks out cut j from pos_a and makes it agent j in r
+
+              [kir,v] = getComplexCirality(r,dT,1);
+              %spirKir(k) = getChiralitySpiral(r,dT,1,20);
+              [squares,normA] = calcArea(pos_a,v,dT,l);
+       end
        
-       result = [kir, normA]
+       result = [kir, normA];
        
        %now save
        clc;
@@ -68,7 +103,7 @@ for i = 1:n
         file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
         file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
         
-        data = [result size(pos_a,3)*dT v l]
+        data = [result size(pos_a,3)*dT v l];
 
         dlmwrite(file1,data,'-append');
 
