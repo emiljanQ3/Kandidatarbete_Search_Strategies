@@ -5,7 +5,7 @@ function r = doublePoint(pos_a,stepSizeThreshold)
 % return a time vektor with the correkt time indexes if it is needed
 % om vi har hål på beggä sidor om dubbelpunkten
     
-    tol = 4;
+    tol = 6;
     segment = pos_a;
     
     for i = 2:length(pos_a)-2
@@ -15,8 +15,14 @@ function r = doublePoint(pos_a,stepSizeThreshold)
            v1 = pos_a(1,:,i)-pos_a(1,:,i-1);
            if(norm(v1) <tol  && norm(v2)> tol)
                segment(1,:,i+1) = inf*0; 
+               
+               %interpolation
+               segment(1,:,i+1) = (segment(1,:,i+2) + segment(1,:,i))/2;
            elseif(norm(v1) >tol && norm(v2)< tol)
                segment(1,:,i) = inf*0; 
+               
+               %interpolation
+               segment(1,:,i) = (segment(1,:,i+1) + segment(1,:,i-1))/2; %
            else
                segment(1,:,i) = 0;
            end
