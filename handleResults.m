@@ -48,12 +48,16 @@ for i = 1:n
        
 end
 %% COMPLEX 1 - collect indices 
- expName = 'c1agent';
- file =  'XMLfiles/HomogenLeft_1agent/1_Tracks.xml']);
+ close all
+ expName = 'Test_hm1agent';
+ n=9;
+ str=num2str(n)
+ file =  ['XMLfiles/HomogenLeft_1agent/' str '_Tracks.xml'];
  [pos_a,~,times] = cut(file,1);
        
- [~, indice] = splitPositionData(pos_a);
+ [r, indice] = splitPositionData(pos_a, n);
  
+ %% save
   % complex environment, saves indices where pos_a should be cut for each XML,
   % each XML separated by NaN in splitPositionData
   file3 = ['results/Lab/' expName 'indices.txt']
@@ -63,7 +67,7 @@ end
 
 % not done!!
 
-indice = load('results/Lab/c1agentindices.txt')
+indice = load('results/Lab/Test_hm1agentindices.txt');
 
 film=0; 
 j=0;
@@ -71,24 +75,25 @@ j=0;
 for i=1:size(indice,1)
     if isnan(indice(i))
         film=film+1;
-        cuts(film)=j; %cuts(i) should be number of cuts in XML file number i
+        cuts(film)=j-1; %cuts(i) should be number of cuts in XML file number i
         j=0;
     else j=j+1;
     end 
 end 
-
-%if all works n=film
+%%
+%if all works n=size(cuts)
 
 % loop through n XML files
 for i = 1:n
     
-       str = num2str(i) %if XMLfiles are named properly
-       file =  join(['XMLfiles/c1agent/', str, '_Tracks.xml'])
+       str = num2str(i); %if XMLfiles are named properly
+       file =  join(['XMLfiles/HomogenLeft_1agent/', str, '_Tracks.xml']);
        [pos_a,~,times] = cut(file,1);
        
-       for j=1:cuts(n)
+       r = zeros(cuts(i),2,size(pos_a,3));
+       for j=1:cuts(i)
            
-              r(j,:,1:(indice(j,2)-indice(j,1)+1)) = pos_a(agent,:,I(1):I(2)); %picks out cut j from pos_a and makes it agent j in r
+              r(j,:,1:(indice(j,2)-indice(j,1)+1)) = pos_a(agent,:,indice(j,1):indice(j,2));clc %picks out cut j from pos_a and makes it agent j in r
 
               [kir,v] = getComplexCirality(r,dT,1);
               %spirKir(k) = getChiralitySpiral(r,dT,1,20);
@@ -98,30 +103,25 @@ for i = 1:n
        result = [kir, normA];
        
        %now save
-       clc;
-            
-        file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
-        file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
-        
-        data = [result size(pos_a,3)*dT v l];
-
-        dlmwrite(file1,data,'-append');
-
-        % complex environment, saves indices where pos_a should be cut for each XML,
-        % each XML separated by NaN
-        file3 = ['results/Lab/' expName 'indices.txt']
-        dlmwrite(file3, indice, '-append')
-        
-        fileID = fopen(file2,'a');
-        fprintf(fileID,'%-40s\n',file);
-        fclose(fileID);
-       
+%        clc;
+%             
+%         file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
+%         file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
+%         
+%         data = [result size(pos_a,3)*dT v l];
+% 
+%         dlmwrite(file1,data,'-append');
+%         
+%         fileID = fopen(file2,'a');
+%         fprintf(fileID,'%-40s\n',file);
+%         fclose(fileID);
+%        
 end
 
 %% load result
-clear all, close all 
+%clear all, close all 
 
-expName = 'hmleft_1agent';
+expName = 'c1agent';
 name= join(['results/Lab/' expName '.txt']);
 c= load(name);
 
