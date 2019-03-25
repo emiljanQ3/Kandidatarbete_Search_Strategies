@@ -4,7 +4,7 @@ file = 'XMLfiles/Kors_1agent/011_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
-l = 15; % Corresponds to ~5*v*dT for agents in experiments
+l = 10; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
