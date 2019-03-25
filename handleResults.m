@@ -65,63 +65,68 @@ end
 
 %% COMLEX 2 - with indices 
 
-% not done!!
-
 indice = load('results/Lab/Test_hm1agentindices.txt');
 
 film=0; 
 j=0;
+start=1;
 
 for i=1:size(indice,1)
     if isnan(indice(i))
         film=film+1;
-        cuts(film)=j-1; %cuts(i) should be number of cuts in XML file number i
+        cuts(film)=j-1; %cuts(i) should be number of cuts in XML file number i 
+        new_indice(film,:) = [start start+j-2] ;
+        start=start+j+1;
         j=0;
     else j=j+1;
     end 
 end 
-%%
-%if all works n=size(cuts)
+%% 
+%if all works
+n=size(cuts,2);
+agent=1;
 
-% loop through n XML files
-for i = 1:n
-    
-       str = num2str(i); %if XMLfiles are named properly
+for i = 1:n % loop through n XML files
+
+       str = num2str(i); % if XMLfiles are named properly
        file =  join(['XMLfiles/HomogenLeft_1agent/', str, '_Tracks.xml']);
        [pos_a,~,times] = cut(file,1);
-       
-       r = zeros(cuts(i),2,size(pos_a,3));
+       r = zeros(cuts(i),2,size(pos_a,3))
+
        for j=1:cuts(i)
            
-              r(j,:,1:(indice(j,2)-indice(j,1)+1)) = pos_a(agent,:,indice(j,1):indice(j,2));clc %picks out cut j from pos_a and makes it agent j in r
-
-              [kir,v] = getComplexCirality(r,dT,1);
+              r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
+              
               %spirKir(k) = getChiralitySpiral(r,dT,1,20);
-              [squares,normA] = calcArea(pos_a,v,dT,l);
+              
        end
+       [kir,v] = getComplexCirality(r,dT,1);
+       [squares,normA] = calcArea(pos_a,v,dT,l);
+      
        
-       result = [kir, normA];
+       
+      result = [kir, normA];
        
        %now save
-%        clc;
-%             
-%         file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
-%         file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
-%         
-%         data = [result size(pos_a,3)*dT v l];
-% 
-%         dlmwrite(file1,data,'-append');
-%         
-%         fileID = fopen(file2,'a');
-%         fprintf(fileID,'%-40s\n',file);
-%         fclose(fileID);
-%        
-end
+       
+            
+        file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
+        file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
+        
+        data = [result size(pos_a,3)*dT v l];
+
+        dlmwrite(file1,data,'-append');
+        
+        fileID = fopen(file2,'a');
+        fprintf(fileID,'%-40s\n',file);
+        fclose(fileID);
+       
+end 
 
 %% load result
-%clear all, close all 
+clear all, close all 
 
-expName = 'c1agent';
+expName = 'Tefat_c1agent';
 name= join(['results/Lab/' expName '.txt']);
 c= load(name);
 
@@ -131,6 +136,10 @@ normA = c((I),2);
 k=5;
 kir_m = movmean(kir,k);
 normA_m = movmean(normA,k);
+
+
+
+
 
 %% load second result if needed
 expName = 'hm1agent';
