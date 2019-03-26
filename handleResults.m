@@ -1,14 +1,17 @@
 %% ploting the results with a loop so we can change parameters
 
-l = 15; % Corresponds to ~5*v*dT for agents in experiments
+l = 10; % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
-n=56; %number of XML files
-%complex = false(1,1); % we could merge homogenous and complex
 
-expName = 'hmleft_1agent'; %Change name for each new set of data
-
+expName = 'HomogenLeft_1agent';         %Change name for each new set of data
+a = dir(['XMLfiles/' expName '/*.xml'])
+n = length(a)                            %number of XML files
 %% HOMOGENOUS
 % loop through n XML files
+
+kir = zeros(1,n)
+normA = zeros(1,n)
+v = zeros(1,n)
 for i = 1:n
 %      for j = 1:5;           % will not be needed if we name XML files properly
 %         k = k+1;
@@ -23,49 +26,16 @@ for i = 1:n
        [pos_a,~,times] = cut(file,1);
        [kir, v] = getCirality(pos_a,dT,1);
        %spirKir = getChiralitySpiral(pos_a,dT,1,20);
-       [squares,normA] = calcArea(pos_a,v,dT,l);
+       [squares,normA(i)] = calcArea(pos_a,v,dT,l);
        
-       result = [kir, normA]
-       clc;
-        % Sparar:
-            % Filnamn/path (i en egen fil)
-            % Kiralitet
-            % NormArea/tid
-            % Total tid
-            % hastighet
-            % l (size of area elements)
-            
-        file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
-        file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
-        
-        data = [result size(pos_a,3)*dT v l]
-
-        dlmwrite(file1,data,'-append');
-        
-        fileID = fopen(file2,'a');
-        fprintf(fileID,'%-40s\n',file);
-        fclose(fileID);
-       
+       result = [kir(i), normA(i)]              
 end
-%% COMPLEX 1 - collect indices 
- close all
- expName = 'Test_hm1agent';
- n=9;
- str=num2str(n)
- file =  ['XMLfiles/HomogenLeft_1agent/' str '_Tracks.xml'];
- [pos_a,~,times] = cut(file,1);
-       
- [r, indice] = splitPositionData(pos_a, n);
- 
- %% save
-  % complex environment, saves indices where pos_a should be cut for each XML,
-  % each XML separated by NaN in splitPositionData
-  file3 = ['results/Lab/' expName 'indices.txt']
-  dlmwrite(file3, indice, '-append')
+
 
 %% COMLEX 2 - with indices 
 
-indice = load('results/Lab/Test_hm1agentindices.txt');
+%file = ['results/Lab/' expName 'indices.txt']
+%indice = load(file);
 
 film=0; 
 j=0;
@@ -74,8 +44,8 @@ start=1;
 for i=1:size(indice,1)
     if isnan(indice(i))
         film=film+1;
-        cuts(film)=j-1; %cuts(i) should be number of cuts in XML file number i 
-        new_indice(film,:) = [start start+j-2] ;
+        cuts(film)=j; %cuts(i) should be number of cuts in XML file number i 
+        new_indice(film,:) = [start start+j-1] ;
         start=start+j+1;
         j=0;
     else j=j+1;
@@ -83,46 +53,30 @@ for i=1:size(indice,1)
 end 
 %% 
 %if all works
-n=size(cuts,2);
+n = size(cuts,2);
 agent=1;
 
+
+kir = zeros(1,n)
+normA = zeros(1,n)
+v = zeros(1,n)
 for i = 1:n % loop through n XML files
 
        str = num2str(i); % if XMLfiles are named properly
-       file =  join(['XMLfiles/HomogenLeft_1agent/', str, '_Tracks.xml']);
+       file =  join(['XMLfiles/', expName, '/', str, '_Tracks.xml']);
        [pos_a,~,times] = cut(file,1);
        r = zeros(cuts(i),2,size(pos_a,3))
 
        for j=1:cuts(i)
            
               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
-              
               %spirKir(k) = getChiralitySpiral(r,dT,1,20);
-              
        end
-       [kir,v] = getComplexCirality(r,dT,1);
-       [squares,normA] = calcArea(pos_a,v,dT,l);
-      
-       
-       
-      result = [kir, normA];
-       
-       %now save
-       
-            
-        file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
-        file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
-        
-        data = [result size(pos_a,3)*dT v l];
-
-        dlmwrite(file1,data,'-append');
-        
-        fileID = fopen(file2,'a');
-        fprintf(fileID,'%-40s\n',file);
-        fclose(fileID);
-       
+       totalTime = size(pos_a,3)*dT;
+       [kir(i),v(i)] = getComplexCirality(r,dT,1);
+       [squares,normA(i)] = calcArea(pos_a,v,dT,l);
 end 
-
+   
 %% load result
 clear all, close all 
 
@@ -130,34 +84,16 @@ expName = 'Tefat_c1agent';
 name= join(['results/Lab/' expName '.txt']);
 c= load(name);
 
-[kir, I] = sort(c(:,1));
-normA = c((I),2);
-
-k=5;
-kir_m = movmean(kir,k);
-normA_m = movmean(normA,k);
-
-
-
-
-
-%% load second result if needed
-expName = 'hm1agent';
-name= join(['results/Lab/' expName '.txt']);
-c= load(name);
-[kir2, I] = sort(c(:,1));
-normA2 = c((I),2);
-
-k=5; %amount of points for each mean
-
-kir2_m = movmean(kir2,k);
-normA2_m = movmean(normA2,k);
-
-
+kir = c(:,1);
+v = c(:,4);
+normA = c(:,2);
+totalTime = c(:,3);
+l = c(:,5);
+D_r = c(:,6);
 %% Plot result
 
-[kir, I] = sort(c(:,1));
-normA = c((I),2);
+[kir, I] = sort(abs(kir));
+normA = normA(I);
 
 k=5;
 
@@ -173,10 +109,18 @@ title('with mean')
 
 axis([0.01 10 0 1.1])
 
-%% plot joint symmetric result
+%% if we want to save the new results
+file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 
-normA_m_tot=[normA_m; normA2_m];
-kir_m_tot = [kir_m; kir2_m];
+results = zeros(n,6)
+results(:,1) = kir;
+results(:,2) = normA;
+results(:,3) = totalTime;
+results(:,4) = v;
+results(:,5) = l;
+results(:,6) = D_r;
 
-plot(kir_m_tot, normA_m_tot, 'o')
+dlmwrite(file1,results);
+
+
 
