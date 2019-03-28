@@ -34,8 +34,8 @@ end
 
 %% COMLEX 2 - with indices 
 
-%file = ['results/Lab/' expName 'indices.txt']
-%indice = load(file);
+file = ['results/Lab/' expName 'indices.txt']
+indice = load(file);
 
 film=0; 
 j=0;
@@ -89,24 +89,60 @@ v = c(:,4);
 normA = c(:,2);
 totalTime = c(:,3);
 l = c(:,5);
-D_r = c(:,6);
+% D_r = c(:,6);
 %% Plot result
-
+kir
 [kir, I] = sort(abs(kir));
 normA = normA(I);
 
-k=5;
+k=3;
 
-kir_m = movmean(kir,k);
-normA_m = movmean(normA,k);
+kir_mm = movmean(kir,k);
+normA_mm = movmean(normA,k);
+
+
+size_kir=size(kir,1);
+floor_size=floor(size_kir/k)*k;
+
+normA_m=zeros(floor_size/k,1);
+kir_m=zeros(floor_size/k,1);
+j=1;
+for i=1:size_kir
+    if mod(i,k)==0
+        for m=1:k
+            v(m)=kir(i-m+1);
+            a(m)=normA(i-m+1);
+        end 
+        kir_m(j)=mean(v); 
+        normA_m(j)=mean(a);
+        j=j+1;
+    end 
+end
+clear v
+
+if size_kir>floor_size
+    rest=size_kir-floor_size
+    for i=1:rest
+        v(i)=kir(floor_size+i-1)
+        a(i)=normA(floor_size+i-1)
+        kir_m(floor_size/k+1)=mean(v);
+        normA_m(floor_size/k+1)=mean(a);
+
+    end
+end 
+            
 
 figure
 semilogx(abs(kir),normA,'o')
 title('no mean')
+axis([0.01 10 0 1.1])
 figure
 semilogx(abs(kir_m), normA_m, 'o')
 title('with mean')
-
+axis([0.01 10 0 1.1])
+figure
+semilogx(abs(kir_mm), normA_mm, 'o')
+title('with moving mean')
 axis([0.01 10 0 1.1])
 
 %% if we want to save the new results
