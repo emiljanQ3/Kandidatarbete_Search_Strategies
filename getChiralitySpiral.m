@@ -1,36 +1,78 @@
-function [w] = getChiralitySpiral(pos_a,dT, stepSizeThreshold,n)
+function [w,D_r,v] = getChiralitySpiral(pos_a,dT, stepSizeThreshold,tol,n)
 
-    str = squeeze(pos_a(1,1,:)) ~= 0;
-    index = strfind(str', [1 0]);
-    pos = pos_a(:,:,1:index);
-
-    pos = pos_a;
-
-    for i = 1:size(pos, 3)-n
-        i
+    pos = doublePoint(pos_a,stepSizeThreshold,tol);
+    pathSum = zeros(1,2,n);
+    for i = 1:size(pos, 3)-(n-1)
         %find segment
-        segment = pos(:,:,i:(i+n));
+        segment = pos(:,:,i:(i+n-1));
         %translate to origin
         segment = segment - segment(:,:,1);
         
         %Find rotation angle
-        dX = pos(:,1,i+1)-pos(:,1,i);
-        dY = pos(:,2,i+1)-pos(:,2,i);
-        angle = -atan2(dY,dX);
+        u = pos(:,:,i+1)-pos(:,:,i);
+        angle = -atan2(u(2),u(1));
 
         %Rotate segment
         for t = 1:size(segment,3)
             segment(:,:,t) = [cos(angle), -sin(angle); sin(angle), cos(angle)] * segment(:,:,t)';
         end
-        
-        dX2 = segment(:,1,2)-segment(:,1,1);
-        dY2 = segment(:,2,2)-segment(:,2,1);
-        angle2(i) = -atan2(dY2,dX2);
-        
+
+        pathSum = pathSum + segment(1,:,:);
+
         %Debug below
-        hold on
-        plot(squeeze(segment(1,1,:)),squeeze(segment(1,2,:)))
-        axis equal
+%    
+%              figure(4)
+%              hold on
+%             plot(squeeze(segment(1,1,:)),squeeze(segment(1,2,:)))
+%              hold off
+
+
+
     end
-    w = 5
+
+    meanPath(1,:) = squeeze(pathSum(1,1,:))./i;
+    meanPath(2,:) = squeeze(pathSum(1,2,:))./i;
+
+    
+    figure(2003)
+    plot(squeeze(meanPath(1,:)),squeeze(meanPath(2,:)))
+    axis equal
+    
+    T = 1:length(meanPath);
+    T = dT*(T-1);
+
+    W = @(x) 0;
+    for j = 1:length(T)
+        f_x = @(x) x(3)/(x(1)^2+x(2)^2)*(x(1)-exp(-x(1)*T(j))*(x(1)*cos(x(2)*T(j))-x(2)*sin(x(2)*T(j))));
+        f_y = @(x) x(3)/(x(1)^2+x(2)^2)*(x(2)-exp(-x(1)*T(j))*(x(2)*cos(x(2)*T(j))+x(1)*sin(x(2)*T(j))));
+        
+        w = @(x) (meanPath(1,j)-f_x(x)).^2 + (meanPath(2,j)-f_y(x)).^2;
+        W = @(x) W(x) + w(x)/j;
+    end
+    
+    guess = getCirality(pos,dT,stepSizeThreshold);
+    x_0 = [0.05,guess,100];
+    options = optimset('MaxFunEvals',1000000,'MaxIter',1000000);
+    x = fminsearch(W,x_0,options);
+    W(x)/(length(T)^2);
+    g_x = x(3)/(x(1)^2+x(2)^2)*(x(1)-exp(-x(1)*T).*(x(1)*cos(x(2)*T)-x(2)*sin(x(2)*T)));
+    g_y = x(3)/(x(1)^2+x(2)^2)*(x(2)-exp(-x(1)*T).*(x(2)*cos(x(2)*T)+x(1)*sin(x(2)*T)));
+
+    hold on
+    plot(g_x,g_y)
+    
+    figure(4014)
+    [theta,rho] = cart2pol(meanPath(1,:)-x(3)*x(1)/(x(1)^2+x(2)^2),meanPath(2,:)-x(3)*x(2)/(x(1)^2+x(2)^2));
+    [theta2,rho2] = cart2pol(g_x-x(3)*x(1)/(x(1)^2+x(2)^2),g_y-x(3)*x(2)/(x(1)^2+x(2)^2));
+    %plot(log(rho))
+    
+    w = x(2);
+    D_r = x(1);
+    v = x(3);
 end
+
+
+
+
+
+

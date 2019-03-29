@@ -1,16 +1,16 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Kors_1agent/011_Tracks.xml'; %Name of file
+file = 'XMLfiles/Kors_1agent/024_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
-l = 15; % Corresponds to ~5*v*dT for agents in experiments
+l = 10; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-r = splitPositionData(pos_a);
+[r, indice] = splitPositionData(pos_a);
 
 [kir,v] = getComplexCirality(r,dT,1);
 
@@ -28,12 +28,14 @@ clc;
     % Total tid
     % hastighet
     % l (size of area elements)
+    % D_r
 
-expName = 'c1agent'; %Change name for each new set of data
+expName = 'test'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
-    
+file3 = ['results/Lab/' expName 'indices.txt']
+
 data = [result size(pos_a,3)*dT v l];
 dlmwrite(file1,data,'-append');
 
@@ -41,6 +43,7 @@ fileID = fopen(file2,'a');
 fprintf(fileID,'%-40s\n',file);
 fclose(fileID);
 
+dlmwrite(file3, indice, '-append')
 %% Plot M, trajectory of agent
 
 x = pos_a(1,1,:);
