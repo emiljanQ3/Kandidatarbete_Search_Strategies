@@ -2,7 +2,7 @@
 clc,clear
 tic
 
-filepath = 'C:\Users\thoma\Desktop\Filmer\KKV\';
+filepath = 'C:\Users\thoma\Desktop\Filmer\KKV-Homogen-Negativ\';
 listing = dir([filepath '*.mp4']);
 for i = 1:1:length(listing)
 VideoName = listing(i).name;
@@ -37,7 +37,7 @@ toc
 clc,clear
 tic
 
-V = VideoReader('011.mp4');
+V = VideoReader('0.72.mp4');
 xsize = V.Height;
 ysize = V.Width;
 Frames = V.Duration*V.FrameRate;
@@ -45,7 +45,7 @@ mappingCoefficients = [880 -3e-4 0 0];       % mapping polynomial coefficients
 imageSize = [xsize ysize];             % in [mrows ncols]
 distortionCenter = [ysize./2 xsize./2];  % in pixels
 intrinsics = fisheyeIntrinsics(mappingCoefficients,imageSize,distortionCenter);
-video = VideoWriter('011m.avi');
+video = VideoWriter('0.72.mp4.avi');
 video.FrameRate = V.Framerate;
 open(video);
 
@@ -65,7 +65,7 @@ toc
 %% Fisheye correction for picture
 clc,clear
 
-Barrel = imread('Barrel.jpg');
+Barrel = imread('PixelCount.jpg');
 xsize = 1080;
 ysize = 1920;
 mappingCoefficients = [880 -3e-4 0 0];       % mapping polynomial coefficients
@@ -73,5 +73,5 @@ imageSize = [xsize ysize];             % in pixels
 distortionCenter = [ysize./2 xsize./2];  % in pixels
 intrinsics = fisheyeIntrinsics(mappingCoefficients,imageSize,distortionCenter);
 J = undistortFisheyeImage(Barrel,intrinsics);
-%J = imcrop(J,[580,220,740,640]);
+J = imcrop(J,[580,220,740,640]);
 imshow(J);
