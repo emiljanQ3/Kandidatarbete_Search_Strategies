@@ -90,26 +90,25 @@ yIndices = yIndices(:,:)';
 
 returnIndices = floor(linspace(1,size(xIndices,1),nReturn));
 k = 1;
-for j = returnIndices
+for j = 1:nReturn
     
-    for i = k:j
-        xIndices(i);
-        yIndices(i);
+    for i = k:returnIndices(j)
+        
         areaGrid(xIndices(i),yIndices(i)) = 1;
         
         if (extraX(i) ~= 0 || extraY(i) ~= 0)
-            extraX(i);
-            extraY(i);
             areaGrid(extraX(i),extraY(i)) = 1;
         end
         
     end
-    numSquares(j) = sum(sum(areaGrid));
-    T = size(M,3)*dT;
-    % Normalized area
-    A = numSquares/((4*v*T/(pi*l)-1));
     
-    k = j;
+    numSquares(j) = sum(sum(areaGrid));
+    
+    T = returnIndices(j)*dT;
+    % Normalized area
+    A(j) = numSquares(j)/((4*v*T/(pi*l)-1));
+    
+    k = returnIndices(j);
 end
 
 
