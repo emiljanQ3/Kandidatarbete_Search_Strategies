@@ -1,5 +1,5 @@
 
-file = 'XMLfiles/Homogen_1agent/053_Tracks.xml'
+file = 'XMLfiles/Homogen_1agent/041_Tracks.xml'
 file2 = 'OG.xml'
 M = cut(file,1);
 %M = cut(file)
@@ -18,11 +18,14 @@ axis equal
 %%
 
 
-pos_a = doublePoint(M,1,6);
+%pos_a = doublePoint(M,1,6);
 %plot(squeeze(pos_a(1,1,:)),squeeze(pos_a(1,2,:)),'.')
 
-[spirKir, D_r ,v] = getChiralitySpiral(M,1/25,1,6,50)
+%[spirKir, D_r ,v] = getChiralitySpiral(M,1/25,1,6,5)
 
+r = splitPositionData(M)
+
+[spirKir2, D_r ,v] = getKompSpiral(r,1/25,1,6,60)
 %%
 
 

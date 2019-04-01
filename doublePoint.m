@@ -16,7 +16,7 @@ function r = doublePoint(pos_a,dpTol,gapTol)
     end
     
     %remove zeros
-    r = zeros(1,2,length(pos_a)-N_zeros);
+    r = zeros(1,2,length(pos_a)-N_zeros-1);
     k = 0;
     for i = 1:length(pos_a)
         if (norm(pos_a(1,:,i))~=0)
