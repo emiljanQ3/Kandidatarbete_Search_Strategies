@@ -9,38 +9,39 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
        n = 5;
     end
     
-    count = 0;
+    count = zeros(1,n);
+    count(1) = 1;
     pathSum = zeros(2,n);
-    for agent = 1:size(pos_a,1)
-        pos = doublePoint(pos_a(agent,:,:),stepSizeThreshold,tol);
-        for i = 1:size(pos, 3)-(n-1)
+    for p = 2:n
+        for agent = 1:size(pos_a,1)
+            pos = doublePoint(pos_a(agent,:,:),stepSizeThreshold,tol);
+            for i = 1:size(pos, 3)-(p-1)
+                segment = squeeze(pos(1,:,i:(i+p-1)));
+                segment = segment - segment(:,1);
 
-            segment = squeeze(pos(1,:,i:(i+n-1)));
-            segment = segment - segment(:,1);
+                %Rotat segment
+                u = pos(1,:,i+1)-pos(1,:,i);
+                angle = -atan2(u(2),u(1));
+                if i > 1
+                    v = pos(1,:,i+1)-pos(1,:,i-1);
+                    angle = -atan2(v(2),v(1));
+                end
+                for t = 1:size(segment,2)
+                    segment(:,t) = [cos(angle), -sin(angle); sin(angle), cos(angle)] * segment(:,t);
+                end
 
-            %Rotat segment
-            u = pos(1,:,i+1)-pos(1,:,i);
-            angle = -atan2(u(2),u(1));
-            if i > 1
-                v = pos(1,:,i+1)-pos(1,:,i-1);
-                angle = -atan2(v(2),v(1));
+                count(p) = count(p) + 1;
+                pathSum(:,p) = pathSum(:,p) + segment(:,p);
+
+%                 figure(4)
+%                 hold on
+%                 plot(squeeze(segment(1,:)),squeeze(segment(2,:)))
+%                 hold off
             end
-            for t = 1:size(segment,2)
-                segment(:,t) = [cos(angle), -sin(angle); sin(angle), cos(angle)] * segment(:,t);
-            end
-            
-            count = count + 1;
-            pathSum = pathSum + segment;
-            
-            figure(4)
-            hold on
-            plot(squeeze(segment(1,:)),squeeze(segment(2,:)))
-            hold off
         end
     end
-
-    meanPath = pathSum/count;
-
+    meanPath(1,:) = pathSum(1,:)./count
+    meanPath(2,:) = pathSum(2,:)./count
   
     T = 1:length(meanPath);
     T = dT*(T-1);
