@@ -6,15 +6,16 @@ r                       = 0.167;
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 30;     %Number of seconds simulation is run before measurement starts.
-measurmentTime          = 120;
+measurmentTime          = 240;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 1;
-w                       = 1; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 100;
+w                       = [0.1, 1.2, 5]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in L/s
-l                       = 1/20*R; % Side length of cells in grid used to determine covered area
-D_r                     = 0.01; %Diffusion constant for rotation
+l                       = 1/10*R; % Side length of cells in grid used to determine covered area
+D_r                     = 0.1; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
+numAreaDP               = 100;
 
 %Config variables that might be interesting to include in the future:
 %Friction
@@ -23,10 +24,10 @@ r_c                     = l/2;
 
 pos_a = zeros(numAgents, 2, numTimeSteps);      %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
-numSquares = zeros(numSimulations,1);           %INITIALIZATION: List of the amount of area elements found each simulation.
+numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 totalTime = zeros(numSimulations,1); 
-meanAreaCovered = zeros(length(w),1);           %INITIALIZATION: List of mean area covered for each kirality.
-areaPerTime = zeros(length(w),1);               %INITIALIZATION: List of mean area covered per total time for each kirality.
+meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
+areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
 colision = zeros(3,numTimeSteps);
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
@@ -46,17 +47,18 @@ for w_i = w %Loop over different kiralities
         
         % Do simulation for measurmenttime after pretime is done
         [pos_a, rot_a, colision,totalTime(N_i)] = simulateCircle( measurmentTime ,dT,D_r,D_p,v,w_i,numAgents,pos_a, rot_a,colision, R, r_c);
-          
-        %Simulation is done. Time to calculate area discovered.
-        [numSquares(N_i),~] = calcArea(pos_a,v,dT,l);
+        
+        %Let's also calculate area discovered at certain times
+
+        [numSquares(N_i, :), ~] = calcArea(pos_a, v, dT, l, numAreaDP);
         
   
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
-    meanAreaCovered(w_j) = mean(numSquares)*l^2;
-    varians(w_j)        = std(numSquares)*l^2;
-    areaPerTime(w_j) = mean(numSquares./totalTime)*l^2;
+    meanAreaCovered(w_j,:) = mean(numSquares).*l^2;
+    varians(w_j)        = std(numSquares(:, numAreaDP)).*l^2;
+    %areaPerTime(w_j,:) = meanAreaCovered(w_j,:)./totalTime;
     w_j = w_j + 1;
     
 end
@@ -65,6 +67,11 @@ toc
 %%
 semilogx(w,meanAreaCovered)
 
+%%
+hold on
+for i = 1:size(meanAreaCovered,1)
+    plot(1:numAreaDP, meanAreaCovered(i,:)./pi)
+end
 %%
 %Plot-----------------------------------------------------------------------------------------------------------------
 hold on
