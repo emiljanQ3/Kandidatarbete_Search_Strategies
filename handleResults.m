@@ -1,6 +1,6 @@
 %% ploting the results with a loop so we can change parameters
 
-l = 10; % Corresponds to ~5*v*dT for agents in experiments
+l = 5; % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 
 expName = 'circle_1agent';         %Change name for each new set of data
@@ -54,6 +54,7 @@ agent=1;
 kir = zeros(1,n)
 normA = zeros(1,n)
 v = zeros(1,n)
+square = zeros(100,n)
 
 for i = 1:n % loop through n XML files
        
@@ -69,7 +70,7 @@ for i = 1:n % loop through n XML files
        
        [kir(i),v(i)] = getComplexCirality(r,dT,1);
        [kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60)
-       [squares,normA(i)] = calcArea(pos_a,v(i),dT,l);
+       [square(:,i),normA] = calcArea(pos_a(:,:,250:end),v(i),dT,l,100);
 end 
    
 %% load result
@@ -88,7 +89,7 @@ l = c(:,5);
 %% Plot result
 kir
 [kir, I] = sort(abs(kir));
-normA1 = normA(I);
+normA1 = square(I);
 k=3;
 kir_mm = movmean(kir,k);
 normA_mm = movmean(normA1,k);
@@ -160,5 +161,31 @@ results(:,6) = D_r;
 
 dlmwrite(file1,results);
 
+%%
+figure
+hold on
 
+[kir2, sortOrder] = sort(abs(kir2))
+square = square(:,sortOrder)
 
+color = jet(size(square,2))
+for i = 1:size(square,2)
+    plot(square(:,i),'color',color(i,:))
+end
+
+%%
+figure
+hold on
+
+sumSquare  = zeros(size(square,1),5)
+for k = 1:5
+    for j = 1:7
+       sumSquare(:,k) = square(:,j+7*(k-1)) + sumSquare(:,k) 
+    end
+end
+sumSquare = sumSquare/7;
+
+color = jet(size(sumSquare,2))
+for i = 1:size(sumSquare,2)
+    plot(sumSquare(:,i),'color',color(i,:))
+end
