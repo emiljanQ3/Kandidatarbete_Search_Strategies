@@ -10,7 +10,7 @@ measurmentTime          = 240;
 numTimeSteps            = floor(measurmentTime/dT);
 numSimulations          = 100;
 w                       = [0.1, 1.2, 5]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
-v                       = 1;     % speed in L/s
+v                       = 0.5;     % speed in L/s
 l                       = 1/20*R; % Side length of cells in grid used to determine covered area
 D_r                     = 0.05; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
@@ -52,14 +52,7 @@ for w_i = w %Loop over different kiralities
         %Let's also calculate area discovered at certain times
 
         [numSquares(N_i, :), normA(N_i, :)] = calcArea(pos_a, v, dT, l, numAreaDP);
-        
-%         T_j = 1;
-%         for T_i = floor(linspace(1, numTimeSteps, numTimesArea))
-%             [numSquares(N_i, T_j), ~] = calcArea(pos_a(:,:,1:T_i), v, dT, l, 1);
-%             T_j = T_j + 1;
-%         end
-        
-  
+
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.

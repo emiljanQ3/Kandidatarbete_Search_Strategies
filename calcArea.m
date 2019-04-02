@@ -23,61 +23,60 @@ extraX = zeros(size(indexedPos_a,3),1);
 extraY = zeros(size(indexedPos_a,3),1);
 
 % Look for missing squares due to diagonal movement
-fill = 1;
 for a = 1:size(indexedPos_a,1)
     for i = 1:size(indexedPos_a,3)-1
         
         xMove = indexedPos_a(a,1,i)-indexedPos_a(a,1,i+1);
         yMove = indexedPos_a(a,2,i)-indexedPos_a(a,2,i+1);
         
-        if (norm(xMove)>0 && norm(yMove)>0)
+        if ~(norm(xMove)>0 && norm(yMove)>0)
+            continue;
+        end
             
-            lineMovement = [M(a,1,i) M(a,2,i); M(a,1,i+1) M(a,2,i+1)];
-            ind = indexedPos_a(a,:,i);
-            
-            lines = zeros(2,2,2);
-            if (xMove > 0)
-                % Generate line1
-                lines(:,:,1) = [(ind(1)-1)*l+minPos(1) (ind(2)-1)*l+minPos(2); (ind(1)-1)*l+minPos(1) (ind(2))*l+minPos(2)];;
-            else
-                % Generate line3
-                lines(:,:,1) = [ind(1)*l+minPos(1) ind(2)*l+minPos(2); ind(1)*l+minPos(1) (ind(2)-1)*l+minPos(2)];
-            end
-            
-            if (yMove > 0)
-                % Generate line4
-                lines(:,:,2) = [ind(1)*l+minPos(1) (ind(2)-1)*l+minPos(2); (ind(1)-1)*l+minPos(1) (ind(2)-1)*l+minPos(2)];
-            else
-                % Generate line2
-                lines(:,:,2) = [(ind(1)-1)*l+minPos(1) (ind(2))*l+minPos(2); ind(1)*l+minPos(1) ind(2)*l+minPos(2)];
-            end
-            
-            % Check if agent crosses horizontal or vertical line
-            for j = 1:2
-                line = lines(:,:,j);
-                %Reorder dimentions
-                %line = line(:,:);
-                if (~isnan(lineIntersection(lineMovement,line)))
-                    if (j == 1) % Crosses vertical lines
-                        xInd = ind(1)-xMove; % xMove negative if positive movement
-                        yInd = ind(2);
-                    elseif j == 2 % Crosses horizontal lines
-                        xInd = ind(1);
-                        yInd = ind(2)-yMove;
-                    elseif j == 3
-                        xInd = ind(1)+1;
-                        yInd = ind(2);
-                    elseif j == 4
-                        xInd = ind(1);
-                        yInd = ind(2)-1;
-                    end
-                    
-                    extraX(fill) = xInd;
-                    extraY(fill) = yInd;
-                    fill = fill + 1;
-                    break;
-                    
+        lineMovement = [M(a,1,i) M(a,2,i); M(a,1,i+1) M(a,2,i+1)];
+        ind = indexedPos_a(a,:,i);
+
+        lines = zeros(2,2,2);
+        if (xMove > 0)
+            % Generate line1
+            lines(:,:,1) = [(ind(1)-1)*l+minPos(1) (ind(2)-1)*l+minPos(2); (ind(1)-1)*l+minPos(1) (ind(2))*l+minPos(2)];
+        else
+            % Generate line3
+            lines(:,:,1) = [ind(1)*l+minPos(1) ind(2)*l+minPos(2); ind(1)*l+minPos(1) (ind(2)-1)*l+minPos(2)];
+        end
+
+        if (yMove > 0)
+            % Generate line4
+            lines(:,:,2) = [ind(1)*l+minPos(1) (ind(2)-1)*l+minPos(2); (ind(1)-1)*l+minPos(1) (ind(2)-1)*l+minPos(2)];
+        else
+            % Generate line2
+            lines(:,:,2) = [(ind(1)-1)*l+minPos(1) (ind(2))*l+minPos(2); ind(1)*l+minPos(1) ind(2)*l+minPos(2)];
+        end
+
+        % Check if agent crosses horizontal or vertical line
+        for j = 1:2
+            line = lines(:,:,j);
+            %Reorder dimentions
+            %line = line(:,:);
+            if (~isnan(lineIntersection(lineMovement,line)))
+                if (j == 1) % Crosses vertical lines
+                    xInd = ind(1)-xMove; % xMove negative if positive movement
+                    yInd = ind(2);
+                elseif j == 2 % Crosses horizontal lines
+                    xInd = ind(1);
+                    yInd = ind(2)-yMove;
+                elseif j == 3
+                    xInd = ind(1)+1;
+                    yInd = ind(2);
+                elseif j == 4
+                    xInd = ind(1);
+                    yInd = ind(2)-1;
                 end
+
+                extraX(i) = xInd;
+                extraY(i) = yInd;
+                break;
+
             end
         end
     end
