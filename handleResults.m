@@ -1,6 +1,7 @@
 %% ploting the results with a loop so we can change parameters
 
-l = 5; % Corresponds to ~5*v*dT for agents in experiments
+R = 150;
+l = R/10; % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 
 expName = 'circle_1agent';         %Change name for each new set of data
@@ -46,21 +47,20 @@ for i=1:size(indice,1)
     end 
 end 
 %% 
-%if all works
 
 agent=1;
 
 
-kir = zeros(1,n)
-normA = zeros(1,n)
-v = zeros(1,n)
-square = zeros(100,n)
+kir = zeros(1,n);
+normA = zeros(1,n);
+v = zeros(1,n);
+square = zeros(100,n);
 
 for i = 1:n % loop through n XML files
        
        file =  sourceFile{1}{i};
        [pos_a,~,times] = cut(file,1);
-       r = zeros(cuts(i),2,size(pos_a,3))
+       r = zeros(cuts(i),2,size(pos_a,3));
 
        for j=1:cuts(i)
               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
@@ -69,7 +69,7 @@ for i = 1:n % loop through n XML files
        totalTime = size(pos_a,3)*dT;
        
        [kir(i),v(i)] = getComplexCirality(r,dT,1);
-       [kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60)
+       [kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60);
        [square(:,i),normA] = calcArea(pos_a(:,:,250:end),v(i),dT,l,100);
 end 
    
@@ -177,13 +177,18 @@ end
 figure
 hold on
 
-sumSquare  = zeros(size(square,1),5)
+[kir2, sortOrder] = sort(abs(kir2));
+square = square(:,sortOrder);
+sumSquare  = zeros(size(square,1),5);
+sumKir     = zeros(5,1);
 for k = 1:5
     for j = 1:7
-       sumSquare(:,k) = square(:,j+7*(k-1)) + sumSquare(:,k) 
+       sumSquare(:,k) = square(:,j+7*(k-1)) + sumSquare(:,k);
+       sumKir(k) = sumKir(k) + kir2(j+7*(k-1));
     end
 end
 sumSquare = sumSquare/7;
+meanKir = sumKir/7
 
 color = jet(size(sumSquare,2))
 for i = 1:size(sumSquare,2)

@@ -6,12 +6,12 @@ r                       = 0.167;
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-measurmentTime          = 240;
+measurmentTime          = 50;
 numTimeSteps            = floor(measurmentTime/dT);
 numSimulations          = 100;
-w                       = [0.1, 1.2, 5]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
-v                       = 0.5;     % speed in L/s
-l                       = 1/20*R; % Side length of cells in grid used to determine covered area
+w                       = [0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+v                       = 0.5;     % speed in R/s
+l                       = 1/7.5*R; % Side length of cells in grid used to determine covered area
 D_r                     = 0.05; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
@@ -22,7 +22,7 @@ numAreaDP               = 100;
 %Agent shape
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
-pos_a = zeros(numAgents, 2, numTimeSteps);      %INITIALIZATION: Agent positions in each timestep
+pos_a = zeros(numAgents, 2, numTimeSteps);              %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
@@ -66,13 +66,14 @@ end
 toc
 
 %%
-figure(2)
+figure
 hold on
+c = jet(length(w));
 for i = 1:size(meanAreaCovered,1)
-    plot(1:numAreaDP, meanAreaCovered(i,:)./pi)
+    plot(1:numAreaDP, meanAreaCovered(i,:)./pi, 'color', c(i,:))
 end
 
-figure(3)
+figure
 hold on
 for i = 1:size(meanNormA,1)
     plot(1:numAreaDP, meanNormA(i,:)./pi)
