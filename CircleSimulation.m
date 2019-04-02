@@ -5,14 +5,14 @@ R                       = 1;      %Circular areana radius
 r                       = 0.167;
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
-preTime                 = 30;     %Number of seconds simulation is run before measurement starts.
+preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 measurmentTime          = 240;
 numTimeSteps            = floor(measurmentTime/dT);
 numSimulations          = 100;
 w                       = [0.1, 1.2, 5]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in L/s
-l                       = 1/10*R; % Side length of cells in grid used to determine covered area
-D_r                     = 0.1; %Diffusion constant for rotation
+l                       = 1/20*R; % Side length of cells in grid used to determine covered area
+D_r                     = 0.05; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 numAreaDP               = 100;
@@ -25,6 +25,7 @@ numAreaDP               = 100;
 pos_a = zeros(numAgents, 2, numTimeSteps);      %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
+normA      = zeros(numSimulations,numAreaDP);
 totalTime = zeros(numSimulations,1); 
 meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
@@ -50,12 +51,19 @@ for w_i = w %Loop over different kiralities
         
         %Let's also calculate area discovered at certain times
 
-        [numSquares(N_i, :), ~] = calcArea(pos_a, v, dT, l, numAreaDP);
+        [numSquares(N_i, :), normA(N_i, :)] = calcArea(pos_a, v, dT, l, numAreaDP);
+        
+%         T_j = 1;
+%         for T_i = floor(linspace(1, numTimeSteps, numTimesArea))
+%             [numSquares(N_i, T_j), ~] = calcArea(pos_a(:,:,1:T_i), v, dT, l, 1);
+%             T_j = T_j + 1;
+%         end
         
   
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
+    meanNormA(w_j,:)       = mean(normA);
     meanAreaCovered(w_j,:) = mean(numSquares).*l^2;
     varians(w_j)        = std(numSquares(:, numAreaDP)).*l^2;
     %areaPerTime(w_j,:) = meanAreaCovered(w_j,:)./totalTime;
@@ -63,15 +71,20 @@ for w_i = w %Loop over different kiralities
     
 end
 toc
-%Result is stored as data points, pairing each kirality with a meanAreaCovered value.
-%%
-semilogx(w,meanAreaCovered)
 
 %%
+figure(2)
 hold on
 for i = 1:size(meanAreaCovered,1)
     plot(1:numAreaDP, meanAreaCovered(i,:)./pi)
 end
+
+figure(3)
+hold on
+for i = 1:size(meanNormA,1)
+    plot(1:numAreaDP, meanNormA(i,:)./pi)
+end
+
 %%
 %Plot-----------------------------------------------------------------------------------------------------------------
 hold on
@@ -100,22 +113,6 @@ for agent = 1:numAgents
 end
 
 
-%%
-if(edge) 
-    figure(112)
-    areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
-    semilogx(w,areaPerTime/(areaPerTime_max),'o')
-    axis([0.01, 10, 0, 1])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)    
-else
-    figure(112)
-    meanArea_max = numAgents*(4*v*measurmentTime*l/pi-l^2);
-    semilogx(w,meanAreaCovered/(meanArea_max),'o')
-    axis([0.01, 10, 0, 1.2])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
-end
 
 %% K�r detta script f�r att spara ditt workspace
 dateTime = clock;
