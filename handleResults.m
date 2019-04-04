@@ -4,7 +4,7 @@ R = 150;
 l = R/10; % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 
-expName = 'circle_1agent';         %Change name for each new set of data
+expName = 'circle_large_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n')
 n =size(sourceFile{1},1)
@@ -55,12 +55,14 @@ kir = zeros(1,n);
 normA = zeros(1,n);
 v = zeros(1,n);
 square = zeros(100,n);
+normA = zeros(100,n);
+
 
 for i = 1:n % loop through n XML files
        
        file =  sourceFile{1}{i};
        [pos_a,~,times] = cut(file,1);
-       r = zeros(cuts(i),2,size(pos_a,3));
+       r = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero 
 
        for j=1:cuts(i)
               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
@@ -69,34 +71,34 @@ for i = 1:n % loop through n XML files
        totalTime = size(pos_a,3)*dT;
        
        [kir(i),v(i)] = getComplexCirality(r,dT,1);
-       [kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60);
-       [square(:,i),normA] = calcArea(pos_a(:,:,250:end),v(i),dT,l,100);
+       %[kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60);
+       [square(:,i),normA(:,i)] = calcArea(pos_a(:,:,250:end),v(i),dT,l,100);
 end 
    
 %% load result
-clear all, close all 
+% clear all, close all 
 
-expName = 'Tefat_c1agent';
+expName = 'circle_large_1agent';
 name= join(['results/Lab/' expName '.txt']);
 c= load(name);
 
-kir = c(:,1);
-v = c(:,4);
-normA = c(:,2);
-totalTime = c(:,3);
-l = c(:,5);
+kir2 = c(:,1);
+% v = c(:,4);
+% normA = c(:,2);
+% totalTime = c(:,3);
+% l = c(:,5);
 % D_r = c(:,6);
 %% Plot result
 kir
-[kir, I] = sort(abs(kir));
-normA1 = square(I);
+[kir_sorted, I] = sort(abs(kir));
+normA1 = square(100,I);
 k=3;
-kir_mm = movmean(kir,k);
+kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
 
-[kir2, I] = sort(abs(kir2));
-normA = normA(I);
-kir_mm2 = movmean(kir2,k);
+[kir2_sorted, I] = sort(abs(kir2));
+%normA = normA(100,I);
+kir_mm2 = movmean(kir2_sorted,k);
 normA_mm2 = movmean(normA,k);
 % 
 % size_kir=size(kir,1);
@@ -131,33 +133,33 @@ normA_mm2 = movmean(normA,k);
 %             
 
 figure
-semilogx(abs(kir),normA1,'o')
+semilogx(abs(kir_sorted),normA1,'o')
 title('no mean')
-axis([0.01 10 0 1.1])
+%axis([0.01 10 0 1.1])
 % figure
 % semilogx(abs(kir_m), normA_m, 'o')
 % title('with mean')
 % axis([0.01 10 0 1.1])
 figure
-semilogx(abs(kir), normA_mm, 'o')
+semilogx(abs(kir_sorted), normA_mm, 'o')
 title('with moving mean')
-axis([0.01 10 0 1.1])
+%axis([0.01 10 0 1.1])
 
 
 figure
-semilogx(abs(kir2), normA_mm2, 'o')
+semilogx(abs(kir2_sorted), normA_mm, 'o')
 title('with moving mean spiral kirality')
-axis([0.01 10 0 1.1])
+%axis([0.01 10 0 1.1])
 %% if we want to save the new results
-file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
+file1 = ['results/Lab/' expName '_square.txt']; % Name of dataFile
 
-results = zeros(n,6)
-results(:,1) = kir;
-results(:,2) = normA;
-results(:,3) = totalTime;
-results(:,4) = v;
-results(:,5) = l;
-results(:,6) = D_r;
+results = square %zeros(n,6)
+% results(:,1) = kir;
+% results(:,2) = normA;
+% results(:,3) = totalTime;
+% results(:,4) = v;
+% results(:,5) = l;
+% results(:,6) = D_r;
 
 dlmwrite(file1,results);
 
