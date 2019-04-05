@@ -196,3 +196,40 @@ color = jet(size(sumSquare,2))
 for i = 1:size(sumSquare,2)
     plot(sumSquare(:,i),'color',color(i,:))
 end
+
+%%
+N = 10; %antalet bins vi delar upp kiraliteten i 
+Mi = min(log10(abs(kir2)));
+Ma = max(log10(abs(kir2)));
+L = (Ma-Mi)/N;
+
+sumSquare = zeros(100,N);
+sumKir = zeros(1,N);
+count = zeros(1,N)
+for i = 1:N
+    
+
+    for j = 1:length(kir2)
+        if ((i-1)*L + Mi <= log10(abs(kir2(j))) && log10(abs(kir2(j))) <= Mi + (i)*L )
+            i
+            j
+            sumSquare(:,i) = sumSquare(:,i) + square(:,j);
+            sumKir(i) = sumKir(i) +kir2(j);
+            count(i) = count(i) +1;
+        end
+    end
+
+end
+
+sumSquare(:,i) = sumSquare(:,i)/count;
+sumKir(i) = sumKir(i)/count;
+
+
+
+
+
+
+
+
+
+
