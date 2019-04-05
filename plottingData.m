@@ -3,7 +3,7 @@ load('results/noEdge/oneAgent/homogeneous/2019218-92_hm02005_1.mat')
 
     figure(112)
     meanArea_max = meanAreaCovered(1);
-    semilogx(w,meanAreaCovered/(meanArea_max),'*')
+    semilogx(w,meanAreaCovered/(meanArea_max),'ro')
    % axis([0.01, 10, 0, 1.2])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)
@@ -17,12 +17,12 @@ load('results/Edge/oneAgent/201937-1428_hm060167_1.mat')
 if(edge) 
     figure(112)
     areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
-    semilogx(w,areaPerTime/(areaPerTime_max),'.')
+    semilogx(w,areaPerTime/(areaPerTime_max),'go')
     %axis([0.01, 10, 0, 1])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)
     figure(113)
-    plot(w,areaPerTime/(areaPerTime_max),'.')
+    plot(w,areaPerTime/(areaPerTime_max),'go')
 else
 
     meanArea_max = numAgents*(4*v*measurmentTime*l/pi-l^2);
@@ -43,7 +43,7 @@ normArea = allData(:,2);
 v = allData(:,4);
 
 figure(112)
-semilogx(abs(w),normArea,'o')
+semilogx(abs(w),normArea,'bo')
 figure(113)
 plot(w,normArea,'o')
 
@@ -51,3 +51,19 @@ plot(w,normArea,'o')
 %name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
 name = 'Experimental results';
 title(name)
+
+%%
+
+figure(112)
+
+axis([0.02 10 0 1.3])
+title('Av agenter uppsökt area normerat mot maximal upptäckt area', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', 28)
+
+ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 35)
+xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 30)
+
+legend('Periodisk','Begränsad','Exprimentel')
+
+
+

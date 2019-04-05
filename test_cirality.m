@@ -1,5 +1,5 @@
 
-file = 'XMLfiles/Homogen_1agent/044_Tracks.xml'
+file = 'XMLfiles/Homogen_1agent/074_Tracks.xml'
 file2 = 'OG.xml'
 M = cut(file,1);
 %M = cut(file)
@@ -11,7 +11,7 @@ figure(1)
 plot(squeeze(M(1,1,:)),squeeze(M(1,2,:)),'.')
 axis equal
 figure(9111)
-pos = doublePoint(M,1,6);
+pos = doublePoint(M,1,7);
 plot(squeeze(pos(1,1,:)),squeeze(pos(1,2,:)),'.')
 axis equal
 [o v] = getCirality(pos,0.04,1)
