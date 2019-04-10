@@ -1,6 +1,6 @@
-function p = animation(pos_a,obstacle,dT,colision)
+function p = animation(pos_a,obstacle,dT,colision, nSteps)
 
-    figure(2002)
+    figure
     hold on
     L = 1;
     maxPos = max(max(pos_a,[],1),[],3);
@@ -17,7 +17,7 @@ function p = animation(pos_a,obstacle,dT,colision)
         end
     end
 
-    for time = 2:length(pos_a(1,1,:))
+    for time = 2:nSteps
         if(colision(3,time) == 1)
             scatter(colision(1,time),colision(2,time),'r')
         end
