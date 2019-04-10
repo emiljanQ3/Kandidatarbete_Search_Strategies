@@ -8,8 +8,8 @@ dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 maxMeasurmentTime       = 300;
 numTimeSteps            = floor(maxMeasurmentTime/dT);
-numSimulations          = 50;
-w                       = linspace(-4,4,20); %[0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 100;
+w                       = linspace(-4,4,50); %[0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.5;     % speed in R/s
 L                       = 1/7.5*R; % Side length of cells in grid used to determine covered area
 D_r                     = 0.03; %Diffusion constant for rotation
@@ -31,10 +31,13 @@ colision = zeros(3,numTimeSteps);
 
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_count = 1;
-loop_cycles = permn()
+loop_cycles = length(w)*(length(w)-1)/2;
+
+startTic = tic;
+
 for i = 1:length(w)
     for j = i:1:length(w)
-        tic
+        loopTic = tic;
 
         W = [w(i),w(j)];
         
@@ -52,15 +55,14 @@ for i = 1:length(w)
         meanTotalTime(i,j) = mean(totalTimeSteps)*dT;
 
 
-        status = string(w_count) + "/" + string(size(W,1) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j)))
-        toc
+        status = string(w_count) + "/" + string(loop_cycles) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j))
 
         w_count = w_count + 1;
-        
+        toc(loopTic)
         %animation(pos_a, generateObstacle('hm'),0,colision, totalTime(N_i))
     end
 end
-
+toc(startTic)
 %% 3D plot
 X = w;
 Y = w;
