@@ -23,71 +23,58 @@ pos_a = zeros(numAgents, 2, numTimeSteps);              %INITIALIZATION: Agent p
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
-totalTime = zeros(numSimulations,1); 
+totalTimeSteps = zeros(numSimulations,1); 
 meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
 colision = zeros(3,numTimeSteps);
 
-%Determine chirality cominations ONLY WORKS FOR 2 AGENTS ATM
-
-W = combnk(w, numAgents);
-W = [W;[w',w']];
 
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_count = 1;
+loop_cycles = permn()
+for i = 1:length(w)
+    for j = i:1:length(w)
+        tic
 
-for i = 1:size(W,1)
-    tic
-    
-    
-    for N_i = 1:numSimulations %Loop over separate simulations
-        rot_a = 2*pi*rand(numAgents,1);          %Starting rotations
-        pos_pre(:,:,1) = zeros(numAgents,2);     %Starting positions
-
-        % Do the simulation for pre time
-        %[pos_pre, rot_a, colision, ~] = simulateMultiAgentCircle( preTime ,dT,D_r,D_p,v,W(i,:),numAgents,pos_pre, rot_a,colision, R, r_c,0);
-
-        %Set starting pos for measurement
-        %pos_a(:,:,1) = pos_pre(:,:,end);
+        W = [w(i),w(j)];
         
-        rot_a = [pi; 0];
-        pos_a(:,:,1) =  [-1/3, 0;
-                          1/3, 0];
+        for N_i = 1:numSimulations %Loop over separate simulations
+
+            rot_a = [pi; 0];
+            pos_a(:,:,1) =  [-1/3, 0;
+                              1/3, 0];
+
+            % Do simulation for measurmenttime after pretime is done
+            [pos_a, rot_a, colision, totalTimeSteps(N_i)] = simulateMultiAgentCircle( maxMeasurmentTime ,dT,D_r,D_p,v,W,numAgents,pos_a, rot_a,colision, R, r_c,1);
+
+        end
+
+        meanTotalTime(i,j) = mean(totalTimeSteps)*dT;
+
+
+        status = string(w_count) + "/" + string(size(W,1) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j)))
+        toc
+
+        w_count = w_count + 1;
         
-        % Do simulation for measurmenttime after pretime is done
-        [pos_a, rot_a, colision,totalTime(N_i)] = simulateMultiAgentCircle( maxMeasurmentTime ,dT,D_r,D_p,v,W(i,:),numAgents,pos_a, rot_a,colision, R, r_c,1);
-
-        %Let's also calculate area discovered at certain times
-
-        %[numSquares(N_i, :), normA(N_i, :)] = calcArea(pos_a, v, dT, L, numAreaDP);
-
+        %animation(pos_a, generateObstacle('hm'),0,colision, totalTime(N_i))
     end
-    
-    %All N simulations have been compleated. The mean result is saved for this kirality.
-    %meanNormA(w_count,:)       = mean(normA);
-    %meanAreaCovered(w_count,:) = mean(numSquares).*L^2;
-    %varians(w_count)        = std(numSquares(:, numAreaDP)).*L^2;
-    %areaPerTime(w_j,:) = meanAreaCovered(w_j,:)./totalTime;
-    kiralTotalTime(w_count,:) = [W(i,1),W(i,2),mean(totalTime)*dT];
-    
-    
-    status = string(w_count) + "/" + string(size(W,1) + "   Chirality: [" + string(W(i,1)) + ", " + string(W(i,2)) + "]   Mean time: " + string(kiralTotalTime(w_count,3)))
-    toc
-
-    
-    w_count = w_count + 1;
-    %animation(pos_a, generateObstacle('hm'),0,colision, totalTime(N_i))
 end
 
 %% 3D plot
 X = w;
 Y = w;
+Z = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
+Z_1 = Z;
+Z_2 = 1./Z;
 
 figure
-scatter3(kiralTotalTime(:,1), kiralTotalTime(:,2), kiralTotalTime(:,3));
-figure
-plot3(kiralTotalTime(:,1), kiralTotalTime(:,2), kiralTotalTime(:,3));
+surf(X,Y,Z_1)
+title("Time")
 
+figure
+surf(X,Y,Z_2)
+title("Efficiency")
 %%
 figure
 hold on
