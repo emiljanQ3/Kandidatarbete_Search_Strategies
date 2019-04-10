@@ -1,15 +1,16 @@
 %% ploting the results with a loop so we can change parameters
 
 R = 250;
-l = R/25;       % Corresponds to ~5*v*dT for agents in experiments
+l = R/10;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 preTime = 10;   % tid i sekunder innan areaberäkningen börjar
 totalTime = 50; % total tid areanberäkningen ska köra efter att den börjat
 N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
 k = 3;          % Hur många movmean medelvärdesbildar på
-N_k = 25;        % Antalet bins vi delar upp kiraliteten i 
+N_k = 25;       % Antalet bins vi delar upp kiraliteten i 
 T = 50;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
- 
+
+maxArea = pi*R^2
 expName = 'circle_large_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
@@ -21,13 +22,13 @@ n =size(sourceFile{1},1);
 kir = zeros(1,n);
 normA = zeros(1,n);
 v = zeros(1,n);
-for i = 1:n
+D_r = zeros(1,n);
 
-       file = sourceFile{1}{i}; %we should use same expName here
+for i = 1:n
+       file = sourceFile{1}{i}; 
        [pos_a,~,times] = cut(file,1);
-       [kir, v] = getCirality(pos_a,dT,1);
-       %spirKir = getChiralitySpiral(pos_a,dT,1,20);
-       [squares,normA(i)] = calcArea(pos_a,v,dT,l);
+       [kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
+       [~,normA(i)] = calcArea(pos_a,v(i),dT,l);
        
        result = [kir(i), normA(i)];          
 end
@@ -60,7 +61,7 @@ agent=1;
 kir = zeros(1,n);
 v = zeros(1,n);
 D_r = zeros(1,n);
-square = zeros(N,n);
+area = zeros(N,n);
 
 startIndex  =  floor(preTime/dT);
 endIndex    =floor((preTime+totalTime)/dT);
@@ -79,9 +80,9 @@ for i = 1:n % loop through n XML files
        %[kir(i),v(i)] = getComplexCirality(r,dT,1);
        %[kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
 
-       [square(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
+       [area(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
 end 
-   
+
 %% load result
 % clear all, close all 
 
@@ -101,11 +102,11 @@ figure
 hold on
 
 [~, sortOrder] = sort(abs(kir));
-square_sorted = square(:,sortOrder);
+area_sorted = area(:,sortOrder);
 
-color = jet(size(square_sorted,2));
-for i = 1:size(square_sorted,2)
-    plot(square_sorted(:,i),'color',color(i,:))
+color = jet(size(area_sorted,2));
+for i = 1:size(area_sorted,2)
+    plot(area_sorted(:,i)/maxArea,'color',color(i,:))
 end
 
 %% Plotting the mean area of time  over N_k different bins of chirality
@@ -116,36 +117,34 @@ Mi = min(log10(abs(kir)));
 Ma = max(log10(abs(kir)));
 L = (Ma-Mi)/N_k;
 
-
-sumSquare = zeros(N,N_k);
+meanArea = zeros(N,N_k);
 sumKir = zeros(1,N_k);
 binKir = zeros(1,N_k);
 count = zeros(1,N_k);
 for i = 1:N_k
     for j = 1:length(kir)
         if ((i-1)*L + Mi <= log10(abs(kir(j))) && log10(abs(kir(j))) <= Mi + (i)*L )
-            sumSquare(:,i) = sumSquare(:,i) + square(:,j);
+            meanArea(:,i) = meanArea(:,i) + area(:,j);
             sumKir(i) = sumKir(i) +abs(kir(j));
             count(i) = count(i) +1;
         end
     end
-    sumSquare(:,i) = sumSquare(:,i)/count(i);
+    meanArea(:,i) = meanArea(:,i)/count(i);
     sumKir(i) = sumKir(i)/count(i);
     binKir(i) = 10^(Mi + L*(i+1/2));
 end
 
-color = jet(size(sumSquare,2));
-for i = 1:size(sumSquare,2)
-    plot(sumSquare(:,i),'color',color(i,:))
+color = jet(size(meanArea,2));
+for i = 1:size(meanArea,2)
+    plot(meanArea(:,i)/maxArea,'color',color(i,:))
 end
 
 
 %% Plot the result at end time
 index = floor(N*T/totalTime);
 
-
 [kir_sorted, sortOrder] = sort(abs(kir));
-normA1 = square(index,sortOrder);
+normA1 = area(index,sortOrder);
 kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
 
@@ -160,11 +159,11 @@ title('with moving mean on area')
 %axis([0.01 10 0 1.1])
 
 figure
-semilogx(sumKir, sumSquare(index,:),'o')
+semilogx(sumKir, meanArea(index,:)/maxArea,'o')
 title('With mean over chirality bins and against mean of chirality')
 
 figure
-semilogx(binKir, sumSquare(index,:),'o')
+semilogx(binKir, meanArea(index,:)/maxArea,'o')
 title('With mean over chirality bins against center of bin')
 
 %% if we want to save the new results

@@ -1,4 +1,4 @@
-function [numSquares,A] = calcArea(M,v,dT,l,nReturn)
+function [A,A_norm] = calcArea(M,v,dT,l,nReturn)
 % Calculates the area covered by an agent, returns the number of squares
 % the agent moves through (numSquares) and the normalized area (A)
 % Also consideres squares that are missed out when moving diagonally.
@@ -8,8 +8,8 @@ function [numSquares,A] = calcArea(M,v,dT,l,nReturn)
 % Line 1:4 refers to the lines of a square, where line 1 is the left
 % vertical line and the others are numbered in clockwise direction.
 
-numSquares = zeros(1,nReturn);
 A = zeros(1,nReturn);
+A_norm = zeros(1,nReturn);
 
 maxPos = max(max(M,[],1),[],3);
 minPos = min(min(M,[],1),[],3);
@@ -101,15 +101,15 @@ for j = 1:nReturn
         
     end
     
-    numSquares(j) = sum(sum(areaGrid));
+    A(j) = sum(sum(areaGrid));
     
     T = returnIndices(j)*dT;
     % Normalized area
-    A(j) = numSquares(j)/((4*v*T/(pi*l)-1));
-    
+    A_norm(j) = A(j)/((4*v*T/(pi*l)-1));
+
     k = returnIndices(j);
 end
 
-
+A = A*l^2;
 
 end
