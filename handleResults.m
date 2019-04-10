@@ -1,20 +1,26 @@
 %% ploting the results with a loop so we can change parameters
 
-R = 150;
-l = R/10; % Corresponds to ~5*v*dT for agents in experiments
+R = 250;
+l = R/25;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
-
+preTime = 10;   % tid i sekunder innan areaberäkningen börjar
+totalTime = 50; % total tid areanberäkningen ska köra efter att den börjat
+N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
+k = 3;          % Hur många movmean medelvärdesbildar på
+N_k = 25;        % Antalet bins vi delar upp kiraliteten i 
+T = 50;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
+ 
 expName = 'circle_large_1agent';         %Change name for each new set of data
 
-sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n')
-n =size(sourceFile{1},1)
+sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
+n =size(sourceFile{1},1);
 
 %% HOMOGENOUS
 % loop through n XML files
 
-kir = zeros(1,n)
-normA = zeros(1,n)
-v = zeros(1,n)
+kir = zeros(1,n);
+normA = zeros(1,n);
+v = zeros(1,n);
 for i = 1:n
 
        file = sourceFile{1}{i}; %we should use same expName here
@@ -23,19 +29,20 @@ for i = 1:n
        %spirKir = getChiralitySpiral(pos_a,dT,1,20);
        [squares,normA(i)] = calcArea(pos_a,v,dT,l);
        
-       result = [kir(i), normA(i)]              
+       result = [kir(i), normA(i)];          
 end
 
 
 %% COMLEX 2 - with indices 
-
 file = ['results/Lab/' expName 'indices.txt']
 indice = load(file);
 
-film=0; 
+cuts = zeros(1,sum(isnan(indice(:,1))));
+new_indice = zeros(sum(isnan(indice(:,1))),2);
+
+film=0;
 j=0;
 start=1;
-
 for i=1:size(indice,1)
     if isnan(indice(i))
         film=film+1;
@@ -43,23 +50,23 @@ for i=1:size(indice,1)
         new_indice(film,:) = [start start+j-1] ;
         start=start+j+1;
         j=0;
-    else j=j+1;
+    else
+        j=j+1;
     end 
 end 
 %% 
-
 agent=1;
 
-
 kir = zeros(1,n);
-normA = zeros(1,n);
 v = zeros(1,n);
-square = zeros(100,n);
-normA = zeros(100,n);
+D_r = zeros(1,n);
+square = zeros(N,n);
 
+startIndex  =  floor(preTime/dT);
+endIndex    =floor((preTime+totalTime)/dT);
 
 for i = 1:n % loop through n XML files
-       
+       i
        file =  sourceFile{1}{i};
        [pos_a,~,times] = cut(file,1);
        r = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero 
@@ -68,92 +75,102 @@ for i = 1:n % loop through n XML files
               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
               %spirKir(k) = getChiralitySpiral(r,dT,1,20);
        end
-       totalTime = size(pos_a,3)*dT;
        
-       [kir(i),v(i)] = getComplexCirality(r,dT,1);
-       %[kir2(i),D_r(i) ,v2(i)] = getKompSpiral(r,dT,1,6,60);
-       [square(:,i),normA(:,i)] = calcArea(pos_a(:,:,250:end),v(i),dT,l,100);
+       %[kir(i),v(i)] = getComplexCirality(r,dT,1);
+       %[kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
+
+       [square(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
 end 
    
 %% load result
 % clear all, close all 
 
-expName = 'circle_large_1agent';
-name= join(['results/Lab/' expName '.txt']);
-c= load(name);
+name = join(['results/Lab/' expName '.txt']);
+c = load(name);
 
-kir2 = c(:,1);
+kir = c(:,1);
 % v = c(:,4);
 % normA = c(:,2);
 % totalTime = c(:,3);
 % l = c(:,5);
 % D_r = c(:,6);
-%% Plot result
-kir
-[kir_sorted, I] = sort(abs(kir));
-normA1 = square(100,I);
-k=3;
+
+
+%% Plotting the area over time for every film
+figure
+hold on
+
+[~, sortOrder] = sort(abs(kir));
+square_sorted = square(:,sortOrder);
+
+color = jet(size(square_sorted,2));
+for i = 1:size(square_sorted,2)
+    plot(square_sorted(:,i),'color',color(i,:))
+end
+
+%% Plotting the mean area of time  over N_k different bins of chirality
+figure
+hold on
+
+Mi = min(log10(abs(kir)));
+Ma = max(log10(abs(kir)));
+L = (Ma-Mi)/N_k;
+
+
+sumSquare = zeros(N,N_k);
+sumKir = zeros(1,N_k);
+binKir = zeros(1,N_k);
+count = zeros(1,N_k);
+for i = 1:N_k
+    for j = 1:length(kir)
+        if ((i-1)*L + Mi <= log10(abs(kir(j))) && log10(abs(kir(j))) <= Mi + (i)*L )
+            sumSquare(:,i) = sumSquare(:,i) + square(:,j);
+            sumKir(i) = sumKir(i) +abs(kir(j));
+            count(i) = count(i) +1;
+        end
+    end
+    sumSquare(:,i) = sumSquare(:,i)/count(i);
+    sumKir(i) = sumKir(i)/count(i);
+    binKir(i) = 10^(Mi + L*(i+1/2));
+end
+
+color = jet(size(sumSquare,2));
+for i = 1:size(sumSquare,2)
+    plot(sumSquare(:,i),'color',color(i,:))
+end
+
+
+%% Plot the result at end time
+index = floor(N*T/totalTime);
+
+
+[kir_sorted, sortOrder] = sort(abs(kir));
+normA1 = square(index,sortOrder);
 kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
-
-[kir2_sorted, I] = sort(abs(kir2));
-%normA = normA(100,I);
-kir_mm2 = movmean(kir2_sorted,k);
-normA_mm2 = movmean(normA,k);
-% 
-% size_kir=size(kir,1);
-% floor_size=floor(size_kir/k)*k;
-% 
-% normA_m=zeros(floor_size/k,1);
-% kir_m=zeros(floor_size/k,1);
-% j=1;
-% for i=1:size_kir
-%     if mod(i,k)==0
-%         for m=1:k
-%             v(m)=kir(i-m+1);
-%             a(m)=normA(i-m+1);
-%         end 
-%         kir_m(j)=mean(v); 
-%         normA_m(j)=mean(a);
-%         j=j+1;
-%     end 
-% end
-% clear v
-% 
-% if size_kir>floor_size
-%     rest=size_kir-floor_size
-%     for i=1:rest
-%         v(i)=kir(floor_size+i-1)
-%         a(i)=normA(floor_size+i-1)
-%         kir_m(floor_size/k+1)=mean(v);
-%         normA_m(floor_size/k+1)=mean(a);
-% 
-%     end
-% end 
-%             
 
 figure
 semilogx(abs(kir_sorted),normA1,'o')
 title('no mean')
 %axis([0.01 10 0 1.1])
-% figure
-% semilogx(abs(kir_m), normA_m, 'o')
-% title('with mean')
-% axis([0.01 10 0 1.1])
+
 figure
 semilogx(abs(kir_sorted), normA_mm, 'o')
-title('with moving mean')
+title('with moving mean on area')
 %axis([0.01 10 0 1.1])
-
 
 figure
-semilogx(abs(kir2_sorted), normA_mm, 'o')
-title('with moving mean spiral kirality')
-%axis([0.01 10 0 1.1])
+semilogx(sumKir, sumSquare(index,:),'o')
+title('With mean over chirality bins and against mean of chirality')
+
+figure
+semilogx(binKir, sumSquare(index,:),'o')
+title('With mean over chirality bins against center of bin')
+
 %% if we want to save the new results
 file1 = ['results/Lab/' expName '_square.txt']; % Name of dataFile
 
-results = square %zeros(n,6)
+results = zeros(n,6);
 % results(:,1) = kir;
 % results(:,2) = normA;
 % results(:,3) = totalTime;
@@ -161,75 +178,6 @@ results = square %zeros(n,6)
 % results(:,5) = l;
 % results(:,6) = D_r;
 
-dlmwrite(file1,results);
-
-%%
-figure
-hold on
-
-[kir2, sortOrder] = sort(abs(kir2))
-square = square(:,sortOrder)
-
-color = jet(size(square,2))
-for i = 1:size(square,2)
-    plot(square(:,i),'color',color(i,:))
-end
-
-%%
-figure
-hold on
-
-[kir2, sortOrder] = sort(abs(kir2));
-square = square(:,sortOrder);
-sumSquare  = zeros(size(square,1),5);
-sumKir     = zeros(5,1);
-for k = 1:5
-    for j = 1:7
-       sumSquare(:,k) = square(:,j+7*(k-1)) + sumSquare(:,k);
-       sumKir(k) = sumKir(k) + kir2(j+7*(k-1));
-    end
-end
-sumSquare = sumSquare/7;
-meanKir = sumKir/7
-
-color = jet(size(sumSquare,2))
-for i = 1:size(sumSquare,2)
-    plot(sumSquare(:,i),'color',color(i,:))
-end
-
-%%
-N = 10; %antalet bins vi delar upp kiraliteten i 
-Mi = min(log10(abs(kir2)));
-Ma = max(log10(abs(kir2)));
-L = (Ma-Mi)/N;
-
-sumSquare = zeros(100,N);
-sumKir = zeros(1,N);
-count = zeros(1,N)
-for i = 1:N
-    
-
-    for j = 1:length(kir2)
-        if ((i-1)*L + Mi <= log10(abs(kir2(j))) && log10(abs(kir2(j))) <= Mi + (i)*L )
-            i
-            j
-            sumSquare(:,i) = sumSquare(:,i) + square(:,j);
-            sumKir(i) = sumKir(i) +kir2(j);
-            count(i) = count(i) +1;
-        end
-    end
-
-end
-
-sumSquare(:,i) = sumSquare(:,i)/count;
-sumKir(i) = sumKir(i)/count;
-
-
-
-
-
-
-
-
+%dlmwrite(file1,results);
 
 
