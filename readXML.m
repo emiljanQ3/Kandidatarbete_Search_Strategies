@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Kors_1agent/024_Tracks.xml'; %Name of file
+file = 'XMLfiles/Circle_small_1agent/Liten (1)_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
@@ -12,11 +12,12 @@ dT = 1/25; % Time step
 
 [r, indice] = splitPositionData(pos_a);
 
-[kir,v] = getComplexCirality(r,dT,1);
 
-[squares,normA] = calcArea(pos_a,v,dT,l);
+[kir,D_r,v] = getKompSpiral(r,dT,1,6,60);
+indice
+%[squares,normA] = calcArea(pos_a,v,dT,l,size(pos_a,3),1);
 
-result = [kir, normA]
+result = [kir D_r v]%, normA]
 
 
 %% Run to save results to file
@@ -30,7 +31,7 @@ clc;
     % l (size of area elements)
     % D_r
 
-expName = 'test'; %Change name for each new set of data
+expName = 'circle_medium_1agent'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
