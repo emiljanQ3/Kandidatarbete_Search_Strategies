@@ -22,3 +22,10 @@ XMLfiles/Circle_small_1agent/Liten (32)_Tracks.xml
 XMLfiles/Circle_small_1agent/Liten (31)_Tracks.xml
 XMLfiles/Circle_small_1agent/Liten (30)_Tracks.xml
 XMLfiles/Circle_small_1agent/Liten (29)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (2)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (3)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (4)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (5)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (6)_Tracks.xml
+XMLfiles/Circle_small_1agent/Liten (7)_Tracks.xml
+
