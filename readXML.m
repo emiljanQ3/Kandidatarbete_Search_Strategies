@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Circle_small_1agent/Liten (1)_Tracks.xml'; %Name of file
+file = 'XMLfiles/Circle_small_1agent/Liten (3)_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
@@ -17,7 +17,7 @@ dT = 1/25; % Time step
 indice
 %[squares,normA] = calcArea(pos_a,v,dT,l,size(pos_a,3),1);
 
-result = [kir D_r v]%, normA]
+result = [kir D_r v size(pos_a,3)*dT]%, normA]
 
 %% Run to get data from circular path (run once)
 myCircle = pos_a;
@@ -45,13 +45,13 @@ clc;
     % l (size of area elements)
     % D_r
 
-expName = 'circle_medium_1agent'; %Change name for each new set of data
+expName = 'circle_small_1agent'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
 file3 = ['results/Lab/' expName 'indices.txt']
 
-data = [result size(pos_a,3)*dT v l];
+data = [result];
 dlmwrite(file1,data,'-append');
 
 fileID = fopen(file2,'a');
