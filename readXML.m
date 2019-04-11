@@ -19,6 +19,20 @@ indice
 
 result = [kir D_r v]%, normA]
 
+%% Run to get data from circular path (run once)
+myCircle = pos_a;
+
+%% Plot M, trajectory of agent
+
+figure(3004)
+
+x = myCircle(1,1,100:300);
+y = myCircle(1,2,100:300);
+x = x(:,:)';
+y = y(:,:)';
+plot(x,y)
+hold on
+axis equal
 
 %% Run to save results to file
 clc;
@@ -45,20 +59,7 @@ fprintf(fileID,'%-40s\n',file);
 fclose(fileID);
 
 dlmwrite(file3, indice, '-append')
-%% Run to get data from circular path (run once)
-myCircle = pos_a;
 
-%% Plot M, trajectory of agent
-
-figure(3004)
-
-x = myCircle(1,1,100:300);
-y = myCircle(1,2,100:300);
-x = x(:,:)';
-y = y(:,:)';
-plot(x,y)
-hold on
-axis equal
 %% Run animation
 
 % Generate an obstacle from the lab
