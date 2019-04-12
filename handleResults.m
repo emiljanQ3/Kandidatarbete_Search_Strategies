@@ -4,14 +4,14 @@ R = 250;
 l = R/10;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 preTime = 10;   % tid i sekunder innan areaberäkningen börjar
-totalTime = 50; % total tid areanberäkningen ska köra efter att den börjat
+totalTime = 40; % total tid areanberäkningen ska köra efter att den börjat
 N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
 k = 3;          % Hur många movmean medelvärdesbildar på
-N_k = 25;       % Antalet bins vi delar upp kiraliteten i 
-T = 50;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
+N_k = 25;     % Antalet bins vi delar upp kiraliteten i 
+T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'circle_large_1agent';         %Change name for each new set of data
+expName = 'circle_medium_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -122,7 +122,7 @@ sumKir = zeros(1,N_k);
 binKir = zeros(1,N_k);
 count = zeros(1,N_k);
 for i = 1:N_k
-    for j = 1:length(kir)
+    for j = 1:size(kir,1)
         if ((i-1)*L + Mi <= log10(abs(kir(j))) && log10(abs(kir(j))) <= Mi + (i)*L )
             meanArea(:,i) = meanArea(:,i) + area(:,j);
             sumKir(i) = sumKir(i) +abs(kir(j));
@@ -149,12 +149,12 @@ kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
 
 figure
-semilogx(abs(kir_sorted),normA1,'o')
+semilogx(abs(kir_sorted),normA1./maxArea,'o')
 title('no mean')
 %axis([0.01 10 0 1.1])
 
 figure
-semilogx(abs(kir_sorted), normA_mm, 'o')
+semilogx(abs(kir_sorted), normA_mm./maxArea, 'o')
 title('with moving mean on area')
 %axis([0.01 10 0 1.1])
 
@@ -165,18 +165,18 @@ title('With mean over chirality bins and against mean of chirality')
 figure
 semilogx(binKir, meanArea(index,:)/maxArea,'o')
 title('With mean over chirality bins against center of bin')
-
+%axis([0.01 10 0 0.7])
 %% if we want to save the new results
-file1 = ['results/Lab/' expName '_square.txt']; % Name of dataFile
+file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 
 results = zeros(n,6);
-% results(:,1) = kir;
-% results(:,2) = normA;
+results(:,1) = kir;
+%results(:,2) = normA;
 % results(:,3) = totalTime;
-% results(:,4) = v;
+results(:,3) = v;
 % results(:,5) = l;
-% results(:,6) = D_r;
+results(:,2) = D_r;
 
-%dlmwrite(file1,results);
+dlmwrite(file1,results);
 
 
