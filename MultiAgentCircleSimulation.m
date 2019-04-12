@@ -7,9 +7,9 @@ numAgents               = 2;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 maxMeasurmentTime       = 300;
-numTimeSteps            = floor(maxMeasurmentTime/dT);
-numSimulations          = 100;
-w                       = linspace(-4,4,50); %[0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+maxTimeSteps            = floor(maxMeasurmentTime/dT);
+numSimulations          = 50;
+w                       = linspace(-4,4,20); %[0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.5;     % speed in R/s
 L                       = 1/7.5*R; % Side length of cells in grid used to determine covered area
 D_r                     = 0.03; %Diffusion constant for rotation
@@ -19,26 +19,27 @@ numAreaDP               = 100;
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
-pos_a = zeros(numAgents, 2, numTimeSteps);              %INITIALIZATION: Agent positions in each timestep
+pos_a = zeros(numAgents, 2, maxTimeSteps);              %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
 totalTimeSteps = zeros(numSimulations,1); 
 meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
-colision = zeros(3,numTimeSteps);
+colision = zeros(3,maxTimeSteps);
+numMax = zeros(length(w));
+meanTotalTime = zeros(length(w));
 
 
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_count = 1;
-loop_cycles = length(w)*(length(w)-1)/2;
+loop_cycles = length(w)*(length(w)-1)/2 + length(w);
 
 startTic = tic;
 
 for i = 1:length(w)
-    for j = i:1:length(w)
-        loopTic = tic;
-
+    for j = i:1:length(w)                
+        
         W = [w(i),w(j)];
         
         for N_i = 1:numSimulations %Loop over separate simulations
@@ -49,26 +50,40 @@ for i = 1:length(w)
 
             % Do simulation for measurmenttime after pretime is done
             [pos_a, rot_a, colision, totalTimeSteps(N_i)] = simulateMultiAgentCircle( maxMeasurmentTime ,dT,D_r,D_p,v,W,numAgents,pos_a, rot_a,colision, R, r_c,1);
+            
 
         end
 
         meanTotalTime(i,j) = mean(totalTimeSteps)*dT;
+        
+        for n = totalTimeSteps
+            if n == maxTimeSteps
+                numMax(i,j) = numMax(i,j) + 1;
+            end
+        end
 
 
-        status = string(w_count) + "/" + string(loop_cycles) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j))
+        disp(string(w_count) + "/" + string(loop_cycles) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j)))
 
         w_count = w_count + 1;
-        toc(loopTic)
+        
+        fprintf("Time elapsed:          " + sec2hms(toc(startTic)) + "\n")
+        timeLeft = toc(startTic) / w_count * (loop_cycles - w_count);
+        fprintf("Estimated time left:   " + sec2hms(timeLeft) + "\n\n")
+
+        
         %animation(pos_a, generateObstacle('hm'),0,colision, totalTime(N_i))
     end
 end
-toc(startTic)
+
+percentMax = numMax ./ numSimulations;
+
 %% 3D plot
 X = w;
 Y = w;
-Z = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
-Z_1 = Z;
-Z_2 = 1./Z;
+Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
+Z_2 = 1./Z_1;
+
 
 figure
 surf(X,Y,Z_1)
@@ -77,6 +92,25 @@ title("Time")
 figure
 surf(X,Y,Z_2)
 title("Efficiency")
+
+Z_3 = percentMax + percentMax' - diag(diag(percentMax));
+
+figure
+surf(X,Y,Z_3)
+title("Fraction failures")
+
+%% 3D plot log
+
+figure
+surf(X,Y,Z_1)
+title("Time")
+set(gca, 'XScale', 'log', 'YScale', 'log');
+
+figure
+surf(X,Y,Z_2)
+title("Efficiency")
+set(gca, 'XScale', 'log', 'YScale', 'log');
+
 %%
 figure
 hold on
@@ -124,7 +158,7 @@ end
 dateTime = clock;
 R_s = num2str(R);
 r_s = num2str(r);
-filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', 'circle', R_s([1,3:end]), r_s([1,3:end]), '_', num2str(numAgents))
+filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', 'circle_R', R_s([1,3:end]), '_N', num2str(maxTimeSteps), '_w', num2str(length(w)))
 path = strcat(pwd, '/results/', filename)
 save(path)
 %saveas(h,figname, 'fig')
