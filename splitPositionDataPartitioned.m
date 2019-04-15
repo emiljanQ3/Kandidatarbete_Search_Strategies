@@ -21,4 +21,5 @@ function [pos_res, indice] = splitPositionDataPartitioned(pos_a, n, myCircle)
    pos_res = pos_res(2:end,:,:);
    indice  = indice(2:end,:);
    
+   close all
 end

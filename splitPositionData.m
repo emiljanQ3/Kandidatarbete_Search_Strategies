@@ -36,7 +36,7 @@ while(button ~= 3)
     [x,y,button] = ginput;
     
     scatter(x,y,'b.')
-    button
+
     if(button == 3)
         break
     end
@@ -65,7 +65,6 @@ while(button ~= 3)
     
     [~,~,button2] = ginput;
     
-    button2
     
     if(isempty(button2)) %the space bar
         
@@ -87,6 +86,5 @@ while(button ~= 3)
     
 end
 
-indice(agent,:) = NaN
-p = 5;
+indice(agent,:) = [NaN,NaN];
 end
