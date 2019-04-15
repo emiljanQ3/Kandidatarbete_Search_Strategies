@@ -9,19 +9,20 @@ figure
 
 X = pos_a(1, 1, :);
 Y = pos_a(1, 2, :);
-start = [pos_a(1,1,1), pos_a(1,2,1)];
-slut = [pos_a(1,1,size(pos_a,3)), pos_a(1,2,size(pos_a,3))];
+start = [pos_a(1,1,1), pos_a(1,2,1)]
+slut = [pos_a(1,1,size(pos_a,3)), pos_a(1,2,size(pos_a,3))]
 
 X = X(:,:)';
 Y = Y(:,:)';
 plot(X,Y);
 hold on
 plot(X,Y, '.');
-x = myCircle(1,1,:);
-y = myCircle(1,2,:);
-x = x(:,:)';
-y = y(:,:)';
-plot(x,y,'c')
+
+circlex = myCircle(1,1,:);
+circley = myCircle(1,2,:);
+circlex = circlex(:,:)';
+circley = circley(:,:)';
+plot(circlex,circley,'c')
 hold on
 axis equal
 
