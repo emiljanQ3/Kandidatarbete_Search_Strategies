@@ -1,5 +1,5 @@
-function [pos_res, indice] = splitPositionData(pos_a)
-figure(3004)
+function [pos_res, indice] = splitPositionData(pos_a, myCircle)
+figure
 
 %press start point and end point then enter to cut
 %cut will turn red
@@ -17,6 +17,13 @@ Y = Y(:,:)';
 plot(X,Y);
 hold on
 plot(X,Y, '.');
+x = myCircle(1,1,:);
+y = myCircle(1,2,:);
+x = x(:,:)';
+y = y(:,:)';
+plot(x,y,'c')
+hold on
+axis equal
 
 plot(start(1),start(2), 'o', 'MarkerEdgeColor','r')
 plot(slut(1), slut(2),'o', 'MarkerEdgeColor','g')
