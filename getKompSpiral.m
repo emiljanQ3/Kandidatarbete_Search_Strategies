@@ -12,7 +12,7 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
 %         plot(squeeze(temp(1,1,:)),squeeze(temp(1,2,:)),'.')
 %         axis equal
     end
-    n = ciel(count/100);
+    n = ceil(count/100);
     if n<=2
        n = 2;
     end 
