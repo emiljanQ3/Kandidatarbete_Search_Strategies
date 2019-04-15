@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Circle_medium_1agent/Medium (2)_Tracks.xml'; %Name of file
+file = 'XMLfiles/Circle_large_1agent/Stor (54)_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
@@ -10,7 +10,7 @@ dT = 1/25; % Time step
 
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-[r, indice] = splitPositionDataPartitioned(pos_a,100, myCircle);
+[r, indice] = splitPositionDataPartitioned(pos_a,700, myCircle);
 
 [kir,D_r,v] = getKompSpiral(r,dT,1,6,60);
 indice
@@ -19,7 +19,15 @@ indice
 result = [kir D_r v size(pos_a,3)*dT]%, normA]
 
 %% Run to get data from circular path (run once)
-myCircle = [pos_a(1,1,80:300), pos_a(1,2,80:300)];
+myCircle = [pos_a(1,1,2000:size(pos_a,3)), pos_a(1,2,2000:size(pos_a,3))];
+figure
+x = myCircle(1,1,:);
+y = myCircle(1,2,:);
+x = x(:,:)';
+y = y(:,:)';
+plot(x,y,'c')
+hold on
+axis equal
 %% Run to save results to file
 clc;
 % Sparar:
