@@ -1,5 +1,5 @@
 function [pos_res, indice] = splitPositionData(pos_a)
-figure(3004)
+figure
 
 %press start point and end point then enter to cut
 %cut will turn red

@@ -13,6 +13,7 @@ function [pos_res, indice] = splitPositionDataPartitioned(pos_a, n)
    
    %Last interation
    [dPos, dIndice] = splitPositionData(pos_a(:,:,k:end));
+   dPos = cat(3, dPos , zeros(size(dPos,1), size(dPos,2), n - size(dPos,3)));
    pos_res = [pos_res ; dPos];
    indice  = [indice ; dIndice];
    
