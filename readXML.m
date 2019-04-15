@@ -1,6 +1,6 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Circle_small_1agent/Liten (3)_Tracks.xml'; %Name of file
+file = 'XMLfiles/Circle_medium_1agent/Medium (2)_Tracks.xml'; %Name of file
 
 agent = 1; % which agent/s we look at
 
@@ -10,8 +10,7 @@ dT = 1/25; % Time step
 
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
 
-[r, indice] = splitPositionData(pos_a);
-
+[r, indice] = splitPositionDataPartitioned(pos_a,100, myCircle);
 
 [kir,D_r,v] = getKompSpiral(r,dT,1,6,60);
 indice
@@ -20,20 +19,7 @@ indice
 result = [kir D_r v size(pos_a,3)*dT]%, normA]
 
 %% Run to get data from circular path (run once)
-myCircle = pos_a;
-
-%% Plot M, trajectory of agent
-
-figure(3004)
-
-x = myCircle(1,1,100:300);
-y = myCircle(1,2,100:300);
-x = x(:,:)';
-y = y(:,:)';
-plot(x,y)
-hold on
-axis equal
-
+myCircle = [pos_a(1,1,80:300), pos_a(1,2,80:300)];
 %% Run to save results to file
 clc;
 % Sparar:
@@ -45,7 +31,7 @@ clc;
     % l (size of area elements)
     % D_r
 
-expName = 'circle_small_1agent'; %Change name for each new set of data
+expName = 'circle_medium_1agent'; %Change name for each new set of data
 
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
@@ -59,6 +45,18 @@ fprintf(fileID,'%-40s\n',file);
 fclose(fileID);
 
 dlmwrite(file3, indice, '-append')
+
+%% Plot M, trajectory of agent
+
+figure(3004)
+
+x = myCircle(1,1,80:300);
+y = myCircle(1,2,80:300);
+x = x(:,:)';
+y = y(:,:)';
+plot(x,y,'c')
+hold on
+axis equal
 
 %% Run animation
 
