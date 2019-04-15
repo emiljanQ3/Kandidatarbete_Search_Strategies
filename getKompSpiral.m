@@ -1,13 +1,21 @@
 function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
     count = 0;
     for agent = 1:size(pos_a,1)
+%         figure(9112)
+%         hold on
+%         plot(squeeze(pos_a(agent,1,:)),squeeze(pos_a(agent,2,:)),'.')
+%         axis equal
         temp = doublePoint(pos_a(agent,:,:),stepSizeThreshold,tol);
         count = count + length(temp);
+%         figure(9111)
+%         hold on
+%         plot(squeeze(temp(1,1,:)),squeeze(temp(1,2,:)),'.')
+%         axis equal
     end
-    n = ceil(count/100)
-    if n<5
-       n = 5;
-    end
+    n = ciel(count/100);
+    if n<=2
+       n = 2;
+    end 
     
     count = zeros(1,n);
     count(1) = 1;
@@ -40,8 +48,8 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
             end
         end
     end
-    meanPath(1,:) = pathSum(1,:)./count
-    meanPath(2,:) = pathSum(2,:)./count
+    meanPath(1,:) = pathSum(1,:)./count;
+    meanPath(2,:) = pathSum(2,:)./count;
   
     T = 1:length(meanPath);
     T = dT*(T-1);
@@ -55,11 +63,11 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
         W = @(x) W(x) + w(x)/j;
     end
     
-    guess = getCirality(pos,dT,stepSizeThreshold);
+    guess = getComplexCirality(pos_a,dT,stepSizeThreshold);
     x_0 = [0.05,guess,100];
     options = optimset('MaxFunEvals',1000000,'MaxIter',1000000);
     x = fminsearch(W,x_0,options);
-    W(x)/(length(T)^2);
+   % W(x)/(length(T)^2);
     g_x = x(3)/(x(1)^2+x(2)^2)*(x(1)-exp(-x(1)*T).*(x(1)*cos(x(2)*T)-x(2)*sin(x(2)*T)));
     g_y = x(3)/(x(1)^2+x(2)^2)*(x(2)-exp(-x(1)*T).*(x(2)*cos(x(2)*T)+x(1)*sin(x(2)*T)));
 
@@ -67,7 +75,7 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
     figure(2003)
     hold on
     plot(meanPath(1,:),meanPath(2,:))
-    %axis equal
+    axis equal
     plot(g_x,g_y)
     
 

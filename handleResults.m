@@ -1,17 +1,17 @@
 %% ploting the results with a loop so we can change parameters
 
-R = 250;
-l = R/10;       % Corresponds to ~5*v*dT for agents in experiments
+R = 270/2;
+l = R/20;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 preTime = 10;   % tid i sekunder innan areaberäkningen börjar
-totalTime = 40; % total tid areanberäkningen ska köra efter att den börjat
+totalTime = 45; % total tid areanberäkningen ska köra efter att den börjat
 N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
 k = 3;          % Hur många movmean medelvärdesbildar på
 N_k = 25;     % Antalet bins vi delar upp kiraliteten i 
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'circle_medium_1agent';         %Change name for each new set of data
+expName = 'circle_small_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -67,20 +67,22 @@ startIndex  =  floor(preTime/dT);
 endIndex    =floor((preTime+totalTime)/dT);
 
 for i = 1:n % loop through n XML files
-       i
+       i;
        file =  sourceFile{1}{i};
        [pos_a,~,times] = cut(file,1);
        r = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero 
 
        for j=1:cuts(i)
               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
-              %spirKir(k) = getChiralitySpiral(r,dT,1,20);
        end
        
        %[kir(i),v(i)] = getComplexCirality(r,dT,1);
-       %[kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
+       
+       %w = waitforbuttonpress;
+       [kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
+       [kir(i) D_r(i) v(i)]
 
-       [area(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
+       %[area(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
 end 
 
 %% load result
@@ -89,12 +91,12 @@ end
 name = join(['results/Lab/' expName '.txt']);
 c = load(name);
 
-kir = c(:,1);
-% v = c(:,4);
+kir2 = c(:,1);
+v2 = c(:,3);
 % normA = c(:,2);
 % totalTime = c(:,3);
 % l = c(:,5);
-% D_r = c(:,6);
+D_r2 = c(:,2);
 
 
 %% Plotting the area over time for every film
@@ -178,5 +180,7 @@ results(:,3) = v;
 results(:,2) = D_r;
 
 dlmwrite(file1,results);
+
+
 
 
