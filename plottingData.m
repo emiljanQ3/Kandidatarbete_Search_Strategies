@@ -3,7 +3,7 @@ load('results/noEdge/oneAgent/homogeneous/2019218-92_hm02005_1.mat')
 
     figure(112)
     meanArea_max = meanAreaCovered(1);
-    semilogx(w,meanAreaCovered/(meanArea_max),'ro')
+    semilogx(w,meanAreaCovered/(meanArea_max),'r')
    % axis([0.01, 10, 0, 1.2])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)
@@ -17,7 +17,7 @@ load('results/Edge/oneAgent/201937-1428_hm060167_1.mat')
 if(edge) 
     figure(112)
     areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
-    semilogx(w,areaPerTime/(areaPerTime_max),'go')
+    semilogx(w,areaPerTime/(areaPerTime_max),'g')
     %axis([0.01, 10, 0, 1])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)
@@ -61,7 +61,7 @@ title('Av agenter uppsökt area normerat mot maximal upptäckt area', 'Interpret
 set(gca, 'fontsize', 28)
 
 ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 35)
-xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 30)
+xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 35)
 
 legend('Periodisk','Begränsad','Exprimentel')
 
