@@ -1,3 +1,8 @@
+%% Creat colormap
+
+c = getRGBGradient(0.4,0.6,150)
+
+
 %% Simulated results
 
 load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
@@ -26,23 +31,21 @@ load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
 load('results/Final_results/2019416-1521_circle_medium_1agent_t45_l216.mat')
 N_k = 40;
 
-
 figure(110)
 hold on
 
 [~, sortOrder] = sort(abs(kir));
 area_sorted = area(:,sortOrder);
-
 color = jet(size(area_sorted,2));
 for i = 1:size(area_sorted,2)
     plot(area_sorted(:,i)/maxArea,'color',color(i,:))
 end
-
+colorbar
+%%
 figure(109)
 hold on
 
 [meanArea,binKir] = makeMean(kir,N_k,area);
-
 color = jet(size(meanArea,2));
 for i = 1:size(meanArea,2)
     plot(meanArea(:,i)/maxArea,'color',color(i,:))
