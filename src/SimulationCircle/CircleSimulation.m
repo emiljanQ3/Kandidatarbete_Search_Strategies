@@ -15,7 +15,7 @@ D_r                     = 0.02; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 numAreaDP               = 100;
-maxArea                 = pi*R^2
+maxArea                 = pi*R^2;
 
 %Config variables that might be interesting to include in the future:
 %Friction
@@ -68,8 +68,8 @@ toc
 figure
 hold on
 c = jet(length(w));
-c(:,2) = 0;
-for i = 1:10:size(meanAreaCovered,2)
+%c(:,2) = 0;
+for i = 1:5:size(meanAreaCovered,2)
     plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
 end
 
