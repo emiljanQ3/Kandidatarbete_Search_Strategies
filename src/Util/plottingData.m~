@@ -1,29 +1,18 @@
 %% Simulated results
 
-load('results/Final_simulation/2019416-144_circle_R1_t50_l0156.mat')
-    T = 50;         % vid vilken tidpunkt plottar vi resultatet
-    index = floor(numAreaDP*T/measurmentTime);
-
-    figure(111)
-    hold on
-    c = jet(length(w));
-    %c(:,2) = 0;
-    for i = 1:5:size(meanAreaCovered,2)
-        plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
-    end
-
+load('results/Final_simulation/2019416-144_hm02005_1.mat')
 
     figure(112)
-    hold on
-    for i = 1:size(meanAreaCovered,2)
-        plot(w(i), meanAreaCovered(index,i)/(pi*R^2),'o','color',c(i,:))
-    end
-    set(gca,'xscale','log')
-    
-    
-    title('')
+    meanArea_max = meanAreaCovered(1);
+    semilogx(w,meanAreaCovered/(meanArea_max),'r')
+   % axis([0.01, 10, 0, 1.2])
     name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
     title(name)
+    hold on
+    figure(113)
+    plot(w,meanAreaCovered/(meanArea_max),'*')
+    hold on
+   
 
 %% Experimental results
 
