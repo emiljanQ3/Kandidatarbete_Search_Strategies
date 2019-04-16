@@ -7,8 +7,8 @@ dT                      = 0.04;   % Delta time in seconds
 preTime                 = 5;     % Number of seconds simulation is run before measurement starts.
 measurmentTime          = 50;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 10;
-w                       = 10.^(linspace(-2,1,150));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 100;
+w                       = 10.^(linspace(-2,1,10));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 l                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.02; %Diffusion constant for rotation
@@ -67,10 +67,26 @@ toc
 %%
 figure
 hold on
-c = jet(length(w));
-%c(:,2) = 0;
-for i = 1:15:size(meanAreaCovered,2)
-    plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
+
+c1 = [0,0,1]; %color("blue");
+c2 = [0,1,0]; %color("green");
+c3 = [1,0,0]; %color("red");
+cSpacing = 0.67;
+
+r1 = linspace(c1(1),c2(1),floor(length(w)*cSpacing)); 
+g1 = linspace(c1(2),c2(2),floor(length(w)*cSpacing)); 
+b1 = linspace(c1(3),c2(3),floor(length(w)*cSpacing));
+
+r2 = linspace(c2(1),c3(1), length(w)-length(g1));
+g2 = linspace(c2(2),c3(2), length(w)-length(g1)); 
+b2 = linspace(c2(3),c3(3), length(w)-length(b1));
+
+
+c  = [r1',g1',b1';
+      r2',g2',b2'];
+
+for i = 1:size(meanAreaCovered,1)
+    plot(1:numAreaDP, meanAreaCovered(i,:)./pi, 'color', c(i,:))
 end
 
 
