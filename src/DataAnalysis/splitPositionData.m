@@ -1,5 +1,5 @@
 function [pos_res, indice] = splitPositionData(pos_a, myCircle)
-figure
+figure('units','normalized','outerposition',[0 0 1 1])
 
 %press start point and end point then enter to cut
 %cut will turn red
