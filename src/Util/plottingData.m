@@ -1,6 +1,6 @@
 %% Simulated results
 
-load('results/Final_simulation/2019416-144_circle_R1_t50_l0156.mat')
+load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
     T = 50;         % vid vilken tidpunkt plottar vi resultatet
     index = floor(numAreaDP*T/measurmentTime);
 
@@ -12,39 +12,49 @@ load('results/Final_simulation/2019416-144_circle_R1_t50_l0156.mat')
         plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
     end
 
-
     figure(112)
     hold on
     for i = 1:size(meanAreaCovered,2)
-        plot(w(i), meanAreaCovered(index,i)/(pi*R^2),'o','color',c(i,:))
+        plot(w(i), meanAreaCovered(index,i)/(maxArea),'o','color',c(i,:))
     end
     set(gca,'xscale','log')
-    
-    
+   
     title('')
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
+
 
 %% Experimental results
+load('results/Final_results/2019416-1521_circle_medium_1agent_t45_l216.mat')
+N_k = 40;
 
-experiment = 'hm1agent';
-dataFile = ['results/Lab/' experiment '.txt'];
-sourceFile = ['results/Lab/' experiment 'SourceFiles.txt'];
-allData = dlmread(dataFile);
 
-w = allData(:,1);
-normArea = allData(:,2); 
-v = allData(:,4);
+figure(110)
+hold on
 
-figure(112)
-semilogx(abs(w),normArea,'bo')
-figure(113)
-plot(w,normArea,'o')
+[~, sortOrder] = sort(abs(kir));
+area_sorted = area(:,sortOrder);
 
-%axis([0.01, 10, 0, 1.2])
-%name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
+color = jet(size(area_sorted,2));
+for i = 1:size(area_sorted,2)
+    plot(area_sorted(:,i)/maxArea,'color',color(i,:))
+end
+
+figure(109)
+hold on
+
+[meanArea,binKir] = makeMean(kir,N_k,area);
+
+color = jet(size(meanArea,2));
+for i = 1:size(meanArea,2)
+    plot(meanArea(:,i)/maxArea,'color',color(i,:))
+end
+
 name = 'Experimental results';
 title(name)
+
+figure(112)
+semilogx(binKir, meanArea(index,:)/maxArea,'o')
+title('With mean over chirality bins against center of bin')
+
 
 %%
 
