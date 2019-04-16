@@ -1,20 +1,21 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1;      %Circular areana radius
+R                       = 1/1.7;      %Circular areana radius
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 5;     % Number of seconds simulation is run before measurement starts.
 measurmentTime          = 50;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 1000;
-w                       = 10.^(linspace(-2,1,150));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 20;
+w                       = 10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 l                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.02; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 numAreaDP               = 100;
+maxArea                 = pi*R^2;
 
 %Config variables that might be interesting to include in the future:
 %Friction
@@ -26,7 +27,7 @@ pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 area = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
 totalTime = zeros(numSimulations,1); 
-meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
+meanAreaCovered = zeros(numAreaDP, length(w));           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
 colision = zeros(3,numTimeSteps);
 tic
@@ -50,14 +51,13 @@ for w_i = w %Loop over different kiralities
         
         %Let's also calculate area discovered at certain times
 
-        [area(N_i, :), normA(N_i, :)] = calcArea(pos_a, v, dT, l, numAreaDP);
+        [area(N_i, :), ~] = calcArea(pos_a, v, dT, l, numAreaDP);
 
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
-    meanNormA(w_j,:)       = mean(normA);
-    meanAreaCovered(w_j,:) = mean(area);
-    varians(w_j)        = std(area(:, numAreaDP));
+    meanAreaCovered(:,w_j) = mean(area)';
+    standardDev(w_j)        = std(area(:, numAreaDP));
     %areaPerTime(w_j,:) = meanAreaCovered(w_j,:)./totalTime;
     w_j = w_j + 1;
     toc
@@ -67,43 +67,31 @@ toc
 %%
 figure
 hold on
-c = jet(length(w));
-for i = 1:size(meanAreaCovered,1)
-    plot(1:numAreaDP, meanAreaCovered(i,:)./pi, 'color', c(i,:))
+
+c1 = [0,0,1]; %color("blue");
+c2 = [0,1,0]; %color("green");
+c3 = [1,0,0]; %color("red");
+trans1 = 0.4;
+trans2 = 0.6;
+
+c = get3CGradient(c1,c2,c3, trans1, trans2, length(w));
+
+for i = 1:2:size(meanAreaCovered,2)
+    plot(1:numAreaDP, meanAreaCovered(:,i)./pi, 'color', c(i,:))
 end
 
-figure
-hold on
-for i = 1:size(meanNormA,1)
-    plot(1:numAreaDP, meanNormA(i,:)./pi)
-end
 
 %%
 %Plot-----------------------------------------------------------------------------------------------------------------
+T = 50;         % vid vilken tidpunkt plottar vi resultatet
+index = floor(numAreaDP*T/measurmentTime);
+figure
 hold on
-obstacle = generateObstacle('hm');
-
-maxPos = max(max(pos_a,[],1),[],3);
-minPos = min(min(pos_a,[],1),[],3);
-maxmax = max(abs([maxPos minPos]));
-plotSize = ceil((maxmax) / R);
-for i = -plotSize():plotSize-1
-    for j = -plotSize:plotSize-1
-        for k = 1:size(obstacle, 3)
-            plot(obstacle(:,1,k)+j*R,obstacle(:,2,k)+i*R, 'k', 'LineWidth', 1)
-            
-        end
-    end
+for i = 1:size(meanAreaCovered,2)
+    plot(w(i), meanAreaCovered(index,i)/(pi*R^2),'o','color',c(i,:))
 end
-
-for agent = 1:numAgents
-    X = pos_a(agent, 1, :);
-    Y = pos_a(agent, 2, :);
-    %Reorder dimentions
-    X = X(:,:)';
-    Y = Y(:,:)';
-    plot(X,Y);
-end
+set(gca,'xscale','log')
+title('')
 
 
 
@@ -113,8 +101,8 @@ R_s = num2str(R);
 l_s = num2str(l);
 time_s = num2str(measurmentTime);
 
-filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', 'circle', '_R', R_s([1,3:end]), '_t', time_s, '_l', l_s([1,3:end]));
-path = strcat(pwd, '/results/Final_simulation/', filename)
+filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_circle', '_R',R_s([1,3:end]), '_t', time_s, '_l', l_s([1,3:end]));
+path = strcat(pwd, '/results/Final_results/', filename)
 save(path)
 %saveas(h,figname, 'fig')
 
@@ -123,20 +111,7 @@ save(path)
 p = animation(pos_a, obstacle,dT,colision);
 
 %%
-
-M = agentTracking('OG.xml')
-
-r = splitPositionData(M)
-
-%%
-
-[cir, v] = getCirality(M,1/25,1)
-
-[cir2, v2] = getKomplexCirality(r,1/25)
-
-[cir3, v3] = getComplexCirality(r,1/25,1)
-
-
+load('results/Final_simulation/2019416-1011_circle_R1_t50_l0156.mat')
 
 
 

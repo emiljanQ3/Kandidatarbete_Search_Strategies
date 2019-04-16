@@ -1,56 +1,63 @@
-%% periodic
-load('results/noEdge/oneAgent/homogeneous/2019218-92_hm02005_1.mat')
+%% Creat colormap
+
+c = getRGBGradient(0.4,0.6,150)
+
+
+%% Simulated results
+
+load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
+    T = 50;         % vid vilken tidpunkt plottar vi resultatet
+    index = floor(numAreaDP*T/measurmentTime);
+
+    figure(111)
+    hold on
+    c = jet(length(w));
+    %c(:,2) = 0;
+    for i = 1:5:size(meanAreaCovered,2)
+        plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
+    end
 
     figure(112)
-    meanArea_max = meanAreaCovered(1);
-    semilogx(w,meanAreaCovered/(meanArea_max),'r')
-   % axis([0.01, 10, 0, 1.2])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
     hold on
-    figure(113)
-    plot(w,meanAreaCovered/(meanArea_max),'*')
-    hold on
-    
-%% with edge
-load('results/Edge/oneAgent/201937-1428_hm060167_1.mat')
-if(edge) 
-    figure(112)
-    areaPerTime_max = numAgents*(4*v*measurmentTime*l/pi-l^2)/measurmentTime;
-    semilogx(w,areaPerTime/(areaPerTime_max),'g')
-    %axis([0.01, 10, 0, 1])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
-    figure(113)
-    plot(w,areaPerTime/(areaPerTime_max),'go')
-else
+    for i = 1:size(meanAreaCovered,2)
+        plot(w(i), meanAreaCovered(index,i)/(maxArea),'o','color',c(i,:))
+    end
+    set(gca,'xscale','log')
+   
+    title('')
 
-    meanArea_max = numAgents*(4*v*measurmentTime*l/pi-l^2);
-    semilogx(w,meanAreaCovered/(meanArea_max),'.')
-    axis([0.01, 10, 0, 1.2])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
+
+%% Experimental results
+load('results/Final_results/2019416-1521_circle_medium_1agent_t45_l216.mat')
+N_k = 40;
+
+figure(110)
+hold on
+
+[~, sortOrder] = sort(abs(kir));
+area_sorted = area(:,sortOrder);
+color = jet(size(area_sorted,2));
+for i = 1:size(area_sorted,2)
+    plot(area_sorted(:,i)/maxArea,'color',color(i,:))
+end
+colorbar
+%%
+figure(109)
+hold on
+
+[meanArea,binKir] = makeMean(kir,N_k,area);
+color = jet(size(meanArea,2));
+for i = 1:size(meanArea,2)
+    plot(meanArea(:,i)/maxArea,'color',color(i,:))
 end
 
-%%
-experiment = 'hm1agent';
-dataFile = ['results/Lab/' experiment '.txt'];
-sourceFile = ['results/Lab/' experiment 'SourceFiles.txt'];
-allData = dlmread(dataFile);
-
-w = allData(:,1);
-normArea = allData(:,2); 
-v = allData(:,4);
-
-figure(112)
-semilogx(abs(w),normArea,'bo')
-figure(113)
-plot(w,normArea,'o')
-
-%axis([0.01, 10, 0, 1.2])
-%name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
 name = 'Experimental results';
 title(name)
+
+figure(112)
+semilogx(binKir, meanArea(index,:)/maxArea,'o')
+title('With mean over chirality bins against center of bin')
+
 
 %%
 
