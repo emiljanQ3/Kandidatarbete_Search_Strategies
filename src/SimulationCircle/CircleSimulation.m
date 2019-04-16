@@ -1,7 +1,7 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1;      %Circular areana radius
+R                       = 1/1.7;      %Circular areana radius
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 5;     % Number of seconds simulation is run before measurement starts.
@@ -67,6 +67,7 @@ toc
 %%
 figure
 hold on
+
 c1 = [0,0,1]; %color("blue");
 c2 = [0,1,0]; %color("green");
 c3 = [1,0,0]; %color("red");
@@ -100,8 +101,8 @@ R_s = num2str(R);
 l_s = num2str(l);
 time_s = num2str(measurmentTime);
 
-filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', 'circle', '_R', R_s([1,3:end]), '_t', time_s, '_l', l_s([1,3:end]));
-path = strcat(pwd, '/results/Final_simulation/', filename)
+filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_circle', '_R',R_s([1,3:end]), '_t', time_s, '_l', l_s([1,3:end]));
+path = strcat(pwd, '/results/Final_results/', filename)
 save(path)
 %saveas(h,figname, 'fig')
 
