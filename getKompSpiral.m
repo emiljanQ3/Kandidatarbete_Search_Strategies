@@ -13,6 +13,7 @@ function [w,D_r,v] = getKompSpiral(pos_a,dT, stepSizeThreshold,tol,~)
 %         axis equal
     end
     n = ceil(count/100);
+
     if n<=3
        n = 3;
     end 

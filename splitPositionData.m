@@ -1,5 +1,5 @@
-function [pos_res, indice] = splitPositionData(pos_a)
-figure(3004)
+function [pos_res, indice] = splitPositionData(pos_a, myCircle)
+figure
 
 %press start point and end point then enter to cut
 %cut will turn red
@@ -9,14 +9,22 @@ figure(3004)
 
 X = pos_a(1, 1, :);
 Y = pos_a(1, 2, :);
-start = [pos_a(1,1,1), pos_a(1,2,1)];
-slut = [pos_a(1,1,size(pos_a,3)), pos_a(1,2,size(pos_a,3))];
+start = [pos_a(1,1,1), pos_a(1,2,1)]
+slut = [pos_a(1,1,size(pos_a,3)), pos_a(1,2,size(pos_a,3))]
 
 X = X(:,:)';
 Y = Y(:,:)';
 plot(X,Y);
 hold on
 plot(X,Y, '.');
+
+circlex = myCircle(1,1,:);
+circley = myCircle(1,2,:);
+circlex = circlex(:,:)';
+circley = circley(:,:)';
+plot(circlex,circley,'c')
+hold on
+axis equal
 
 plot(start(1),start(2), 'o', 'MarkerEdgeColor','r')
 plot(slut(1), slut(2),'o', 'MarkerEdgeColor','g')
@@ -29,7 +37,7 @@ while(button ~= 3)
     [x,y,button] = ginput;
     
     scatter(x,y,'b.')
-    button
+
     if(button == 3)
         break
     end
@@ -58,7 +66,6 @@ while(button ~= 3)
     
     [~,~,button2] = ginput;
     
-    button2
     
     if(isempty(button2)) %the space bar
         
@@ -80,6 +87,5 @@ while(button ~= 3)
     
 end
 
-indice(agent,:) = NaN
-p = 5;
+indice(agent,:) = [NaN,NaN];
 end

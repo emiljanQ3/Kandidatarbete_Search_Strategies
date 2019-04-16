@@ -1,22 +1,28 @@
 %% Reads a file, returns the calculated chirality and normalized area.
 
-file = 'XMLfiles/Circle_large_1agent/Stor (54)_Tracks.xml'; %Name of file
+file = 'XMLfiles\Circle_large_1agent\Stor (1)_Tracks.xml'; %Name of file
 
-agent = 1; % which agent/s we look at
+agent = 1:2; % which agent/s we look at
 
 l = 10; % Corresponds to ~5*v*dT for agents in experiments
 
 dT = 1/25; % Time step
 
 [pos_a,length,times] = cut(file,agent); % Turns file into a position matrix, without NaN:s
+result = zeros(2,4);
+% splitPositionDataPartitioned only works for one agent
 
-[r, indice] = splitPositionDataPartitioned(pos_a,700, myCircle);
+clc;
+[r1, indice1] = splitPositionData(pos_a(1,:,:));
+[kir1,D_r1,v1] = getKompSpiral(r1,dT,1,6,60);
+result(1,:) = [kir1 D_r1 v1 size(pos_a(1,:,:),3)*dT]%, normA]
 
-[kir,D_r,v] = getKompSpiral(r,dT,1,6,60);
-indice
+[r2, indice2] = splitPositionData(pos_a(2,:,:));
+[kir2,D_r2,v2] = getKompSpiral(r2,dT,1,6,60);
+result(2,:) = [kir2 D_r2 v2 size(pos_a(2,:,:),3)*dT]%, normA]
+
 %[squares,normA] = calcArea(pos_a,v,dT,l,size(pos_a,3),1);
-
-result = [kir D_r v size(pos_a,3)*dT]%, normA]
+    
 
 %% Run to get data from circular path (run once)
 myCircle = [pos_a(1,1,2000:size(pos_a,3)), pos_a(1,2,2000:size(pos_a,3))];
@@ -31,13 +37,13 @@ axis equal
 %% Run to save results to file
 clc;
 % Sparar:
-    % Filnamn/path (i en egen fil)
-    % Kiralitet
-    % NormArea/tid
-    % Total tid
-    % hastighet
-    % l (size of area elements)
-    % D_r
+% Filnamn/path (i en egen fil)
+% Kiralitet
+% NormArea/tid
+% Total tid
+% hastighet
+% l (size of area elements)
+% D_r
 
 expName = 'circle_medium_1agent'; %Change name for each new set of data
 
@@ -45,6 +51,7 @@ file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 file2 = ['results/Lab/' expName 'SourceFiles.txt']; % Name of file containing names of XML files
 file3 = ['results/Lab/' expName 'indices.txt']
 
+% Each experiment has two rows of data
 data = [result];
 dlmwrite(file1,data,'-append');
 
@@ -52,7 +59,10 @@ fileID = fopen(file2,'a');
 fprintf(fileID,'%-40s\n',file);
 fclose(fileID);
 
-dlmwrite(file3, indice, '-append')
+% Each experiment has two sets of indices,
+% one for each agent
+dlmwrite(file3, indice1, '-append')
+dlmwrite(file3, indice2, '-append')
 
 %% Plot M, trajectory of agent
 
@@ -81,7 +91,7 @@ sourceFile = ['results/Lab/' experiment 'SourceFiles.txt'];
 allData = dlmread(dataFile);
 
 w = abs(allData(:,1));
-normArea = allData(:,2); 
+normArea = allData(:,2);
 v = allData(:,4);
 
 figure(2)
