@@ -1,16 +1,19 @@
 %% Simulated results
 
 load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
-    T = 50;         % vid vilken tidpunkt plottar vi resultatet
-    index = floor(numAreaDP*T/measurmentTime);
+
+    T       = 50;         % vid vilken tidpunkt plottar vi resultatet mot kiralitet
+    T2      = 50;         % Hur lång tid plottar vi arean 
+    index2  = floor(numAreaDP*T2/measurmentTime);           
+    index   = floor(numAreaDP*T/measurmentTime);
 
     figure(111)
     hold on
-    
-    c = getRGBGradient(0.4,0.6,150);
+   % c = chir2color(abs(w(1:end)));
+    c = getRGBGradient(0.4,0.6,150)
     map = colormap(c);
     for i = 1:5:size(meanAreaCovered,2)
-        plot(1:numAreaDP, meanAreaCovered(:,i)./maxArea, 'color', c(i,:))
+        plot(1:numAreaDP, meanAreaCovered(1:index2,i)./maxArea, 'color', c(i,:))
     end
     bar = colorbar
     bar.Ruler.Scale = 'log';
@@ -19,8 +22,13 @@ load('results/Final_results/2019416-1532circle_R1_t50_l0156.mat')
 
     figure(112)
     hold on
-    for i = 1:size(meanAreaCovered,2)
-        plot(w(i), meanAreaCovered(index,i)/(maxArea),'o','color',c(i,:))
+%     for i = 1:size(meanAreaCovered,2)
+%         plot(w(i), meanAreaCovered(index,i)/(maxArea),'0','color',c(i,:))
+%     end
+    %plot(w,meanAreaCovered(index,i)/maxArea,'b','Linewidth',3)
+    for i = 1:size(meanAreaCovered,2)-1
+        
+        plot([w(i+1) w(i)],[meanAreaCovered(index,i+1), meanAreaCovered(index,i)]/maxArea,'color',c(i,:),'Linewidth',3)
     end
     set(gca,'xscale','log')
     axis([0.1 10 0 1])
@@ -66,7 +74,7 @@ name = 'Experimental results';
 title(name)
 
 figure(112)
-semilogx(binKir, meanArea(index,:)/maxArea,'o')
+semilogx(binKir, meanArea(index,:)/maxArea,'.','markersize',20)
 title('With mean over chirality bins against center of bin')
 
 
@@ -74,14 +82,14 @@ title('With mean over chirality bins against center of bin')
 
 figure(112)
 
-axis([0.02 10 0 1.3])
+axis([0.1 10 0 1])
 title('Av agenter uppsökt area normerat mot maximal upptäckt area', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', 28)
+set(gca, 'fontsize', 30)
 
-ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 35)
-xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 35)
+ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 30)
+xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 30)
 
-legend('Periodisk','Begränsad','Exprimentel')
+legend('Simulering','Exprimentel')
 
 
 
