@@ -1,7 +1,7 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1/1.7;      %Circular areana radius
+R                       = 1;      %Circular areana radius
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 5;     % Number of seconds simulation is run before measurement starts.
@@ -73,8 +73,9 @@ c2 = [0,1,0]; %color("green");
 c3 = [1,0,0]; %color("red");
 trans1 = 0.4;
 trans2 = 0.6;
+center = 0.5;
 
-c = get3CGradient(c1,c2,c3, trans1, trans2, length(w));
+c = get3CGradient(c1,c2,c3, trans1, center, trans2, length(w));
 
 for i = 1:2:size(meanAreaCovered,2)
     plot(1:numAreaDP, meanAreaCovered(:,i)./pi, 'color', c(i,:))
