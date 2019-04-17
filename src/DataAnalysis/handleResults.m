@@ -11,7 +11,7 @@ N_k = 15;     % Antalet bins vi delar upp kiraliteten i
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'circle_medium_1agent';         %Change name for each new set of data
+expName = 'circle_large_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -78,7 +78,7 @@ for i = 1:n % loop through n XML files
        
        %[kir(i),v(i)] = getComplexCirality(r,dT,1);
        
-       %w = waitforbuttonpress;
+       w = waitforbuttonpress;
        [kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
        [kir(i) D_r(i) v(i)]
 
@@ -131,6 +131,17 @@ normA1 = area(index,sortOrder);
 kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
 
+
+area1 = area(index,1:50);
+area2 = area(index,50:86);
+
+[kir_sorted1, sortOrder1] = sort(abs(kir(1:50)));
+normA11 = area1(sortOrder1);
+
+[kir_sorted2, sortOrder2] = sort(abs(kir(50:86)));
+normA2 = area2(sortOrder2);
+
+
 figure
 semilogx(abs(kir_sorted),normA1./maxArea,'o')
 title('no mean')
@@ -145,6 +156,27 @@ figure
 semilogx(binKir, meanArea(index,:)/maxArea,'o')
 title('With mean over chirality bins against center of bin')
 %axis([0.01 10 0 0.7])
+%% plot other parameters
+
+figure 
+plot(1:50, v(1:50),'o')
+hold on
+plot (51:86, v(51:86),'o')
+title('Velocity')
+axis([1 86 1 150])
+% 
+% plot(1:50, v2(1:50),'o')
+% plot (51:86, v2(51:86),'o')
+
+
+figure 
+plot(1:50, D_r2(1:50),'o')
+hold on
+plot (51:86, D_r2(51:86),'o')
+title('Diffusion constant')
+%axis([1 86 1 150])
+
+
 %% if we want to save the new results
 file1 = ['results/Lab/' expName '.txt']; % Name of dataFile
 
