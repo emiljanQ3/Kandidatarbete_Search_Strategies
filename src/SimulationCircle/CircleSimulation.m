@@ -69,7 +69,7 @@ figure
 hold on
 
 c1 = [0,0,1]; %color("blue");
-c2 = [0,1,0]; %color("green");
+c2 = [0,0.6,0]; %color("green");
 c3 = [1,0,0]; %color("red");
 trans1 = 0.4;
 trans2 = 0.6;
