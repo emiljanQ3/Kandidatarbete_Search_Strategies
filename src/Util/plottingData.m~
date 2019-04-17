@@ -1,52 +1,97 @@
 %% Simulated results
 
-load('results/Final_simulation/2019416-144_hm02005_1.mat')
+load('results/Final_results/2019417-1033_circle_R1_t50_l0156.mat')
+
+    T       = 50;         % vid vilken tidpunkt plottar vi resultatet mot kiralitet
+    T2      = 50;         % Hur lång tid plottar vi arean 
+    index2  = floor(numAreaDP*T2/measurmentTime);           
+    index   = floor(numAreaDP*T/measurmentTime);
+
+    figure(111)
+    hold on
+   % c = chir2color(abs(w(1:end)));
+    c = getRGBGradient(0.4,0.5,0.6,100)
+    map = colormap(c);
+    for i = 1:size(meanAreaCovered,2)
+        plot(1:numAreaDP, meanAreaCovered(1:index2,i)./maxArea, 'color', c(i,:))
+    end
+    bar = colorbar
+    bar.Ruler.Scale = 'log';
+    bar.Ruler.MinorTick = 'on';
+    caxis([0.1 10])
 
     figure(112)
-    meanArea_max = meanAreaCovered(1);
-    semilogx(w,meanAreaCovered/(meanArea_max),'r')
-   % axis([0.01, 10, 0, 1.2])
-    name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
-    title(name)
     hold on
-    figure(113)
-    plot(w,meanAreaCovered/(meanArea_max),'*')
-    hold on
-   
+%     for i = 1:size(meanAreaCovered,2)
+%         plot(w(i), meanAreaCovered(index,i)/(maxArea),'0','color',c(i,:))
+%     end
+    %plot(w,meanAreaCovered(index,i)/maxArea,'b','Linewidth',3)
+    for i = 1:size(meanAreaCovered,2)-1
+        
+        plot([w(i+1) w(i)],[meanAreaCovered(index,i+1), meanAreaCovered(index,i)]/maxArea,'color',c(i,:),'Linewidth',3)
+    end
+    set(gca,'xscale','log')
+    axis([0.1 10 0 1])
+    title('')
+
 
 %% Experimental results
+load('results/Final_results/2019416-1521_circle_medium_1agent_t45_l216.mat')
+N_k = 25;
 
-experiment = 'hm1agent';
-dataFile = ['results/Lab/' experiment '.txt'];
-sourceFile = ['results/Lab/' experiment 'SourceFiles.txt'];
-allData = dlmread(dataFile);
+figure(110)
+hold on
 
-w = allData(:,1);
-normArea = allData(:,2); 
-v = allData(:,4);
+[~, sortOrder] = sort(abs(kir));
+area_sorted = area(:,sortOrder);
 
-figure(112)
-semilogx(abs(w),normArea,'bo')
-figure(113)
-plot(w,normArea,'o')
+c = getRGBGradient(0.4,0.5,0.6,46);
+map = colormap(c);
+for i = 1:size(area_sorted,2)
+    plot(area_sorted(:,i)/maxArea,'color',c(i,:))
+end
 
-%axis([0.01, 10, 0, 1.2])
-%name=strcat('step', num2str(dT), '; ', 'time', num2str(numTimeSteps), '; ', 'simulations', num2str(numSimulations), '; ', obstacleType, '; ', 'R=', num2str(R), '; D_r=', num2str(D_r));
+bar = colorbar
+bar.Ruler.Scale = 'log';
+bar.Ruler.MinorTick = 'on';
+caxis([0.1 10])
+
+figure(109)
+hold on
+
+[meanArea,binKir] = makeMean(kir,N_k,area);
+
+c = getRGBGradient(0.4,0.5,0.6,N_k);
+for i = 1:size(meanArea,2)
+    plot(meanArea(:,i)/maxArea,'color',c(i,:))
+end
+bar = colorbar
+bar.Ruler.Scale = 'log';
+bar.Ruler.MinorTick = 'on';
+caxis([0.1 10])
+
 name = 'Experimental results';
 title(name)
+
+figure(112)
+hold on
+semilogx(binKir, meanArea(index,:)/maxArea,'k.','markersize',20)
+
+title('With mean over chirality bins against center of bin')
+
 
 %%
 
 figure(112)
 
-axis([0.02 10 0 1.3])
+axis([0.1 10 0 1])
 title('Av agenter uppsökt area normerat mot maximal upptäckt area', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', 28)
+set(gca, 'fontsize', 30)
 
-ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 35)
-xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 35)
+ylabel('Effektivitet', 'Interpreter', 'latex', 'fontsize', 30)
+xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', 30)
 
-legend('Periodisk','Begränsad','Exprimentel')
+legend('Simulering','Exprimentel')
 
 
 
