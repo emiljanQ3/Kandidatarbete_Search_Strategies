@@ -3,7 +3,7 @@ function [meanArea, binKir] = makeMean(kir,N_k, area)
 
     N = size(area,1);
 
-    Mi = min(log10(abs(kir)));
+    Mi = -1;
     Ma = max(log10(abs(kir)));
     L = (Ma-Mi)/N_k;
 
