@@ -1,7 +1,7 @@
 %% Parameters
 
 digit = 2;              % Antalet signifikanta siffror vi skriver ut för kiralitet i legend
-N_k = 13;               % Antalet kiralitetsbins vi delar upp datan i           
+N_K = 8;               % Antalet kiralitetsbins vi delar upp datan i           
 
 T       = 50;           % vid vilken tidpunkt plottar vi resultatet mot kiralitet
 T2      = 50;           % Hur lÃ¥ng tid plottar vi arean 
@@ -18,6 +18,7 @@ tit_Font = 30;          % Fontsizes on titels
 clc
 load('results/Final_results/2019417-1959_circle_medium_1agent_t50_l216.mat')
 clear 'length'
+
 
 c1 = chir2color(10.^(-1:0.02:1));
 
@@ -42,7 +43,7 @@ caxis([0.1 10])
 figure(109)
 hold on
 
-[meanArea,binKir] = makeMean(kir,N_k,area);
+[meanArea,binKir] = makeMean(kir,N_K,area);
 
 c = chir2color(binKir);
 map = colormap(c1);
@@ -56,7 +57,7 @@ end
 bar = colorbar;
 bar.Ruler.Scale = 'log';
 bar.Ruler.MinorTick = 'on';
-caxis([0.01 10]);
+caxis([0.1 10]);
 
 % In figure(112) we are plotting area over chiraleties both for sim and exp
 % at the time T given in parameters
