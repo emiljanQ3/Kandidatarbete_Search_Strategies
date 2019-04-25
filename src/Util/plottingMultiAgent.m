@@ -41,15 +41,16 @@ title("Win and fail")
 %%Formatting 1
 
 ax_Font = 40;           % Fontsizes on axis
-tit_Font = 30;          % Fontsizes on titles
+%tit_Font = 30;          % Fontsizes on titles
 
 figure(1)
 
 view(2)
 
 axis('square')
-title('Tid till möte för två agenter', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+axis([-4 4 -4 4])
+title('Tid till m\"ote f\"or tv\r{a}  agenter', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', ax_Font)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -63,8 +64,9 @@ figure(2)
 view(2)
 
 axis('square')
-title('Invers av tid till möte av två agenter (Effektivitet)', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+axis([-4 4 -4 4])
+title('M\"oteseffektivitet f\"or tv\r{a} agenter', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', ax_Font)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -78,8 +80,9 @@ figure(3)
 view(2)
 
 axis('square')
-title('Andel agentpar som inte hittar varandra vid en maxtid på 300 sekunder', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+axis([-4 4 -4 4])
+title('Andel agentpar som inte hittar varandra vid en maxtid p\r{a}  300 sekunder', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', ax_Font)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
