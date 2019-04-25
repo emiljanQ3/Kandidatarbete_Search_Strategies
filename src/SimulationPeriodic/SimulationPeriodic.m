@@ -1,23 +1,23 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-obstacleType            = "hc";
+obstacleType            = "hm";
 L                       = 1;      %Cell side length
 mapSize                 = [3,3];  %Number of cells before a boundry is reached
-edge                    = true(1,1);  % true med kant fals utan
+edge                    = 0;  % true med kant fals utan
 R                       = 0.6;
 r                       = 0.167;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
 preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-measurmentTime          = 30;
+measurmentTime          = 20;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 1000;
-w                       = 10.^(linspace(-2,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 10000;
+w                       = 10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
-l                       = 1/20*L; % Side length of cells in grid used to determine covered area
-D_r                     = 0.01; %Diffusion constant for rotation
+l                       = 0.156; % Side length of cells in grid used to determine covered area
+D_r                     = 0.05; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 
@@ -29,7 +29,7 @@ r_c                     = l/2;
 
 pos_a = zeros(numAgents, 2, numTimeSteps);      %INITIALIZATION: Agent positions in each timestep
 pos_pre = zeros(numAgents, 2, floor(preTime/dT));
-numSquares = zeros(numSimulations,1);           %INITIALIZATION: List of the amount of area elements found each simulation.
+area = zeros(numSimulations,1);           %INITIALIZATION: List of the amount of area elements found each simulation.
 totalTime = zeros(numSimulations,1); 
 meanAreaCovered = zeros(length(w),1);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),1);               %INITIALIZATION: List of mean area covered per total time for each kirality.
@@ -54,15 +54,15 @@ for w_i = w %Loop over different kiralities
         [pos_a, rot_a, colision,totalTime(N_i)] = simulate( measurmentTime ,dT,D_r,D_p,v,w_i,numAgents,pos_a, rot_a,colision, obstacle, L, r_c,mapSize,edge);
           
         %Simulation is done. Time to calculate area discovered.
-        [numSquares(N_i),~] = calcArea(pos_a,v,dT,l);
+        [area(N_i),~] = calcArea(pos_a,v,dT,l,1);
         
   
     end
     
     %All N simulations have been compleated. The mean result is saved for this kirality.
-    meanAreaCovered(w_j) = mean(numSquares)*l^2;
-    varians(w_j)        = std(numSquares)*l^2;
-    areaPerTime(w_j) = mean(numSquares./totalTime)*l^2;
+    meanAreaCovered(w_j) = mean(area);
+    varians(w_j)        = std(area);
+    areaPerTime(w_j) = mean(area./totalTime);
     w_j = w_j + 1;
     
 end
@@ -125,7 +125,7 @@ save(path)
 
 %% Animation of the last done kirality
 
-p = animation(pos_a,obstacle,dT,colision);
+p = animation(pos_a,obstacle,dT,colision, numTimeSteps);
 
 %%
 

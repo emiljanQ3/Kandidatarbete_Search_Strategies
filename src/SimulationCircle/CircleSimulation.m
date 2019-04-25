@@ -113,7 +113,7 @@ save(path)
 
 %% Animation of the last done kirality
 
-p = animation(pos_a, obstacle,dT,colision);
+p = animation(pos_a, obstacle,dT,colision,numTimeSteps);
 
 %%
 load('results/Final_simulation/2019416-1011_circle_R1_t50_l0156.mat')
