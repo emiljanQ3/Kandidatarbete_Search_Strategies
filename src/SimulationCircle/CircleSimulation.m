@@ -1,20 +1,20 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1;      %Circular areana radius
+R                       = 1/1.7;      %Circular areana radius
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
-preTime                 = 5;     % Number of seconds simulation is run before measurement starts.
-measurmentTime          = 50;
+preTime                 = 10;     % Number of seconds simulation is run before measurement starts.
+measurmentTime          = 180;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 20;
+numSimulations          = 1000;
 w                       = 10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 l                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.02; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
-numAreaDP               = 100;
+numAreaDP               = measurmentTime;
 maxArea                 = pi*R^2;
 
 %Config variables that might be interesting to include in the future:
@@ -59,8 +59,12 @@ for w_i = w %Loop over different kiralities
     meanAreaCovered(:,w_j) = mean(area)';
     standardDev(w_j)        = std(area(:, numAreaDP));
     %areaPerTime(w_j,:) = meanAreaCovered(w_j,:)./totalTime;
+        
+    fprintf("Time elapsed:          " + sec2hms(toc) + "\n")
+    timeLeft = toc / w_j * (length(w) - w_j);
+    fprintf("Estimated time left:   " + sec2hms(timeLeft) + "\n\n")
     w_j = w_j + 1;
-    toc
+
 end
 toc
 
@@ -78,7 +82,7 @@ center = 0.5;
 c = get3CGradient(c1,c2,c3, trans1, center, trans2, length(w));
 
 for i = 1:2:size(meanAreaCovered,2)
-    plot(1:numAreaDP, meanAreaCovered(:,i)./pi, 'color', c(i,:))
+    plot(1:numAreaDP, meanAreaCovered(:,i)./(pi*R^2), 'color', c(i,:))
 end
 
 
