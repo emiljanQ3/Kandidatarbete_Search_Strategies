@@ -13,7 +13,7 @@ linewidth = 4;          % Hur breda plottade linjer ska vara
 markSize = 40;          % Hur stor plottade datapunkter ska vara
 
 ax_Font = 50;           % Fontsizes on axis
-tit_Font = 30;          % Fontsizes on titels
+tit_Font = 50;          % Fontsizes on titels
 %% Experimental results
 clc
 load('results/Final_results/2019417-118_circle_large_1agent_t50_l216.mat')
@@ -123,7 +123,7 @@ clear 'max'
 figure(112)
 
 axis([0.1 10 0 1])
-title('Experimentell och simulerad uppsökt area för en agent', 'Interpreter', 'latex')      %titla
+title('Experimentell och simulerad upps\"okt area f\"or en agent', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
 ylabel('Normerad area', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -134,7 +134,7 @@ xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 figure(109)
 
 axis([0 T2 0 1])
-title('Experimentell data av normerad uppsökt area över tid', 'Interpreter', 'latex')      %titla
+title('Experimentell data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
 ylabel('Normerad area ', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -147,7 +147,7 @@ xlabel('Tid (s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 figure(113)
 
 axis([0 T2 0 1])
-title('Simulerad data av normerad uppsökt area över tid', 'Interpreter', 'latex')      %titla
+title('Simulerad data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
 ylabel('Normerad area', 'Interpreter', 'latex', 'fontsize', ax_Font)
