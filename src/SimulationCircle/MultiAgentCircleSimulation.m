@@ -1,7 +1,7 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1;      %Circular areana radius
+R                       = 1/1.7;      %Circular areana radius
 r                       = 0.167;
 numAgents               = 2;
 dT                      = 0.04;   % Delta time in seconds

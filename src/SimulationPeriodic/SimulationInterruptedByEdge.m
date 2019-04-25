@@ -15,9 +15,9 @@ numTimeSteps            = floor(simulationTime/dT);
 numSimulations          = 1;
 w                       = 0.9;  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 1;     % speed in m/s
-l                       = 10 * dT * v; % Side length of cells in grid used to determine covered area
+l                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.01; %Diffusion constant for rotation
-D_p                     = 0.001; %Diffusion constant for position
+D_p                     = 0; %Diffusion constant for position
 r_c                     = l/2;
 
 %Config variables that might be interesting to include in the future:
