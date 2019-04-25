@@ -1,8 +1,13 @@
 function c = chir2color(w)
-    palette = getRGBGradient(0.4,0.5,0.6,1000);
+    palette = getRGBGradient(0.4,0.5,0.6,1001);
     c = zeros(length(w),3);
     for i = 1:length(w)
-        c(i,:) = palette(ceil((log(w(i))+1)*500),:);
+        if (w(i) < 0.1)
+            i
+            c(i,:) = palette(1,:);
+        else
+            c(i,:) = palette(ceil((log10(w(i))+1)*500)+1,:);
+        end
     end
     
 end

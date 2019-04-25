@@ -11,7 +11,7 @@ N_k = 15;     % Antalet bins vi delar upp kiraliteten i
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'circle_large_1agent';         %Change name for each new set of data
+expName = 'circle_medium_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -67,20 +67,20 @@ startIndex  =  floor(preTime/dT);
 endIndex    =floor((preTime+totalTime)/dT);
 
 for i = 1:n % loop through n XML files
-       i;
+       i
        file =  sourceFile{1}{i};
        [pos_a,~,times] = cut(file,1);
-       r = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero 
-
-       for j=1:cuts(i)
-              r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
-       end
+%        r = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero 
+% 
+%        for j=1:cuts(i)
+%               r(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(agent,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2)); %picks out cut j from pos_a and makes it agent j in r
+%        end
        
        %[kir(i),v(i)] = getComplexCirality(r,dT,1);
        
-       w = waitforbuttonpress;
-       [kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
-       [kir(i) D_r(i) v(i)]
+       %w = waitforbuttonpress;
+       %[kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
+       %[kir(i) D_r(i) v(i)]
 
        [area(:,i),~] = calcArea(pos_a(:,:,startIndex:endIndex),v(i),dT,l,N);
 end 
@@ -103,7 +103,7 @@ D_r2 = c(:,2);
 figure
 hold on
 
-[~, sortOrder] = sort(abs(kir));
+[~, sortOrder] = sort(abs(kir2));
 area_sorted = area(:,sortOrder);
 
 color = jet(size(area_sorted,2));
@@ -115,7 +115,7 @@ end
 figure
 hold on
 
-[meanArea,binKir] = makeMean(kir,N_k,area);
+[meanArea,binKir] = makeMean(kir2,N_k,area);
 
 color = jet(size(meanArea,2));
 for i = 1:size(meanArea,2)
@@ -125,6 +125,7 @@ end
 
 %% Plot the result at end time
 index = floor(N*T/totalTime);
+kir=kir2
 
 [kir_sorted, sortOrder] = sort(abs(kir));
 normA1 = area(index,sortOrder);
@@ -132,14 +133,21 @@ kir_mm = movmean(kir_sorted,k);
 normA_mm = movmean(normA1,k);
 
 
-area1 = area(index,1:50);
-area2 = area(index,50:86);
+area1 = area(index,1:46);
+area2 = area(index,47:96);
 
-[kir_sorted1, sortOrder1] = sort(abs(kir(1:50)));
+[kir_sorted1, sortOrder1] = sort(abs(kir(1:46)));
 normA11 = area1(sortOrder1);
 
-[kir_sorted2, sortOrder2] = sort(abs(kir(50:86)));
+[kir_sorted2, sortOrder2] = sort(abs(kir(47:96)));
 normA2 = area2(sortOrder2);
+
+figure
+semilogx(abs(kir_sorted1),normA11./maxArea,'o')
+hold on
+semilogx(abs(kir_sorted2),normA2./maxArea,'o')
+title('different occasion different colors')
+
 
 
 figure
@@ -158,21 +166,25 @@ title('With mean over chirality bins against center of bin')
 %axis([0.01 10 0 0.7])
 %% plot other parameters
 
+v=v2;
+D_r=D_r2;
+
+
 figure 
-plot(1:50, v(1:50),'o')
+plot(1:46, v(1:46),'o')
 hold on
-plot (51:86, v(51:86),'o')
+plot (47:96, v(47:96),'o')
 title('Velocity')
-axis([1 86 1 150])
+axis([1 96 1 100])
 % 
 % plot(1:50, v2(1:50),'o')
 % plot (51:86, v2(51:86),'o')
 
 
 figure 
-plot(1:50, D_r2(1:50),'o')
+plot(1:46, D_r2(1:46),'o')
 hold on
-plot (51:86, D_r2(51:86),'o')
+plot (47:96, D_r2(47:96),'o')
 title('Diffusion constant')
 %axis([1 86 1 150])
 
