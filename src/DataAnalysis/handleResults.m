@@ -1,5 +1,5 @@
 %% ploting the results with a loop so we can change parameters
-
+clear,clf,clc
 R = 270/2;
 l = 3.6*6;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
@@ -11,28 +11,35 @@ N_k = 15;     % Antalet bins vi delar upp kiraliteten i
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'circle_medium_1agent';         %Change name for each new set of data
+expName = 'hm1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
 
 %% HOMOGENOUS
 % loop through n XML files
+clc
 
 kir = zeros(1,n);
-normA = zeros(1,n);
 v = zeros(1,n);
 D_r = zeros(1,n);
-
+area_hm = zeros(1,n);
+totalTime = zeros(1,n);
 for i = 1:n
        file = sourceFile{1}{i}; 
        [pos_a,~,times] = cut(file,1);
-       [kir(i),D_r(i) ,v(i)] = getKompSpiral(r,dT,1,6,60);
-       [~,normA(i)] = calcArea(pos_a,v(i),dT,l);
+       pos_a(1,:,end+1) = 0;
        
-       result = [kir(i), normA(i)];          
+       [kir(i),D_r(i) ,v(i)] = getKompSpiral(pos_a,dT,1,6,60);
+       
+       r = doublePoint(pos_a,1,6);
+       Time2(i) = size(pos_a,3)*dT;
+       Time(i) = size(r,3)*dT;
+       [area_hm(i),~] = calcArea(pos_a,v(i),dT,l,1);        
 end
-
+areaPerTime = area_hm./Time;
+maxAreaPerTime = (4*v*T/(pi*l)-1)*l^2/T;
+normA = areaPerTime./maxAreaPerTime;
 
 %% COMLEX 2 - with indices 
 file = ['results/Lab/' expName 'indices.txt']
@@ -212,4 +219,16 @@ filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5
 path = strcat(pwd, '/results/Final_results/', filename)
 save(path)
 
+%% Plott the result from homogeunus
+N_k = 30;
+figure
+semilogx(abs(kir), normA, 'o')
+title('rawdata')
+axis([0.1 10 0 1.5])
+
+figure
+[meanArea,binKir] = makeMean(kir,N_k,normA);
+semilogx(binKir,meanArea,'o')
+title('Medelvärde over kiralitetbins')
+axis([0.1 10 0 1.5])
 
