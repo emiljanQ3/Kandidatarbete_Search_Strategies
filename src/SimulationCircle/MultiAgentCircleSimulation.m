@@ -14,7 +14,7 @@ v                       = 0.5;     % speed in R/s
 L                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.03; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
-r_c                     = R/5;
+r_c                     = L/2;
 numAreaDP               = 100;
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
