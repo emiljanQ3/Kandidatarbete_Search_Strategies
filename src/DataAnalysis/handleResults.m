@@ -1,6 +1,6 @@
 %% ploting the results with a loop so we can change parameters
 clf,clc
-R = 80;
+R = 70;
 l = 3.6*6;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 preTime = 5;   % tid i sekunder innan areaberäkningen börjar
