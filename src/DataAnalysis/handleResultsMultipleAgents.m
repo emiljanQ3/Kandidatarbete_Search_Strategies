@@ -9,30 +9,13 @@ N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
 k = 3;          % Hur många movmean medelvärdesbildar på
 N_k = 25;     % Antalet bins vi delar upp kiraliteten i
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
+agent = 1:2
 
 maxArea = pi*R^2;
-expName = 'circle_small_1agent';         %Change name for each new set of data
+expName = 'test_2agents';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
-
-%% HOMOGENOUS
-% loop through n XML files
-
-kir1 = zeros(1,n);
-normA = zeros(1,n);
-v = zeros(1,n);
-D_r = zeros(1,n);
-
-for i = 1:n
-    file = sourceFile{1}{i};
-    [pos_a,~,times] = cut(file,1);
-    [kir1(i),D_r(i) ,v(i)] = getKompSpiral(r1,dT,1,6,60);
-    [~,normA(i)] = calcArea(pos_a,v(i),dT,l);
-    
-    result = [kir1(i), normA(i)];
-end
-
 
 %% COMPLEX 2 - with indices
 file = ['results/Lab/' expName 'indices.txt']
@@ -48,6 +31,7 @@ film=0;
 j=0;
 start=1;
 bool = false; % False if not both agents indices are found
+% Finds all values for new_indice
 for i=1:size(indice,1)
     if (isnan(indice(i)) && bool == false) % End of one set
         film=film+1;
@@ -67,8 +51,7 @@ for i=1:size(indice,1)
         j=j+1;
     end
 end
-%%
-agent=1;
+
 
 kir1 = zeros(1,n);
 v1 = zeros(1,n);
@@ -86,14 +69,14 @@ total_time = zeros(n,1)
 
 for i = 1:n % loop through n XML files
     file =  sourceFile{1}{i};
-    [pos_a,~,times] = cut(file,1);
+    [pos_a,~,times] = cut(file,agent);
     total_time(i,1) = times(1,2); % Assumes both agents exist for the same amount of time
-    r1 = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero
-    r2 = zeros(cuts(i),2,size(pos_a,3)+1);
+    pos1 = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero
+    pos2 = zeros(cuts(i),2,size(pos_a,3)+1);
     for j=1:cuts(i)
         %picks out cut j from pos_a and makes it agent j in r
-        r1(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(1,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2));
-        r2(j,:,1:(indice(new_indice(i,3)+j-1,2)-indice(new_indice(i,3)+j-1,1))+1) = pos_a(2,:,indice(new_indice(i,3)+j-1,1):indice(new_indice(i,3)+j-1,2));
+        pos1(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(1,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2));
+        pos2(j,:,1:(indice(new_indice(i,3)+j-1,2)-indice(new_indice(i,3)+j-1,1))+1) = pos_a(2,:,indice(new_indice(i,3)+j-1,1):indice(new_indice(i,3)+j-1,2));
     end
     
     %[kir(i),v(i)] = getComplexCirality(r,dT,1);
@@ -101,8 +84,8 @@ for i = 1:n % loop through n XML files
     %w = waitforbuttonpress;
     
     % Calculate chirality, D_r and speed separately for each agent
-    [kir1(i),D_r1(i) ,v1(i)] = getKompSpiral(r1,dT,1,6,60);
-    [kir2(i),D_r2(i) ,v2(i)] = getKompSpiral(r2,dT,1,6,60);
+    [kir1(i),D_r1(i) ,v1(i)] = getKompSpiral(pos1,dT,1,6,60);
+    [kir2(i),D_r2(i) ,v2(i)] = getKompSpiral(pos2,dT,1,6,60);
     %[kir1(i) D_r(i) v(i)]
     
 end
@@ -121,11 +104,13 @@ v2 = c(:,3);
 % totalTime = c(:,3);
 % l = c(:,5);
 
-%% Plot graph of time and effectivity
+%% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
 [total_time_sorted, sortOrder] = sort(total_time);
 kir1_sorted = kir1(sortOrder);
 kir2_sorted = kir2(sortOrder);
+
+time_color = chir2color(total_time_sorted);
 figure(1)
 scatter(kir1_sorted,kir2_sorted,[],total_time_sorted)
 
@@ -133,7 +118,7 @@ efficiency = 1/total_time_sorted;
 figure(2)
 scatter(kir1_sorted,kir2_sorted,[],efficiency)
 
-%% Plot interpolated data as surface plot
+%% Plot interpolated data as surface plot - not done...
 xlin = linspace(min(kir1),max(kir1),50);
 ylin = linspace(min(kir2),max(kir2),50);
 [X,Y] = meshgrid(xlin,ylin);
