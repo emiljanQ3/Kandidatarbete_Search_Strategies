@@ -18,6 +18,7 @@ figure(2)
 surf(X,Y,Z_2)
 title("Efficiency")
 
+%%
 Z_3 = percentMax + percentMax' - diag(diag(percentMax));
 
 figure(3)
@@ -38,7 +39,7 @@ figure(4)
 surf(X,Y,Z_4)
 title("Win and fail")
 
-%%Formatting 1
+%% Formatting 1
 
 ax_Font = 40;           % Fontsizes on axis
 %tit_Font = 30;          % Fontsizes on titles
@@ -73,7 +74,7 @@ xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
 
-%%Formatting 3
+%% Formatting 3
 
 figure(3)
 
