@@ -1,17 +1,17 @@
 %% ploting the results with a loop so we can change parameters
-clear,clf,clc
-R = 270/2;
+clf,clc
+R = 70;
 l = 3.6*6;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
 preTime = 5;   % tid i sekunder innan areaberäkningen börjar
-totalTime = 50; % total tid areanberäkningen ska köra efter att den börjat
-N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
-k = 3;          % Hur många movmean medelvärdesbildar på
+totalTime = 30; % total tid areanberäkningen ska köra efter att den börjat
+N = totalTime;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
+k = 5;          % Hur många movmean medelvärdesbildar på
 N_k = 15;     % Antalet bins vi delar upp kiraliteten i 
-T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
+T = totalTime;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
 
 maxArea = pi*R^2
-expName = 'hm1agent';         %Change name for each new set of data
+expName = 'circle_small2_1agent';         %Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -24,7 +24,7 @@ kir = zeros(1,n);
 v = zeros(1,n);
 D_r = zeros(1,n);
 area_hm = zeros(1,n);
-totalTime = zeros(1,n);
+Time = zeros(1,n);
 for i = 1:n
        file = sourceFile{1}{i}; 
        [pos_a,~,times] = cut(file,1);
@@ -62,9 +62,8 @@ for i=1:size(indice,1)
         j=j+1;
     end 
 end 
-%% 
-agent=1;
 
+agent=1;
 kir = zeros(1,n);
 v = zeros(1,n);
 D_r = zeros(1,n);
@@ -98,19 +97,19 @@ end
 name = join(['results/Lab/' expName '.txt']);
 c = load(name);
 
-kir2 = c(:,1);
-v2 = c(:,3);
+kir = c(:,1);
+v = c(:,3);
 % normA = c(:,2);
 % totalTime = c(:,3);
 % l = c(:,5);
-D_r2 = c(:,2);
+D_r = c(:,2);
 
 
 %% Plotting the area over time for every film
 figure
 hold on
 
-[~, sortOrder] = sort(abs(kir2));
+[~, sortOrder] = sort(abs(kir));
 area_sorted = area(:,sortOrder);
 
 color = jet(size(area_sorted,2));
@@ -122,7 +121,7 @@ end
 figure
 hold on
 
-[meanArea,binKir] = makeMean(kir2,N_k,area);
+[meanArea,binKir] = makeMean(kir,N_k,area);
 
 color = jet(size(meanArea,2));
 for i = 1:size(meanArea,2)
@@ -132,7 +131,6 @@ end
 
 %% Plot the result at end time
 index = floor(N*T/totalTime);
-kir=kir2
 
 [kir_sorted, sortOrder] = sort(abs(kir));
 normA1 = area(index,sortOrder);
@@ -160,12 +158,12 @@ title('different occasion different colors')
 figure
 semilogx(abs(kir_sorted),normA1./maxArea,'o')
 title('no mean')
-%axis([0.01 10 0 1.1])
+axis([0.1 10 0 1.1])
 
 figure
 semilogx(abs(kir_sorted), normA_mm./maxArea, 'o')
 title('with moving mean on area')
-%axis([0.01 10 0 1.1])
+axis([0.1 10 0 1.1])
 
 figure
 semilogx(binKir, meanArea(index,:)/maxArea,'o')
