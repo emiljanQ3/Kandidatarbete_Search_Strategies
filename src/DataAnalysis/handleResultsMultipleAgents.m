@@ -1,5 +1,5 @@
 %% ploting the results with a loop so we can change parameters
-
+clc
 R = 270/2;
 l = R/20;       % Corresponds to ~5*v*dT for agents in experiments
 dT = 1/25;
@@ -9,10 +9,10 @@ N = 100;        % antalet tidssteg som calcArea ger tillbaka uppsökt area på
 k = 3;          % Hur många movmean medelvärdesbildar på
 N_k = 25;     % Antalet bins vi delar upp kiraliteten i
 T = 40;         % Plotta upptäckt area som funktion av kiralitet vid tvärsnitet tiden lika med T s efter pretime
-agent = 1:2
+agent = 1:2;
 
 maxArea = pi*R^2;
-expName = 'test_2agents';         %Change name for each new set of data
+expName = 'circle_medium_2agent';         % Change name for each new set of data
 
 sourceFile = textscan(fopen(['results/Lab/' expName 'SourceFiles.txt']), '%s','delimiter','\n');
 n =size(sourceFile{1},1);
@@ -71,7 +71,7 @@ for i = 1:n % loop through n XML files
     file =  sourceFile{1}{i};
     [pos_a,~,times] = cut(file,agent);
     total_time(i,1) = times(1,2); % Assumes both agents exist for the same amount of time
-    pos1 = zeros(cuts(i),2,size(pos_a,3)+1); %so as to always have at least one zero
+    pos1 = zeros(cuts(i),2,size(pos_a,3)+1); % so as to always have at least one zero
     pos2 = zeros(cuts(i),2,size(pos_a,3)+1);
     for j=1:cuts(i)
         %picks out cut j from pos_a and makes it agent j in r
@@ -98,12 +98,20 @@ name = join(['results/Lab/' expName '.txt']);
 c = load(name);
 
 kir_saved = c(:,1);
-D_r2 = c(:,2);
-v2 = c(:,3);
-% normA = c(:,2);
+D_r_saved = c(:,2);
+v_saved = c(:,3);
+time_saved = c(:,4);
 % totalTime = c(:,3);
 % l = c(:,5);
 
+for i = 1:size(kir_saved)/2
+   kir1(i) = kir_saved(2*i-1);
+   kir2(i) = kir_saved(2*i);
+   time(i) = time_saved(2*i-1);
+end
+%(kir1,kir2,time,'.')
+scatter(kir1,kir2,time)
+axis([-5 5 -5 5])
 %% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
 [total_time_sorted, sortOrder] = sort(total_time);
