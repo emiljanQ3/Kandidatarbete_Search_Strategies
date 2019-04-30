@@ -1,20 +1,20 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-R                       = 1/1.7;      %Circular areana radius
+R                       = 1;      %Circular areana radius
 r                       = 0.167;
 numAgents               = 2;
 dT                      = 0.04;   % Delta time in seconds
-preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-maxMeasurmentTime       = 300;
+%preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
+maxMeasurmentTime       = 60;
 maxTimeSteps            = floor(maxMeasurmentTime/dT);
-numSimulations          = 50;
+numSimulations          = 1;
 w                       = linspace(-4,4,20); %[0.3366, 0.7897, 1.1479, 1.7525, 3.8640]; %10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
-v                       = 0.5;     % speed in R/s
+v                       = 0.652;     % speed in R/s
 L                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.03; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
-r_c                     = L/2;
+r_c                     = L;
 numAreaDP               = 100;
 
 %SETUP-----------------------------------------------------------------------------------------------------------------------
