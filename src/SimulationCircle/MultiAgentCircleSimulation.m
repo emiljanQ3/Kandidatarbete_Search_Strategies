@@ -8,8 +8,8 @@ dT                      = 0.04;   % Delta time in seconds
 %preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 maxMeasurmentTime       = 60;
 maxTimeSteps            = floor(maxMeasurmentTime/dT);
-numSimulations          = 50;
-w                       = linspace(-3,3,30); %Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 1000;
+w                       = linspace(-3,3,99); %Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 L                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.03; %Diffusion constant for rotation
@@ -20,7 +20,7 @@ numAreaDP               = 100;
 %SETUP-----------------------------------------------------------------------------------------------------------------------
 
 pos_a = zeros(numAgents, 2, maxTimeSteps);              %INITIALIZATION: Agent positions in each timestep
-pos_pre = zeros(numAgents, 2, floor(preTime/dT));
+%pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
 totalTimeSteps = zeros(1, numSimulations); 
