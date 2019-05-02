@@ -43,7 +43,7 @@ caxis([0.1 10])
 figure(109)
 hold on
 
-[meanArea,binKir] = makeMean(kir,N_K,area);
+[meanArea,binKir, limit] = makeMean(kir,N_K,area);
 
 c = chir2color(binKir);
 map = colormap(c1);
@@ -54,10 +54,14 @@ for i = 1:size(meanArea,2)
     P(i) = plot((1:size(meanArea,1))*9/10, meanArea(:,i)/maxArea,'color',c(i,:),'DisplayName',txt,'Linewidth', linewidth)
 end
 
-bar = colorbar;
+bar = colorbar('Ticks',limit);
 bar.Ruler.Scale = 'log';
 bar.Ruler.MinorTick = 'on';
-caxis([0.1 10]);
+caxis([0.1 limit(end)]);
+
+%...
+         %'TickLabels',{'Cold','Cool','Neutral','Warm','Hot'})
+
 
 % In figure(112) we are plotting area over chiraleties both for sim and exp
 % at the time T given in parameters
