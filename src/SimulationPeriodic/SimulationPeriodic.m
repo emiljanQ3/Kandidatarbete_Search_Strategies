@@ -1,25 +1,25 @@
 %%Iteration 2 of simulation
 %CONFIG-------------------------------------------------------------------------------------------------------
 
-obstacleType            = "hm";
-L                       = 1;      %Cell side length
+obstacleType            = "c";
+L                       = 30;      %Cell side length
 mapSize                 = [3,3];  %Number of cells before a boundry is reached
-edge                    = 0;  % true med kant fals utan
+edge                    = 1;  % true med kant fals utan
 R                       = 0.6;
-r                       = 0.167;
+r                       = 0;
 obstacle                = generateObstacle(obstacleType, R,r);   %Periodic obstacle contained in one cell
 numAgents               = 1;
 dT                      = 0.04;   % Delta time in seconds
-preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
-measurmentTime          = 20;
+preTime                 = 20;     %Number of seconds simulation is run before measurement starts.
+measurmentTime          = 30;
 numTimeSteps            = floor(measurmentTime/dT);
-numSimulations          = 10000;
+numSimulations          = 1000;
 w                       = 10.^(linspace(-1,1,100));  % angle speed in rad/s      Should be defined as vector when doing tests for sevareal kiralities.
-v                       = 0.652;     % speed in m/s
-l                       = 0.156; % Side length of cells in grid used to determine covered area
-D_r                     = 0.05; %Diffusion constant for rotation
+v                       = 16;     % 
+l                       = 3.6; % Side length of cells in grid used to determine covered area
+D_r                     = 0.04; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
-r_c                     = l/2;
+r_c                     = l;
 
 %Config variables that might be interesting to include in the future:
 %Friction
@@ -37,8 +37,10 @@ colision = zeros(3,numTimeSteps);
 tic
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
 w_j = 1;
+w_count = 0;
+loop_cycles = length(w);
+startTic = tic;
 for w_i = w %Loop over different kiralities
-    w_j
       
     for N_i = 1:numSimulations %Loop over separate simulations
         rot_a = 2*pi*rand(numAgents,1);          %Starting rotations
@@ -65,6 +67,12 @@ for w_i = w %Loop over different kiralities
     areaPerTime(w_j) = mean(area./totalTime);
     w_j = w_j + 1;
     
+    
+    w_count = w_count + 1
+        
+    fprintf("Time elapsed:          " + sec2hms(toc(startTic)) + "\n")
+    timeLeft = toc(startTic) / w_count * (loop_cycles - w_count);
+    fprintf("Estimated time left:   " + sec2hms(timeLeft) + "\n\n")
 end
 toc
 %Result is stored as data points, pairing each kirality with a meanAreaCovered value.

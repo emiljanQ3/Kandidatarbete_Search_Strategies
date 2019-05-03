@@ -71,13 +71,19 @@ for i = 1:n % loop through n XML files
     file =  sourceFile{1}{i};
     [pos_a,~,times] = cut(file,agent);
     total_time(i,1) = times(1,2); % Assumes both agents exist for the same amount of time
-    pos1 = zeros(cuts(i),2,size(pos_a,3)+1); % so as to always have at least one zero
-    pos2 = zeros(cuts(i),2,size(pos_a,3)+1);
-    for j=1:cuts(i)
+    pos1 = zeros(cuts(1,i),2,size(pos_a,3)+1); % so as to always have at least one zero
+    pos2 = zeros(cuts(2,i),2,size(pos_a,3)+1);
+    for j=1:cuts(1,i)
         %picks out cut j from pos_a and makes it agent j in r
         pos1(j,:,1:(indice(new_indice(i,1)+j-1,2)-indice(new_indice(i,1)+j-1,1))+1) = pos_a(1,:,indice(new_indice(i,1)+j-1,1):indice(new_indice(i,1)+j-1,2));
+    end
+    
+    for j=1:cuts(2,i)
+        %picks out cut j from pos_a and makes it agent j in r
         pos2(j,:,1:(indice(new_indice(i,3)+j-1,2)-indice(new_indice(i,3)+j-1,1))+1) = pos_a(2,:,indice(new_indice(i,3)+j-1,1):indice(new_indice(i,3)+j-1,2));
     end
+    
+    
     
     %[kir(i),v(i)] = getComplexCirality(r,dT,1);
     
@@ -118,7 +124,6 @@ axis([-5 5 -5 5])
 kir1_sorted = kir1(sortOrder);
 kir2_sorted = kir2(sortOrder);
 
-time_color = chir2color(total_time_sorted);
 figure(1)
 scatter(kir1_sorted,kir2_sorted,[],total_time_sorted)
 
@@ -131,7 +136,7 @@ xlin = linspace(min(kir1),max(kir1),50);
 ylin = linspace(min(kir2),max(kir2),50);
 [X,Y] = meshgrid(xlin,ylin);
 
-f = scatteredInterpolant(kir1,kir2,Z1);
+f = scatteredInterpolant(kir1,kir2,total_time);
 Z = f(X,Y);
 
 %% if we want to save the new results

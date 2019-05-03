@@ -2,7 +2,7 @@
 
 
 %% Create plots
-load('results/Final_results/2019411-1611_multiAgentCircle_R1_N100_w75.mat')
+%load('results/Final_results/2019411-1611_multiAgentCircle_R1_N100_w75.mat')
 
 X = w;
 Y = w;
