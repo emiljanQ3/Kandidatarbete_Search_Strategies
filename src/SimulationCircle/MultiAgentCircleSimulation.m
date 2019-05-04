@@ -32,13 +32,13 @@ meanTotalTime = zeros(length(w));
 
 
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
-w_count = 1;
+w_count = 0;
 loop_cycles = length(w)*(length(w)-1)/2 + length(w);
 
 startTic = tic;
 
-for i = 1:length(w)
-    for j = i:1:length(w)                
+for j = 1:length(w)
+    for i = i:1:length(w)                
         
         W = [w(i),w(j)];
         
@@ -61,12 +61,11 @@ for i = 1:length(w)
                 numMax(i,j) = numMax(i,j) + 1;
             end
         end
-
+        
+        w_count = w_count + 1;
 
         disp(string(w_count) + "/" + string(loop_cycles) + "   Chirality: [" + string(w(i)) + ", " + string(w(j)) + "]   Mean time: " + string(meanTotalTime(i,j)))
 
-        w_count = w_count + 1;
-        
         fprintf("Time elapsed:          " + sec2hms(toc(startTic)) + "\n")
         timeLeft = toc(startTic) / w_count * (loop_cycles - w_count);
         fprintf("Estimated time left:   " + sec2hms(timeLeft) + "\n\n")
@@ -77,6 +76,16 @@ for i = 1:length(w)
 end
 
 percentMax = numMax ./ numSimulations;
+
+%%K�r detta script f�r att spara ditt workspace
+dateTime = clock;
+R_s = num2str(R);
+r_s = num2str(r);
+filename = strcat( join(string(dateTime(1:3)),''), '-', join(string(dateTime(4:5)),''), '_', 'circle_R', R_s([1,3:end]), '_N', num2str(maxTimeSteps), '_w', num2str(length(w)))
+path = strcat(pwd, '/results/', filename)
+save(path)
+%saveas(h,figname, 'fig')
+
 
 %% 3D plot
 X = w;
@@ -98,6 +107,9 @@ Z_3 = percentMax + percentMax' - diag(diag(percentMax));
 figure
 surf(X,Y,Z_3)
 title("Fraction failures")
+
+Z_4 = Z_2(10,:);
+plot (Y,Z_4)
 
 %% 3D plot log
 
