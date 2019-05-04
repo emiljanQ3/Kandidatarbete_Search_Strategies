@@ -1,13 +1,14 @@
 %% Parameters
-clc,,clf
+clc,clf
 digit = 2;              % Antalet signifikanta siffror vi skriver ut f�r kiralitet i legend
-N_K = 15;               % Antalet kiralitetsbins vi delar upp datan i           
+N_Kir = 15;               % Antalet kiralitetsbins vi delar upp datan i           
 
-T       = 90;           % vid vilken tidpunkt plottar vi resultatet mot kiralitet
-T2      = 90;           % Hur lång tid plottar vi arean 
+T       = 30;           % vid vilken tidpunkt plottar vi resultatet mot kiralitet
+T2      = 30;           % Hur lång tid plottar vi arean 
 
-index2  = floor(numAreaDP*T2/measurmentTime);
 index1   = floor(numAreaDP*T/measurmentTime);
+index2   = floor(numAreaDP*T2/measurmentTime);
+
 
 linewidth = 4;          % Hur breda plottade linjer ska vara
 markSize = 40;          % Hur stor plottade datapunkter ska vara
@@ -16,7 +17,9 @@ ax_Font = 50;           % Fontsizes on axis
 tit_Font = 50;          % Fontsizes on titels
 %% Experimental results
 clc
-load('results/Final_results/2019417-118_circle_large_1agent_t50_l216.mat')
+%load('results/Final_results/experimental/2019424-1357_circle_large_1agent_t90_l216.mat')
+load('results/Final_results/experimental/2019426-111_circle_small2_1agent_t30_l216.mat')
+%load('results/Final_results/experimental/2019417-1959_circle_medium_1agent_t50_l216.mat')
 clear 'length'
 
 
@@ -44,14 +47,14 @@ c1 = chir2color(10.^(-1:0.02:1));
 figure(109)
 hold on
 
-[meanArea,binKir, limit] = makeMean(kir,N_K,area);
+[meanArea,binKir, limit] = makeMean(kir,N_Kir,area);
 
 c = chir2color(binKir);
 map = colormap(c1);
 for i = 1:size(meanArea,2)
     num = round(binKir(i),digit,'significant');
     txt = ['$\omega$ = ',num2str(num),' rad/s'];
-    P(i) = plot((1:size(meanArea,1))*9/10, meanArea(:,i)/maxArea,'color',c(i,:),'DisplayName',txt,'Linewidth', linewidth)
+    P(i) = plot((1:size(meanArea,1))*T2/size(meanArea,1), meanArea(:,i)/maxArea,'color',c(i,:),'DisplayName',txt,'Linewidth', linewidth)
 end
 roundedlimit=round(limit,3);
 bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
@@ -71,11 +74,11 @@ figure(112)
 hold on
 c = chir2color(binKir);
 map = colormap(c1);
-P2 = semilogx(binKir,meanArea(index1,:)/maxArea,'k.','markersize',50)
+P2 = semilogx(binKir,meanArea(end,:)/maxArea,'k.','markersize',50)
 set(gca,'xscale','log')
 
 for i = 1:length(binKir)
-    semilogx(binKir(i), meanArea(index1,i)/maxArea,'.','color',c(i,:),'markersize',markSize)
+    semilogx(binKir(i), meanArea(end,i)/maxArea,'.','color',c(i,:),'markersize',markSize)
 end
 bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
 %bar.Ruler.Scale = 'log';
@@ -83,9 +86,12 @@ bar.Ruler.MinorTick = 'off';
 caxis([0.1 10])
 
 %% Simulated results
-load('results/Final_results/2019417-1359_circle_R17_t360_l0156.mat')
+%load('results/Final_results/simulation/2019417-1359_circle_R17_t360_l0156.mat')
+load('results/Final_results/simulation/2019425-943_circle_R058824_t180_l0156.mat')
+%load('results/Final_results/simulation/2019417-1057_circle_R1_t180_l0156.mat')
 clear 'min'
 clear 'max'
+
     % In figure(111) we plot al simulated ciralitys not in report
     figure(111)
     hold on
@@ -134,7 +140,7 @@ figure(112)
 %title('Experimentell och simulerad upps\"okt area f\"or en agent', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
-axis([0.1 10 0 1])
+axis([0.1 10 0 1.2])
 xticks([0.1 1 10])
 xticklabels({'0.1','1','10'})
 ylabel('Normerad area', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -147,20 +153,20 @@ axis(axesHandles,'square')
 %%  set font sizes and titel on figur 109
 figure(109)
 
-axis([0 T2 0 1])
+axis([0 T2 0 1.2])
 %title('Experimentell data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
 ylabel('Normerad area ', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Tid (s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 
-hlegend = legend('show','Location','northwest','Interpreter','latex')
-hlegend.NumColumns=2;      % g�r legenden i tv� kolumner
+%hlegend = legend('show','Location','northwest','Interpreter','latex')
+%hlegend.NumColumns=2;      % g�r legenden i tv� kolumner
 
 %% set font sizes and titel on figur 113
 figure(113)
 
-axis([0 T2 0 1])
+axis([0 T2 0 1.2])
 %title('Simulerad data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', tit_Font)
 
