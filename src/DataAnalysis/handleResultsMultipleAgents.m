@@ -119,6 +119,56 @@ end
 figure(2)
 scatter(kir1,kir2,time)
 axis([-5 5 -5 5])
+
+%% Plot datapoints binned
+% Scatters data points, time/efficiency is colour coded
+kirRange = 5;
+
+[time_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, time, [-5 5]);
+
+k = 1;
+for i = 1:length(kir1_bin)
+    for j = 1:length(kir2_bin)
+        if ~isnan(time_bin(i,j))
+            time_bin2(k) = time_bin(i,j);
+            kir1_bin2(k) = kir1_bin(i);
+            kir2_bin2(k) = kir2_bin(j);
+            
+            k = k + 1;
+        end
+    end
+end
+
+hold on
+[total_time_sorted, sortOrder] = sort(time_bin2);
+kir1_sorted = kir1_bin2(sortOrder);
+kir2_sorted = kir2_bin2(sortOrder);
+
+%plot 1
+figure
+hold on
+img = imread('Images/svartvitTid.png');
+image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
+scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
+
+%Formatting 1
+axis('square')
+axis([-kirRange kirRange -kirRange kirRange])
+
+%Plot 2
+efficiency = 1./total_time_sorted;
+figure
+hold on
+img = imread('Images/svartvitEffektivitet.png');
+image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
+scatter(kir1_sorted,kir2_sorted, [],efficiency)
+%plot([-3, 3], [-1,-1], 'r')
+
+%Formatting 2
+axis('square')
+axis([-kirRange kirRange -kirRange kirRange])
+
+
 %% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
 kirRange = 5;
@@ -146,7 +196,7 @@ hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
 scatter(kir1_sorted,kir2_sorted, [],efficiency)
-plot([-3, 3], [-1,-1], 'r')
+%plot([-3, 3], [-1,-1], 'r')
 
 %Formatting 2
 axis('square')
@@ -183,6 +233,7 @@ figure(1338)
 hold on
 effic2 = 1./timeLine;
 scatter(kirLine1, effic2);
+
 
 %% Plot interpolated data as surface plot - not done...
 xlin = linspace(min(kir1),max(kir1),50);
