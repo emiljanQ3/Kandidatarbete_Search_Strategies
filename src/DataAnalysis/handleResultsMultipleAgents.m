@@ -123,6 +123,13 @@ axis([-5 5 -5 5])
 %% Plot datapoints binned
 % Scatters data points, time/efficiency is colour coded
 kirRange = 5;
+ax_Font = 40;
+gca_Font = 30;
+
+% Mirror points
+% time = [time, time];
+% kir1 = [kir1, kir2];
+% kir2 = [kir2, kir1];
 
 [time_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, time, [-5 5]);
 
@@ -155,18 +162,28 @@ scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
 
+
 %Plot 2
 efficiency = 1./total_time_sorted;
 figure
 hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency)
+scatter(kir1_sorted,kir2_sorted, [],efficiency, 'linewidth', 2)
 %plot([-3, 3], [-1,-1], 'r')
 
 %Formatting 2
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
+set(gca, 'fontsize', gca_Font)
+xticks(-kirRange:1:kirRange)
+yticks(-kirRange:1:kirRange)
+set(gca,'Layer','top','GridAlpha', 0.0)
+
+ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+bar = colorbar;
+set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
 
 
 %% Plot datapoints
@@ -195,12 +212,21 @@ figure(22)
 hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency)
-%plot([-3, 3], [-1,-1], 'r')
+scatter(kir1_sorted,kir2_sorted, [],efficiency, 'Linewidth', 2)
+%plot([-3, 3], [-1,-1], 'r', 'Linewidth', 2)
 
 %Formatting 2
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
+set(gca, 'fontsize', gca_Font)
+xticks(-kirRange:1:kirRange)
+yticks(-kirRange:1:kirRange)
+set(gca,'Layer','top','GridAlpha', 0.0)
+
+ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+bar = colorbar;
+set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
 
 %% Tvärsnitt
 rangeKir1 = [-3 3];
@@ -229,6 +255,20 @@ hold on
 effic = 1./binnedTimes;
 scatter(binKir1, effic)
 
+figure(112)
+hold on
+c = chir2color(abs(binKir1));
+map = colormap(chir2color(10.^(-1:0.02:1)));
+P2 = plot(binKir1,effic,'k.','markersize',50)
+
+for i = 1:length(binKir1)
+    plot(binKir1(i), effic(i),'.','color',c(i,:),'markersize',40)
+end
+bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
+bar.Ruler.MinorTick = 'off';
+caxis([0.1 10])
+
+%%
 figure(1338)
 hold on
 effic2 = 1./timeLine;

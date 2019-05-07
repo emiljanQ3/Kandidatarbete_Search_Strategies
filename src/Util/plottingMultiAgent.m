@@ -7,9 +7,10 @@
 
 %load('results/Final_results/2019411-1611_multiAgentCircle_R1_N100_w75.mat')
 
-kirRange = 5;
+kirRange = 3;
 %cMap = gray(length(meanTotalTime)); %gray, default
 ax_Font = 40;
+gca_Font = 30;
 
 %END Config
 
@@ -22,18 +23,20 @@ Z_2 = 1./Z_1;
 
 figure(11)
 element(1) = surf(X,Y,Z_1)
-title("Time")
+
+%title("Time")
 
 figure(12)
 element(2) = surf(X,Y,Z_2)
-title("Efficiency")
+
+%title("Efficiency")
 
 
 Z_3 = percentMax + percentMax' - diag(diag(percentMax));
 
 figure(13)
 surf(X,Y,Z_3)
-title("Fraction failures")
+%title("Fraction failures")
 
 Z_4 = Z_3;
 
@@ -47,7 +50,7 @@ end
 
 figure(14)
 surf(X,Y,Z_4)
-title("Win and fail")
+%title("Win and fail")
 
 %%Formatting 1
 
@@ -58,8 +61,11 @@ shading interp
 
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
-title('Tid till m\"ote f\"or tv\r{a}  agenter', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', ax_Font)
+%title('Tid till m\"ote f\"or tv\r{a}  agenter', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', gca_Font)
+xticks(-kirRange:1:kirRange)
+yticks(-kirRange:1:kirRange)
+set(gca,'Layer','top','GridAlpha', 0.0)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -75,8 +81,11 @@ shading interp
 
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
-title('M\"oteseffektivitet f\"or tv\r{a} agenter', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', ax_Font)
+%title('M\"oteseffektivitet f\"or tv\r{a} agenter', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', gca_Font)
+xticks(-kirRange:1:kirRange)
+yticks(-kirRange:1:kirRange)
+set(gca,'Layer','top','GridAlpha', 0.0)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -92,8 +101,8 @@ shading interp
 
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
-title('Andel agentpar som inte hittar varandra vid en maxtid p\r{a}  300 sekunder', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', ax_Font)
+%title('Andel agentpar som inte hittar varandra vid en maxtid p\r{a}  300 sekunder', 'Interpreter', 'latex')      %titla
+set(gca, 'fontsize', gca_Font)
 
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
@@ -119,4 +128,14 @@ figure(1337)
 hold on
 
 plot(Y, Z_2(33,:))
+
+figure(112)
+hold on
+
+plot(Y, Z_2(33,:), 'k', 'Linewidth', 4)
+
+set(gca, 'fontsize', gca_Font)
+ylabel('Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+
 
