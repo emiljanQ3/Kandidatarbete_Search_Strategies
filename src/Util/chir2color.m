@@ -3,7 +3,6 @@ function c = chir2color(w)
     c = zeros(length(w),3);
     for i = 1:length(w)
         if (w(i) < 0.1)
-            i
             c(i,:) = palette(1,:);
         else
             c(i,:) = palette(ceil((log10(w(i))+1)*500)+1,:);
