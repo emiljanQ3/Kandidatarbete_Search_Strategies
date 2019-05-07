@@ -116,20 +116,17 @@ for i = 1:size(kir_saved)/2
    time(i) = time_saved(2*i-1);
 end
 %(kir1,kir2,time,'.')
-figure(2)
-scatter(kir1,kir2,time)
-axis([-5 5 -5 5])
+
+%Mirror points
+time = [time, time];
+kir1 = [kir1, kir2];
+kir2 = [kir2, kir1];
 
 %% Plot datapoints binned
 % Scatters data points, time/efficiency is colour coded
 kirRange = 5;
 ax_Font = 40;
 gca_Font = 30;
-
-% Mirror points
-% time = [time, time];
-% kir1 = [kir1, kir2];
-% kir2 = [kir2, kir1];
 
 [time_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, time, [-5 5]);
 
@@ -151,16 +148,16 @@ hold on
 kir1_sorted = kir1_bin2(sortOrder);
 kir2_sorted = kir2_bin2(sortOrder);
 
-%plot 1
-figure
-hold on
-img = imread('Images/svartvitTid.png');
-image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
-
-%Formatting 1
-axis('square')
-axis([-kirRange kirRange -kirRange kirRange])
+% %plot 1
+% figure
+% hold on
+% img = imread('Images/svartvitTid.png');
+% image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
+% scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
+% 
+% %Formatting 1
+% axis('square')
+% axis([-kirRange kirRange -kirRange kirRange])
 
 
 %Plot 2
@@ -169,8 +166,9 @@ figure
 hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency, 'linewidth', 2)
-%plot([-3, 3], [-1,-1], 'r')
+scatter(kir1_sorted,kir2_sorted, 'k.', 'SizeData', 1200)
+scatter(kir1_sorted,kir2_sorted, [],efficiency, '.', 'SizeData', 1000)
+
 
 %Formatting 2
 axis('square')
@@ -188,7 +186,7 @@ set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex',
 
 %% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
-kirRange = 5;
+kirRange = 3;
 
 hold on
 [total_time_sorted, sortOrder] = sort(time);
@@ -212,7 +210,8 @@ figure(22)
 hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency, 'Linewidth', 2)
+scatter(kir1_sorted,kir2_sorted, 'k.', 'SizeData', 1200)
+scatter(kir1_sorted,kir2_sorted, [],efficiency, '.', 'SizeData', 1000)
 %plot([-3, 3], [-1,-1], 'r', 'Linewidth', 2)
 
 %Formatting 2
@@ -230,7 +229,7 @@ set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex',
 
 %% Tvärsnitt
 rangeKir1 = [-3 3];
-rangeKir2 = [-1.5 -0.5];
+rangeKir2 = [-1.2 -0.7];
 
 j = 1;
 for i = 1:length(kir1)
@@ -247,13 +246,9 @@ for i = 1:length(kir1)
     %kir2(i) = NaN;
     %kir1(i) = NaN;
 end
-
-figure(1337)
-hold on
-
+ 
 [binnedTimes, binKir1] = linearBin(kirLine1, 18, timeLine, rangeKir1);
 effic = 1./binnedTimes;
-scatter(binKir1, effic)
 
 figure(112)
 hold on

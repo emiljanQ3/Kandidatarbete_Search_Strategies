@@ -19,6 +19,7 @@ X = w;
 Y = w;
 Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
 Z_2 = 1./Z_1;
+Z_log = log10(Z_2);
 
 
 figure(11)
@@ -27,7 +28,7 @@ element(1) = surf(X,Y,Z_1)
 %title("Time")
 
 figure(12)
-element(2) = surf(X,Y,Z_2)
+element(2) = surf(X,Y,Z_log)
 
 %title("Efficiency")
 
@@ -124,10 +125,14 @@ colormap gray
 hold off
 
 %% Tvärsnitt
-figure(1337)
-hold on
-
-plot(Y, Z_2(33,:))
+% figure(1337)
+% hold on
+% 
+% Z_tv = Z_2(25:42,:)
+% 
+% Z_tv = mean(Z_tv, 1);
+% 
+% plot(Y, Z_tv)
 
 figure(112)
 hold on
