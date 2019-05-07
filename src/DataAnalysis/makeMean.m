@@ -5,6 +5,7 @@ function [meanArea, binKir, limit] = makeMean(kir,N_k, area)
 
     Mi = -1;
     Ma = max(log10(abs(kir)));
+    %Ma = 1
     L = (Ma-Mi)/N_k;
     limit=zeros(N_k,1);
     limit(1)=10
@@ -22,7 +23,7 @@ function [meanArea, binKir, limit] = makeMean(kir,N_k, area)
             end
         end
         meanArea(:,i) = meanArea(:,i)/count(i);
-        binKir(i) = 10^(Mi + L*(i+1/2));
+        binKir(i) = 10^(Mi + L*(i-1/2));
     end
     limit(i+1) = 10^Ma;
     

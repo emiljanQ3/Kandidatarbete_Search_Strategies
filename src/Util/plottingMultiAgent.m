@@ -2,7 +2,17 @@
 
 
 %% Create plots
+
+%Config ---
+
 %load('results/Final_results/2019411-1611_multiAgentCircle_R1_N100_w75.mat')
+
+kirRange = 5;
+%cMap = gray(length(meanTotalTime)); %gray, default
+ax_Font = 40;
+
+%END Config
+
 
 X = w;
 Y = w;
@@ -10,18 +20,18 @@ Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
 Z_2 = 1./Z_1;
 
 
-figure(1)
-surf(X,Y,Z_1)
+figure(11)
+element(1) = surf(X,Y,Z_1)
 title("Time")
 
-figure(2)
-surf(X,Y,Z_2)
+figure(12)
+element(2) = surf(X,Y,Z_2)
 title("Efficiency")
 
-%%
+
 Z_3 = percentMax + percentMax' - diag(diag(percentMax));
 
-figure(3)
+figure(13)
 surf(X,Y,Z_3)
 title("Fraction failures")
 
@@ -35,21 +45,19 @@ for i = 1:size(Z_4,1)
     end
 end
 
-figure(4)
+figure(14)
 surf(X,Y,Z_4)
 title("Win and fail")
 
-%% Formatting 1
+%%Formatting 1
 
-ax_Font = 40;           % Fontsizes on axis
-%tit_Font = 30;          % Fontsizes on titles
-
-figure(1)
+figure(11)
 
 view(2)
+shading interp
 
 axis('square')
-axis([-4 4 -4 4])
+axis([-kirRange kirRange -kirRange kirRange])
 title('Tid till m\"ote f\"or tv\r{a}  agenter', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', ax_Font)
 
@@ -60,12 +68,13 @@ set(get(bar,'label'),'string','Tid (s)', 'Interpreter', 'latex', 'fontsize', ax_
 
 %%Formatting 2
 
-figure(2)
+figure(12)
 
 view(2)
+shading interp
 
 axis('square')
-axis([-4 4 -4 4])
+axis([-kirRange kirRange -kirRange kirRange])
 title('M\"oteseffektivitet f\"or tv\r{a} agenter', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', ax_Font)
 
@@ -74,14 +83,15 @@ xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
 
-%% Formatting 3
+%%Formatting 3
 
-figure(3)
+figure(13)
 
 view(2)
+shading interp
 
 axis('square')
-axis([-4 4 -4 4])
+axis([-kirRange kirRange -kirRange kirRange])
 title('Andel agentpar som inte hittar varandra vid en maxtid p\r{a}  300 sekunder', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', ax_Font)
 
@@ -89,3 +99,24 @@ ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
 set(get(bar,'label'),'string','Andel', 'Interpreter', 'latex', 'fontsize', ax_Font);
+
+%% Black and white
+hold on
+
+figure(11)
+colormap gray
+
+figure(12)
+colormap gray
+
+figure(13)
+colormap gray
+
+hold off
+
+%% Tvärsnitt
+figure(1337)
+hold on
+
+plot(Y, Z_2(33,:))
+
