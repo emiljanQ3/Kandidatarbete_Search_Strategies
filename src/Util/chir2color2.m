@@ -1,4 +1,4 @@
-function c = chir2color(w)
+function c = chir2color2(w)
     palette = getYGBGradient(0.4,0.5,0.6,1001);
     c = zeros(length(w),3);
     for i = 1:length(w)
