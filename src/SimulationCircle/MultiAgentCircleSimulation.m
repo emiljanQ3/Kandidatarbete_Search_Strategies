@@ -37,8 +37,8 @@ loop_cycles = length(w)*(length(w)-1)/2 + length(w);
 
 startTic = tic;
 
-for j = 1:length(w)
-    for i = i:1:length(w)                
+for i = 1:length(w)
+    for j = i:1:length(w)                
         
         W = [w(i),w(j)];
         
