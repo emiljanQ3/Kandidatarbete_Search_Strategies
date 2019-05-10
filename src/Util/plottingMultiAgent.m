@@ -7,7 +7,7 @@
 
 %load('results/Final_results/2019411-1611_multiAgentCircle_R1_N100_w75.mat')
 
-kirRange = 3;
+kirRange = 5;
 %cMap = gray(length(meanTotalTime)); %gray, default
 ax_Font = 40;
 gca_Font = 30;
@@ -28,7 +28,7 @@ element(1) = surf(X,Y,Z_1)
 %title("Time")
 
 figure(12)
-element(2) = surf(X,Y,Z_log)
+element(2) = surf(X,Y,Z_2)
 
 %title("Efficiency")
 
@@ -91,7 +91,9 @@ set(gca,'Layer','top','GridAlpha', 0.0)
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
+set(bar, 'YTick', [0.02,0.1,0.27 ] )
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
+set(gca, 'colorscale', 'log')
 
 %%Formatting 3
 
@@ -137,10 +139,14 @@ hold off
 figure(112)
 hold on
 
-plot(Y, Z_2(33,:), 'k', 'Linewidth', 4)
+semilogy(w, 1./meanTotalTime, 'k', 'Linewidth', 4)
 
 set(gca, 'fontsize', gca_Font)
 ylabel('Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 
+axis('square')
+axis([-3 3 0 0.3])
+
+%set(gca, 'YScale', 'log')
 
