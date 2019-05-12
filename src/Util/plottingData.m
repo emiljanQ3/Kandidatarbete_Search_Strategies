@@ -15,6 +15,7 @@ markSize = 40;          % Hur stor plottade datapunkter ska vara
 
 ax_Font = 50;           % Fontsizes on axis
 tit_Font = 50;          % Fontsizes on titels
+num_Font = 20;          % Fontsize of numbes in plot
 %% Experimental results
 clc
 %load('results/Final_results/experimental/2019424-1357_circle_large_1agent_t90_l216.mat')
@@ -80,11 +81,13 @@ set(gca,'xscale','log')
 for i = 1:length(binKir)
     semilogx(binKir(i), meanArea(end,i)/maxArea,'.','color',c(i,:),'markersize',markSize)
 end
-bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
+%bar1 = colorbar('Location', 'manual');
+bar1 = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
 %bar.Ruler.Scale = 'log';
-bar.Ruler.MinorTick = 'off';
+%bar1.Ruler.MinorTick = 'off';
 caxis([0.1 10])
-
+% bar1.Position = [0.1 0 0.05 1]
+% bar1.Rotate = pi
 %% Simulated results
 %load('results/Final_results/simulation/2019417-1359_circle_R17_t360_l0156.mat')
 load('results/Final_results/simulation/2019425-943_circle_R058824_t180_l0156.mat')
@@ -124,6 +127,12 @@ clear 'max'
     bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
     %bar.Ruler.Scale = 'log';
     bar.Ruler.MinorTick = 'off';
+    bar.Label.String = "Kiralitet $\omega$ ";
+    %bar.Label.FontName = "latex"
+    
+    set(bar,'Interpreter','latex')
+    %set(bar, 'fontsize', ax_Font)
+    
     caxis([0.1 10])
     axis([0 T2 0 1])
     
@@ -138,7 +147,7 @@ clear 'max'
 figure(112)
 
 %title('Experimentell och simulerad upps\"okt area f\"or en agent', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+set(gca, 'fontsize', num_Font)
 
 axis([0.1 10 0 1.2])
 xticks([0.1 1 10])
@@ -146,7 +155,11 @@ xticklabels({'0.1','1','10'})
 ylabel('Normerad area', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 
-axis(axesHandles,'square')
+
+%set(get(bar1,'label'),'string','Kiralitet (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+%set(gcf,'pbarosition',[0 0 900 900])
+
+%axis('square')
 
 
 %legend([P1 P2], 'Simulering','Experimentell','Location','northwest')
@@ -155,10 +168,11 @@ figure(109)
 
 axis([0 T2 0 1.2])
 %title('Experimentell data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+set(gca, 'fontsize', num_Font)
 
 ylabel('Normerad area ', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Tid (s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
+bar.Label.String = "Kiralitet (rad/s)";
 
 %hlegend = legend('show','Location','northwest','Interpreter','latex')
 %hlegend.NumColumns=2;      % g�r legenden i tv� kolumner
@@ -168,11 +182,10 @@ figure(113)
 
 axis([0 T2 0 1.2])
 %title('Simulerad data av normerad upps\"okt area \"over tid', 'Interpreter', 'latex')      %titla
-set(gca, 'fontsize', tit_Font)
+set(gca, 'fontsize', num_Font)
 
 ylabel('Normerad area', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Tid (s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
-
 %hlegend = legend('show','Location','northwest','Interpreter','latex');
 %hlegend.NumColumns = 2;      % gör legenden i 2 kolumner
 
