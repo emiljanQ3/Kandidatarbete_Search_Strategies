@@ -119,8 +119,14 @@ end
 
 %Mirror points
 time = [time, time];
-kir1 = [kir1, kir2];
+temp = [kir1, kir2];
 kir2 = [kir2, kir1];
+kir1 = temp;
+
+time = [time, time];
+temp = [kir1, -kir1];
+kir2 = [kir2, -kir2];
+kir1 = temp;
 
 %% Plot datapoints binned
 % Scatters data points, time/efficiency is colour coded
@@ -128,13 +134,14 @@ kirRange = 5;
 ax_Font = 40;
 gca_Font = 30;
 
-[time_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, time, [-5 5]);
+efficiency = 1./time;
+[effic_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, efficiency, [-5 5]);
 
 k = 1;
 for i = 1:length(kir1_bin)
     for j = 1:length(kir2_bin)
-        if ~isnan(time_bin(i,j))
-            time_bin2(k) = time_bin(i,j);
+        if ~isnan(effic_bin(i,j))
+            effic_bin2(k) = effic_bin(i,j);
             kir1_bin2(k) = kir1_bin(i);
             kir2_bin2(k) = kir2_bin(j);
             
@@ -143,7 +150,7 @@ for i = 1:length(kir1_bin)
     end
 end
 
-[total_time_sorted, sortOrder] = sort(time_bin2);
+[effic_sorted, sortOrder] = sort(effic_bin2);
 kir1_sorted = kir1_bin2(sortOrder);
 kir2_sorted = kir2_bin2(sortOrder);
 
@@ -160,13 +167,20 @@ kir2_sorted = kir2_bin2(sortOrder);
 
 
 %Plot 2
-efficiency = 1./total_time_sorted;
+
 figure
 hold on
-img = imread('Images/svartvitEffektivitetLog.png');
+img = imread('Images/fargEffektivitetMedel.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
+% for i = 1: length(kir1_sorted)
+%     if(effic_sorted(i) < 0.05)
+%         scatter(kir1_sorted(i),kir2_sorted(i), 'w.', 'SizeData', 1400)
+%     else
+%         scatter(kir1_sorted(i),kir2_sorted(i), 'k.', 'SizeData', 1400)
+%     end
+% end
 scatter(kir1_sorted,kir2_sorted, 'k.', 'SizeData', 1400)
-scatter(kir1_sorted,kir2_sorted, [],efficiency, '.', 'SizeData', 1200)
+scatter(kir1_sorted,kir2_sorted, [],effic_sorted, '.', 'SizeData', 1000)
 
 
 %Formatting 2
@@ -181,16 +195,16 @@ ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
-set(bar, 'YTick', [0.02,0.1,0.27 ] )
-caxis([min(Z_2, [], 'all'), max(Z_2, [], 'all')])
-set(gca, 'colorscale', 'log')
+%set(bar, 'YTick', [0.02,0.1,0.27 ] )
+caxis([0, max(Z_5, [], 'all')])
+%set(gca, 'colorscale', 'log')
 
 %% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
 kirRange = 3;
 
 hold on
-[total_time_sorted, sortOrder] = sort(time);
+[effic_sorted, sortOrder] = sort(time);
 kir1_sorted = kir1(sortOrder);
 kir2_sorted = kir2(sortOrder);
 
@@ -199,14 +213,14 @@ figure(21)
 hold on
 img = imread('Images/svartvitTid.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
+scatter(kir1_sorted,kir2_sorted, [],effic_sorted)
 
 %Formatting 1
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
 
 %Plot 2
-efficiency = 1./total_time_sorted;
+efficiency = 1./effic_sorted;
 figure(22)
 hold on
 img = imread('Images/svartvitEffektivitet.png');

@@ -20,6 +20,7 @@ Y = w;
 Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
 Z_2 = 1./Z_1;
 Z_log = log10(Z_2);
+Z_5 = meanEfficiency + meanEfficiency' - diag(diag(meanEfficiency));
 
 
 figure(11)
@@ -28,7 +29,7 @@ element(1) = surf(X,Y,Z_1)
 %title("Time")
 
 figure(12)
-element(2) = surf(X,Y,Z_2)
+element(2) = surf(X,Y,Z_5)
 
 %title("Efficiency")
 
@@ -81,6 +82,7 @@ view(2)
 shading interp
 
 axis('square')
+set(gcf,'position',[0,0,900,900])
 axis([-kirRange kirRange -kirRange kirRange])
 %title('M\"oteseffektivitet f\"or tv\r{a} agenter', 'Interpreter', 'latex')      %titla
 set(gca, 'fontsize', gca_Font)
@@ -91,9 +93,10 @@ set(gca,'Layer','top','GridAlpha', 0.0)
 ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
-set(bar, 'YTick', [0.02,0.1,0.27 ] )
+%set(bar, 'YTick', [0.02,0.1,0.27 ] )
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
-set(gca, 'colorscale', 'log')
+%set(gca, 'colorscale', 'log')
+caxis([0, max(Z_5, [], 'all')])
 
 %%Formatting 3
 
