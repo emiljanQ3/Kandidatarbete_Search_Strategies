@@ -8,8 +8,8 @@ dT                      = 0.04;   % Delta time in seconds
 %preTime                 = 10;     %Number of seconds simulation is run before measurement starts.
 maxMeasurmentTime       = 60;
 maxTimeSteps            = floor(maxMeasurmentTime/dT);
-numSimulations          = 500;
-w                       = linspace(-5,5,99); %Should be defined as vector when doing tests for sevareal kiralities.
+numSimulations          = 1000;
+w                       = linspace(-5,5,149); %Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 L                       = 0.156; % Side length of cells in grid used to determine covered area
 D_r                     = 0.02; %Diffusion constant for rotation
@@ -95,7 +95,7 @@ X = w;
 Y = w;
 Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
 Z_2 = 1./Z_1;
-Z_5 = meanEfficiency + meanEfficiency' - diag(diag(meanEfficiency));
+Z_5 = meanEfficiency + meanEfficiency' - diag(diag(meanEfficiency))
 
 figure
 surf(X,Y,Z_1)
