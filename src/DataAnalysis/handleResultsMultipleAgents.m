@@ -116,9 +116,17 @@ for i = 1:size(kir_saved)/2
    time(i) = time_saved(2*i-1);
 end
 %(kir1,kir2,time,'.')
-figure(2)
-scatter(kir1,kir2,time)
-axis([-5 5 -5 5])
+
+%Mirror points
+time = [time, time];
+temp = [kir1, kir2];
+kir2 = [kir2, kir1];
+kir1 = temp;
+
+time = [time, time];
+temp = [kir1, -kir1];
+kir2 = [kir2, -kir2];
+kir1 = temp;
 
 %% Plot datapoints binned
 % Scatters data points, time/efficiency is colour coded
@@ -126,18 +134,14 @@ kirRange = 5;
 ax_Font = 40;
 gca_Font = 30;
 
-% Mirror points
-% time = [time, time];
-% kir1 = [kir1, kir2];
-% kir2 = [kir2, kir1];
-
-[time_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, time, [-5 5]);
+efficiency = 1./time;
+[effic_bin, kir1_bin, kir2_bin] = linearBin2(kir1, kir2, 40, efficiency, [-5 5]);
 
 k = 1;
 for i = 1:length(kir1_bin)
     for j = 1:length(kir2_bin)
-        if ~isnan(time_bin(i,j))
-            time_bin2(k) = time_bin(i,j);
+        if ~isnan(effic_bin(i,j))
+            effic_bin2(k) = effic_bin(i,j);
             kir1_bin2(k) = kir1_bin(i);
             kir2_bin2(k) = kir2_bin(j);
             
@@ -146,31 +150,38 @@ for i = 1:length(kir1_bin)
     end
 end
 
-hold on
-[total_time_sorted, sortOrder] = sort(time_bin2);
+[effic_sorted, sortOrder] = sort(effic_bin2);
 kir1_sorted = kir1_bin2(sortOrder);
 kir2_sorted = kir2_bin2(sortOrder);
 
-%plot 1
-figure
-hold on
-img = imread('Images/svartvitTid.png');
-image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
-
-%Formatting 1
-axis('square')
-axis([-kirRange kirRange -kirRange kirRange])
+% %plot 1
+% figure
+% hold on
+% img = imread('Images/svartvitTid.png');
+% image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
+% scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
+% 
+% %Formatting 1
+% axis('square')
+% axis([-kirRange kirRange -kirRange kirRange])
 
 
 %Plot 2
-efficiency = 1./total_time_sorted;
+
 figure
 hold on
-img = imread('Images/svartvitEffektivitet.png');
+img = imread('Images/fargEffektivitetMedel.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency, 'linewidth', 2)
-%plot([-3, 3], [-1,-1], 'r')
+% for i = 1: length(kir1_sorted)
+%     if(effic_sorted(i) < 0.05)
+%         scatter(kir1_sorted(i),kir2_sorted(i), 'w.', 'SizeData', 1400)
+%     else
+%         scatter(kir1_sorted(i),kir2_sorted(i), 'k.', 'SizeData', 1400)
+%     end
+% end
+scatter(kir1_sorted,kir2_sorted, 'k.', 'SizeData', 1400)
+scatter(kir1_sorted,kir2_sorted, [],effic_sorted, '.', 'SizeData', 1000)
+
 
 %Formatting 2
 axis('square')
@@ -184,14 +195,16 @@ ylabel('Kiralitet agent A (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 xlabel('Kiralitet agent B (rad/s)', 'Interpreter', 'latex', 'fontsize', ax_Font)
 bar = colorbar;
 set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
-
+%set(bar, 'YTick', [0.02,0.1,0.27 ] )
+caxis([0, max(Z_5, [], 'all')])
+%set(gca, 'colorscale', 'log')
 
 %% Plot datapoints
 % Scatters data points, time/efficiency is colour coded
-kirRange = 5;
+kirRange = 3;
 
 hold on
-[total_time_sorted, sortOrder] = sort(time);
+[effic_sorted, sortOrder] = sort(time);
 kir1_sorted = kir1(sortOrder);
 kir2_sorted = kir2(sortOrder);
 
@@ -200,19 +213,20 @@ figure(21)
 hold on
 img = imread('Images/svartvitTid.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],total_time_sorted)
+scatter(kir1_sorted,kir2_sorted, [],effic_sorted)
 
 %Formatting 1
 axis('square')
 axis([-kirRange kirRange -kirRange kirRange])
 
 %Plot 2
-efficiency = 1./total_time_sorted;
+efficiency = 1./effic_sorted;
 figure(22)
 hold on
 img = imread('Images/svartvitEffektivitet.png');
 image('CData', img, 'XData', [kirRange ,-kirRange], 'YData', [-kirRange, kirRange])
-scatter(kir1_sorted,kir2_sorted, [],efficiency, 'Linewidth', 2)
+scatter(kir1_sorted,kir2_sorted, 'k.', 'SizeData', 1200)
+scatter(kir1_sorted,kir2_sorted, [],efficiency, '.', 'SizeData', 1000)
 %plot([-3, 3], [-1,-1], 'r', 'Linewidth', 2)
 
 %Formatting 2
@@ -230,7 +244,7 @@ set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex',
 
 %% Tvärsnitt
 rangeKir1 = [-3 3];
-rangeKir2 = [-1.5 -0.5];
+rangeKir2 = [-1.2 -0.7];
 
 j = 1;
 for i = 1:length(kir1)
@@ -247,13 +261,9 @@ for i = 1:length(kir1)
     %kir2(i) = NaN;
     %kir1(i) = NaN;
 end
-
-figure(1337)
-hold on
-
+ 
 [binnedTimes, binKir1] = linearBin(kirLine1, 18, timeLine, rangeKir1);
 effic = 1./binnedTimes;
-scatter(binKir1, effic)
 
 figure(112)
 hold on
@@ -267,6 +277,49 @@ end
 bar = colorbar('Location', 'northoutside', 'Ticks', ([0.1 4.95 10]), 'TickLabels',{'0.1', '1','10'});
 bar.Ruler.MinorTick = 'off';
 caxis([0.1 10])
+
+%% 
+%% Tvärsnitt 2
+rangeKir1 = [-3 3];
+rangeKir2 = [-1.2 -0.7];
+colormap('default')
+
+j = 1;
+for i = 1:length(kir1)
+    
+    if ~(kir1(i) < rangeKir1(1) || kir1(i) > rangeKir1(2) || kir2(i) < rangeKir2(1) || kir2(i) > rangeKir2(2))
+        kirLine1(j) = kir1(i);
+        kirLine2(j) = kir2(i);
+        timeLine(j) = time(i);
+        
+        j = j + 1;
+        continue;
+    end
+    %time(i) = NaN;
+    %kir2(i) = NaN;
+    %kir1(i) = NaN;
+end
+ 
+[binnedTimes, binKir1] = linearBin(kirLine1, 18, timeLine, rangeKir1);
+effic = 1./binnedTimes;
+
+figure(112)
+hold on
+c = chir2color(abs(binKir1));
+colormap('default');
+P2 = semilogy(binKir1,effic,'k.','markersize',50)
+
+
+scatter(binKir1, effic,[],effic,'.', 'sizeData', 1700)
+
+
+bar = colorbar;
+set(get(bar,'label'),'string','Effektivitet (s$^{-1}$)', 'Interpreter', 'latex', 'fontsize', ax_Font);
+set(bar, 'YTick', [0.02,0.1,0.27 ] )
+caxis([min(Z_2, [], 'all'), max(Z_2, [], 'all')])
+set(gca, 'colorscale', 'log')
+yticks([0.02,0.1,0.27 ])
+
 
 %%
 figure(1338)

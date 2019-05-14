@@ -9,10 +9,10 @@ dT                      = 0.04;   % Delta time in seconds
 maxMeasurmentTime       = 60;
 maxTimeSteps            = floor(maxMeasurmentTime/dT);
 numSimulations          = 1000;
-w                       = linspace(-3,3,99); %Should be defined as vector when doing tests for sevareal kiralities.
+w                       = linspace(-5,5,149); %Should be defined as vector when doing tests for sevareal kiralities.
 v                       = 0.652;     % speed in R/s
 L                       = 0.156; % Side length of cells in grid used to determine covered area
-D_r                     = 0.03; %Diffusion constant for rotation
+D_r                     = 0.02; %Diffusion constant for rotation
 D_p                     = 0; %Diffusion constant for position
 r_c                     = L;
 numAreaDP               = 100;
@@ -23,12 +23,14 @@ pos_a = zeros(numAgents, 2, maxTimeSteps);              %INITIALIZATION: Agent p
 %pos_pre = zeros(numAgents, 2, floor(preTime/dT));
 numSquares = zeros(numSimulations,numAreaDP);           %INITIALIZATION: List of the amount of area elements found each simulation.
 normA      = zeros(numSimulations,numAreaDP);
-totalTimeSteps = zeros(1, numSimulations); 
+totalTimeSteps = zeros(1, numSimulations);
+Efficiency = zeros(1, numSimulations);
 meanAreaCovered = zeros(length(w),numAreaDP);           %INITIALIZATION: List of mean area covered for each kirality.
 areaPerTime = zeros(length(w),numAreaDP);               %INITIALIZATION: List of mean area covered per total time for each kirality.
 colision = zeros(3,maxTimeSteps);
 numMax = zeros(length(w));
 meanTotalTime = zeros(length(w));
+meanEfficiency = zeros(length(w));
 
 
 %SIMULATION LOOP-------------------------------------------------------------------------------------------------------------
@@ -50,11 +52,12 @@ for i = 1:length(w)
 
             % Do simulation for measurmenttime after pretime is done
             [pos_a, rot_a, colision, totalTimeSteps(N_i)] = simulateMultiAgentCircle( maxMeasurmentTime ,dT,D_r,D_p,v,W,numAgents,pos_a, rot_a,colision, R, r_c,1);
-            
+            Efficiency(N_i) = 1/(totalTimeSteps(N_i)*dT);
 
         end
 
         meanTotalTime(i,j) = mean(totalTimeSteps)*dT;
+        meanEfficiency(i,j) = mean(Efficiency);
         
         for n = totalTimeSteps
             if n == maxTimeSteps
@@ -92,7 +95,7 @@ X = w;
 Y = w;
 Z_1 = meanTotalTime + meanTotalTime' - diag(diag(meanTotalTime));
 Z_2 = 1./Z_1;
-
+Z_5 = meanEfficiency + meanEfficiency' - diag(diag(meanEfficiency))
 
 figure
 surf(X,Y,Z_1)
@@ -110,6 +113,10 @@ title("Fraction failures")
 
 Z_4 = Z_2(10,:);
 plot (Y,Z_4)
+
+figure
+surf(X,Y,Z_5)
+title("reciprikal Efficiency")
 
 %% 3D plot log
 
